@@ -1,0 +1,21 @@
+app/Config/database.php
+
+# Git files
+*.md
+
+# Log files
+*.log
+
+# Applications
+*.app
+*.exe
+*.war
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+/vendor/
