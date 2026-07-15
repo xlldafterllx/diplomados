@@ -1,0 +1,205 @@
+class ComponentHelper {
+    constructor(selector) {
+        this.$context = $(selector);
+        this.isModal = this.$context.hasClass("modal");
+        this.mandatoryFields = [];
+        this.optionalFields = [];
+    }
+
+    getField(name) {
+        return this.$context.find(`[data-field="${name}"]`);
+    }
+
+    getContainer(name) {
+        return this.$context.find(`[data-field-container="${name}"]`);
+    }
+
+    getAction(name) {
+        return this.$context.find(`[data-action="${name}"]`);
+    }
+
+    getTable(name) {
+        return this.$context.find(`[data-table="${name}"]`);
+    }
+
+    setMandatoryFields(fields) {
+        this.mandatoryFields = fields;
+    }
+
+    setOptionalFields(fields) {
+        this.optionalFields = fields;
+    }
+
+    open() {
+        if (this.isModal) {
+            this.$context.modal('show');
+        }
+    }
+
+    close() {
+        if (this.isModal) {
+            this.$context.modal('hide');
+        }
+    }
+
+    validateMandatory() {
+        try {
+            let success = true;
+
+            for (const rowElement of this.mandatoryFields) {
+                const element = this.getField(rowElement.field);
+                const type = rowElement.type;
+                const validation = rowElement.validation ?? null;
+                const value = element.val();
+
+                element.removeClass("is-invalid");
+
+                if (type === "select") {
+                    if (value == null) {
+                        this.setInvalid(element, rowElement.name, errorMandatoryElement);
+                        success = false;
+                    }
+                } else if (type === "select-multiple") {
+                    if (!value || value.length < 1) {
+                        this.setInvalid(element, rowElement.name, errorMandatoryElement);
+                        success = false;
+                    }
+                } else if (type === "datepicker" || type === "input") {
+                    if (!value || value.trim() === "") {
+                        this.setInvalid(element, rowElement.name, errorMandatoryElement);
+                        success = false;
+                    }
+                    else if (validation && this.validators[validation]) {
+                        if (!this.validators[validation](value.trim())) {
+                            this.setInvalid(element, rowElement.name, errorMandatoryElement);
+                            success = false;
+                        }
+                    }
+                }
+            }
+            return success;
+        } catch (e) {
+            Toast.fire({
+                icon: "error",
+                title: "Ocurrió un error al validar los controles"
+            });
+            console.error(e);
+            return false;
+        }
+    }
+
+    validateOptional() {
+        try {
+            let success = false;
+
+            for (const rowElement of this.optionalFields) {
+                const element = this.getField(rowElement.field);
+                const type = rowElement.type;
+                const validation = rowElement.validation ?? null;
+                const value = element.val();
+
+                element.removeClass("is-invalid");
+
+                if (type === "select") {
+                    if (value != null) {
+                        success = true;
+                    }
+                } else if (type === "select-multiple") {
+                    if (value && value.length > 0) {
+                        success = true;
+                    }
+                } else if (type === "datepicker" || type === "input") {
+                    if (value && value.trim() !== "") {
+                        success = true;
+                    }
+                    else if (validation && this.validators[validation]) {
+                        if (this.validators[validation](value.trim())) {
+                            success = true;
+                        }
+                    }
+                }
+            }
+
+            if (!success) {
+                for (const rowElement of this.optionalFields) {
+                    const element = this.getField(rowElement.field);
+                    element.addClass("is-invalid");
+                }
+                Toast.fire({
+                    icon: "warning",
+                    title: "Debe llenar al menos un campo de los filtros opcionales"
+                });
+            }
+
+            return success;
+        } catch (e) {
+            Toast.fire({
+                icon: "error",
+                title: "Ocurrió un error al validar los controles"
+            });
+            console.error(e);
+            return false;
+        }
+    }
+
+    setInvalid(element, name, errorFn) {
+        element.addClass("is-invalid");
+        errorFn(element, name);
+    }
+
+    getData() {
+        const data = {};
+
+        this.$context.find('[data-field]').each(function () {
+            const $element = $(this);
+            const key = $element.data('field');
+
+            data[key] = $element.val();
+
+            if ($element.is('select')) {
+                data[`${key}-des`] = $element.find('option:selected').text().trim();
+            }
+
+            if ($element.is(":file")) {
+                data[`${key}`] = $element[0].files[0] ?? null;
+            }
+        });
+
+        return data;
+    }
+
+    setData(data) {
+        Object.keys(data).forEach(key => {
+            const $field = this.getField(key);
+            if ($field.length) {
+                $field.val(data[key]).change();
+            }
+        });
+    }
+
+    getBind(name) {
+        return this.$context.find(`[data-bind="${name}"]`);
+    }
+
+    setText(name, value) {
+        this.getBind(name).text(value);
+    }
+
+    clear() {
+        this.$context.find('[data-field]').each(function () {
+            $(this)
+                .val('')
+                .removeClass('is-invalid')
+                .change();
+        });
+    }
+
+    onAction(action, callback) {
+        this.$context.on('click', `[data-action="${action}"]`, callback);
+    }
+
+    validators = {
+        mail: value => /\S+@\S+\.\S+/.test(value),
+        cp: value => /^[0-9]{5}$/.test(value)
+    };
+}
