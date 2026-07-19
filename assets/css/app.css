@@ -1,0 +1,11 @@
+.sidebar-image {
+    max-width: 35px !important;
+}
+
+.sidebar-brand-fix {
+    padding: unset !important;
+}
+
+.brand-text-fix {
+    margin-left: .2rem !important;
+}

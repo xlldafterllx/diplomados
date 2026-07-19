@@ -1,4 +1,5 @@
 app/Config/database.php
+initial_configuration.txt
 
 # Git files
 *.md

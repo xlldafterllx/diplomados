@@ -109,7 +109,7 @@ class Request
         $this->files = $this->normalizeFiles($_FILES);
     }
 
-    private function getNested(array $data, string $key, $default = null)
+    /*private function getNested(array $data, string $key, $default = null)
     {
         foreach (explode(".", $key) as $segment) {
             if (!is_array($data) || !array_key_exists($segment, $data)) {
@@ -120,7 +120,7 @@ class Request
         }
 
         return $data;
-    }
+    }*/
 
     private function normalizeFiles(array $files): array
     {
@@ -194,13 +194,15 @@ class Request
             );
         }
 
-        $value = $this->getNested($this->data, $key);
+        $value = ArrayHelper::get($this->data, $key);
+        //$value = $this->getNested($this->data, $key);
 
         if ($value !== null) {
             return $value;
         }
 
-        return $this->getNested($this->files, $key, $default);
+        return ArrayHelper::get($this->data, $key, $default);
+        //return $this->getNested($this->files, $key, $default);
     }
 
     public function all(): array
@@ -323,16 +325,18 @@ class Request
 
     public function input(?string $key = null, $default = null)
     {
-        if ($key === null) {
+        /*if ($key === null) {
             return $this->data;
-        }
+        }*/
 
-        return $this->getNested($this->data, $key, $default);
+        return ArrayHelper::get($this->data, $key, $default);
+        //return $this->getNested($this->data, $key, $default);
     }
 
     public function has(string $key): bool
     {
-        return $this->input($key) !== null;
+        return ArrayHelper::has($this->data, $key);
+        //return $this->input($key) !== null;
     }
 
     public function file(?string $key = null): UploadedFile|array|null
@@ -341,7 +345,8 @@ class Request
             return $this->files;
         }
 
-        $file = $this->getNested($this->files, $key);
+        $file = ArrayHelper::get($this->data, $key);
+        //$file = $this->getNested($this->files, $key);
 
         return $file instanceof UploadedFile
             ? $file

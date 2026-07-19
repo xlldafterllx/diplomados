@@ -1,4 +1,42 @@
 class ComponentHelper {
+
+    //-------------------------------------------------------------------------
+    // Static methods
+    //-------------------------------------------------------------------------
+    static cards(context = document) {
+        const $context = $(context);
+
+        $context
+            .find('[data-lte-toggle="card-collapse"]')
+            .off("click")
+            .on("click", function (event) {
+                event.preventDefault();
+                new adminlte.CardWidget(this).toggle();
+            });
+
+
+        $context
+            .find('[data-lte-toggle="card-remove"]')
+            .off("click")
+            .on("click", function (event) {
+                event.preventDefault();
+                new adminlte.CardWidget(this).remove();
+            });
+
+
+        $context
+            .find('[data-lte-toggle="card-maximize"]')
+            .off("click")
+            .on("click", function (event) {
+                event.preventDefault();
+                new adminlte.CardWidget(this).toggleMaximize();
+            });
+    }
+
+    //-------------------------------------------------------------------------
+    // Instance methods
+    //-------------------------------------------------------------------------
+
     constructor(selector) {
         this.$context = $(selector);
         this.isModal = this.$context.hasClass("modal");
@@ -56,22 +94,22 @@ class ComponentHelper {
 
                 if (type === "select") {
                     if (value == null) {
-                        this.setInvalid(element, rowElement.name, errorMandatoryElement);
+                        this.setInvalid(element, rowElement.name, this.errorMandatoryElement);
                         success = false;
                     }
                 } else if (type === "select-multiple") {
                     if (!value || value.length < 1) {
-                        this.setInvalid(element, rowElement.name, errorMandatoryElement);
+                        this.setInvalid(element, rowElement.name, this.errorMandatoryElement);
                         success = false;
                     }
                 } else if (type === "datepicker" || type === "input") {
                     if (!value || value.trim() === "") {
-                        this.setInvalid(element, rowElement.name, errorMandatoryElement);
+                        this.setInvalid(element, rowElement.name, this.errorMandatoryElement);
                         success = false;
                     }
                     else if (validation && this.validators[validation]) {
                         if (!this.validators[validation](value.trim())) {
-                            this.setInvalid(element, rowElement.name, errorMandatoryElement);
+                            this.setInvalid(element, rowElement.name, this.errorMandatoryElement);
                             success = false;
                         }
                     }
@@ -202,4 +240,11 @@ class ComponentHelper {
         mail: value => /\S+@\S+\.\S+/.test(value),
         cp: value => /^[0-9]{5}$/.test(value)
     };
+
+    errorMandatoryElement(element, elementName) {
+        Toast.fire({
+            icon: "warning",
+            title: "La variable <b>" + elementName + "</b> es obligatoria"
+        });
+    }
 }
