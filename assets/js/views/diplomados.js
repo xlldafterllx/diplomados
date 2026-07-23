@@ -1,7 +1,0 @@
-const Diplomados = {
-
-    init() {
-
-    }
-
-};

@@ -44,11 +44,15 @@ class ComponentHelper {
         this.optionalFields = [];
     }
 
+    getBind(name) {
+        return this.$context.find(`[data-bind="${name}"]`);
+    }
+
     getField(name) {
         return this.$context.find(`[data-field="${name}"]`);
     }
 
-    getContainer(name) {
+    getFieldContainer(name) {
         return this.$context.find(`[data-field-container="${name}"]`);
     }
 
@@ -58,6 +62,10 @@ class ComponentHelper {
 
     getTable(name) {
         return this.$context.find(`[data-table="${name}"]`);
+    }
+
+    getContainer(name) {
+        return this.$context.find(`[data-container="${name}"]`);
     }
 
     setMandatoryFields(fields) {
@@ -78,6 +86,20 @@ class ComponentHelper {
         if (this.isModal) {
             this.$context.modal('hide');
         }
+    }
+
+    buttonOn(name) {
+        const button = this.getAction(name);
+        button.prop("disabled", false);
+        button.find(".spinner-load").css("display", "inline-block");
+        button.find(".spinner-loading").css("display", "none");
+    }
+
+    buttonOff(name) {
+        const button = this.getAction(name);
+        button.prop("disabled", true);
+        button.find(".spinner-load").css("display", "none");
+        button.find(".spinner-loading").css("display", "inline-block");
     }
 
     validateMandatory() {
@@ -215,10 +237,6 @@ class ComponentHelper {
         });
     }
 
-    getBind(name) {
-        return this.$context.find(`[data-bind="${name}"]`);
-    }
-
     setText(name, value) {
         this.getBind(name).text(value);
     }
@@ -236,10 +254,34 @@ class ComponentHelper {
         this.$context.on('click', `[data-action="${action}"]`, callback);
     }
 
+    slideDown(time = 300) {
+        this.$context.slideDown(time);
+    }
+
+    slideUp(time = 300) {
+        this.$context.slideUp(time);
+    }
+
+    fadeIn(time = 300) {
+        this.$context.fadeIn(time);
+    }
+
+    fadeOut(time = 300) {
+        this.$context.fadeOut(time);
+    }
+
+    show(time = 300) {
+        this.$context.show(time);
+    }
+
+    hide(time = 300) {
+        this.$context.hide(time);
+    }
+
     validators = {
         mail: value => /\S+@\S+\.\S+/.test(value),
         cp: value => /^[0-9]{5}$/.test(value)
-    };
+    }
 
     errorMandatoryElement(element, elementName) {
         Toast.fire({

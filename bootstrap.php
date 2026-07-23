@@ -19,6 +19,8 @@ define("CONFIG_PATH", APP_PATH . "/config");
 
 define("CORE_PATH", APP_PATH . "/core");
 
+define("PAGES_PATH", APP_PATH . "/pages");
+
 /*
 |--------------------------------------------------------------------------
 | AUTOLOADER
@@ -74,11 +76,4 @@ setlocale(LC_TIME, Config::get("app.locale"));
 
 define("APP_NAME", Config::get("app.name"));
 define("BASE_URL", Config::get("app.base_url"));
-
-$page = [
-    "assets" => [
-        "header" => [],
-        "footer" => []
-    ]
-];
 ?>

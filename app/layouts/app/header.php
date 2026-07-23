@@ -18,7 +18,7 @@
     <Script>
         const APP_NAME = "<?= APP_NAME ?>";
         const BASE_URL = "<?= BASE_URL ?>";
-        const DEFAULT_VIEW = "dashboard/index";
-        const DEFAULT_TITLE = "Dashboard";
+        const API_URL = BASE_URL + "app/api/";
+        const TODAY = "<?= date("Y-m-d"); ?>";
     </Script>
 </head>

@@ -1,7 +1,7 @@
 <?php
-foreach ($view["assets"]["footer"] as $asset) {
+foreach ($page["assets"]["footer"] as $asset) {
 ?>
-    <script src="<?= BASE_URL ?>assets/<?= $asset ?>"></script>
+    <script src="<?= BASE_URL . $asset ?>"></script>
 <?php
 }
 ?>

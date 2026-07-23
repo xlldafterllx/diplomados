@@ -10,7 +10,8 @@ return [
     "proyect_name" => "diplomados",
     "version" => "1.0.0",
     "base_url" => "/diplomados/",
-    "development" => true,    
+    "development" => true,
+    "home" => "dashboard",
 
     /*
     |--------------------------------------------------------------------------
@@ -32,8 +33,6 @@ return [
         "fixed-header",
         "fixed-footer",
         "sidebar-expand-lg",
-        "bg-body-tertiary",
-        "app-loaded",
-        "sidebar-collapse"
+        "bg-body-tertiary"
     ]
 ];

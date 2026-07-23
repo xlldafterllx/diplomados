@@ -9,3 +9,11 @@
 .brand-text-fix {
     margin-left: .2rem !important;
 }
+
+.hidden {
+    display: none;
+}
+
+.max-w {
+    max-width: 1900px;
+}

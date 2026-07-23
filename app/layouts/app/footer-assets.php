@@ -1,7 +1,13 @@
 <?php
 foreach (Config::get("assets.footer") as $asset) {
 ?>
-    <script src="<?= BASE_URL ?>assets/<?= $asset ?>"></script>
+    <script src="<?= BASE_URL . $asset ?>"></script>
+<?php
+}
+
+foreach ($page["assets"]["footer"] as $asset) {
+?>
+    <script src="<?= BASE_URL . $asset ?>"></script>
 <?php
 }
 ?>
@@ -10,7 +16,6 @@ document.addEventListener(
     "DOMContentLoaded",
     () => {
         Theme.init();
-        NavigationManager.init();
     }
 );
 </script>

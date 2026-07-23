@@ -4,12 +4,14 @@ class TableHelper {
             scrollX: true,
             ordering: true,
             destroy: true,
+            scrollY: "60vh",
+            scrollCollapse: true,
             info: false,
             paging: false,
             lengthChange: false,
 
             language: {
-                url: "/assets/vendor/datatables/json/language-es-MX.json"
+                url: "assets/vendor/datatables/json/language-es-MX.json"
             },
 
             ...configuration
@@ -62,7 +64,6 @@ class TableHelper {
     }
 
     static exportButtons(configuration = {}) {
-
         return {
             layout: {
                 topStart: {
@@ -84,6 +85,7 @@ class TableHelper {
                                     title: configuration.title,
                                     filename: configuration.filename,
                                     footer: true,
+                                    autoFilter: true,
                                     exportOptions: configuration.exportOptions ?? {}
                                 },
                                 {
