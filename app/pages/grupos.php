@@ -14,3 +14,4 @@ $page = [
 ];
 
 require LAYOUTS_PATH . "/app/layout.php";
+require VIEWS_PATH . "/grupos/partials/grupo.php";

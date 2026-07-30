@@ -1,3 +1,18 @@
+<?php
+function asset(string $path): string
+{
+    $path = ltrim($path, "/");
+
+    $fullPath = ROOT_PATH . "/" . $path;
+
+    $version = file_exists($fullPath)
+        ? filemtime($fullPath)
+        : time();
+
+    return BASE_URL . $path . "?v={$version}";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 

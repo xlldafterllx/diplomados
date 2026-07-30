@@ -1,5 +1,4 @@
 class ComponentHelper {
-
     //-------------------------------------------------------------------------
     // Static methods
     //-------------------------------------------------------------------------
@@ -56,16 +55,16 @@ class ComponentHelper {
         return this.$context.find(`[data-field-container="${name}"]`);
     }
 
+    getContainer(name) {
+        return this.$context.find(`[data-container="${name}"]`);
+    }
+
     getAction(name) {
         return this.$context.find(`[data-action="${name}"]`);
     }
 
     getTable(name) {
         return this.$context.find(`[data-table="${name}"]`);
-    }
-
-    getContainer(name) {
-        return this.$context.find(`[data-container="${name}"]`);
     }
 
     setMandatoryFields(fields) {
@@ -102,109 +101,254 @@ class ComponentHelper {
         button.find(".spinner-loading").css("display", "inline-block");
     }
 
+    getValidationElement(element) {
+        const $element = element instanceof jQuery
+            ? element
+            : $(element);
+
+        const control = $element[0];
+
+        if (!control) {
+            return $element;
+        }
+
+        const instance = control._flatpickr;
+
+        if (instance?.altInput) {
+            return $(instance.altInput);
+        }
+
+        /*
+         * Respaldo por si la instancia no está disponible directamente
+         * en el input original.
+         */
+        const $flatpickrInput = $element
+            .siblings(".flatpickr-input")
+            .filter(":visible")
+            .first();
+
+        if ($flatpickrInput.length) {
+            return $flatpickrInput;
+        }
+
+        return $element;
+    }
+
+    setInvalidClass(element) {
+        const validationElement = this.getValidationElement(element);
+
+        element.removeClass("is-invalid");
+        validationElement.addClass("is-invalid");
+
+        return validationElement;
+    }
+
+    removeInvalid(element) {
+        const validationElement = this.getValidationElement(element);
+
+        element.removeClass("is-invalid");
+        validationElement.removeClass("is-invalid");
+
+        return validationElement;
+    }
+
     validateMandatory() {
         try {
             let success = true;
 
             for (const rowElement of this.mandatoryFields) {
                 const element = this.getField(rowElement.field);
+
                 const type = rowElement.type;
                 const validation = rowElement.validation ?? null;
                 const value = element.val();
 
-                element.removeClass("is-invalid");
+                this.removeInvalid(element);
 
                 if (type === "select") {
-                    if (value == null) {
-                        this.setInvalid(element, rowElement.name, this.errorMandatoryElement);
+                    if (value == null || value === "") {
+                        this.setInvalid(
+                            element,
+                            rowElement.name,
+                            this.errorMandatoryElement
+                        );
+
                         success = false;
                     }
-                } else if (type === "select-multiple") {
+
+                    continue;
+                }
+
+                if (type === "select-multiple") {
                     if (!value || value.length < 1) {
-                        this.setInvalid(element, rowElement.name, this.errorMandatoryElement);
+                        this.setInvalid(
+                            element,
+                            rowElement.name,
+                            this.errorMandatoryElement
+                        );
+
                         success = false;
                     }
-                } else if (type === "datepicker" || type === "input") {
-                    if (!value || value.trim() === "") {
-                        this.setInvalid(element, rowElement.name, this.errorMandatoryElement);
+
+                    continue;
+                }
+
+                if (
+                    type === "datepicker" ||
+                    type === "timepicker" ||
+                    type === "datetimepicker" ||
+                    type === "input"
+                ) {
+                    const normalizedValue = typeof value === "string"
+                        ? value.trim()
+                        : value;
+
+                    if (!normalizedValue) {
+                        this.setInvalid(
+                            element,
+                            rowElement.name,
+                            this.errorMandatoryElement
+                        );
+
                         success = false;
+
+                        continue;
                     }
-                    else if (validation && this.validators[validation]) {
-                        if (!this.validators[validation](value.trim())) {
-                            this.setInvalid(element, rowElement.name, this.errorMandatoryElement);
-                            success = false;
-                        }
+
+                    if (
+                        validation &&
+                        this.validators[validation] &&
+                        !this.validators[validation](normalizedValue)
+                    ) {
+                        this.setInvalid(
+                            element,
+                            rowElement.name,
+                            this.errorMandatoryElement
+                        );
+
+                        success = false;
                     }
                 }
             }
+
             return success;
-        } catch (e) {
+        } catch (error) {
             Toast.fire({
                 icon: "error",
                 title: "Ocurrió un error al validar los controles"
             });
-            console.error(e);
+
+            console.error(error);
+
             return false;
         }
     }
 
     validateOptional() {
         try {
-            let success = false;
+            let hasValue = false;
+            let hasInvalidValue = false;
 
             for (const rowElement of this.optionalFields) {
                 const element = this.getField(rowElement.field);
+
                 const type = rowElement.type;
                 const validation = rowElement.validation ?? null;
                 const value = element.val();
 
-                element.removeClass("is-invalid");
+                this.removeInvalid(element);
 
                 if (type === "select") {
-                    if (value != null) {
-                        success = true;
+                    if (value != null && value !== "") {
+                        hasValue = true;
                     }
-                } else if (type === "select-multiple") {
-                    if (value && value.length > 0) {
-                        success = true;
+
+                    continue;
+                }
+
+                if (type === "select-multiple") {
+                    if (Array.isArray(value) && value.length > 0) {
+                        hasValue = true;
                     }
-                } else if (type === "datepicker" || type === "input") {
-                    if (value && value.trim() !== "") {
-                        success = true;
+
+                    continue;
+                }
+
+                if (
+                    type === "datepicker" ||
+                    type === "timepicker" ||
+                    type === "datetimepicker" ||
+                    type === "input"
+                ) {
+                    const normalizedValue = typeof value === "string"
+                        ? value.trim()
+                        : value;
+
+                    if (!normalizedValue) {
+                        continue;
                     }
-                    else if (validation && this.validators[validation]) {
-                        if (this.validators[validation](value.trim())) {
-                            success = true;
-                        }
+
+                    hasValue = true;
+
+                    if (
+                        validation &&
+                        this.validators[validation] &&
+                        !this.validators[validation](normalizedValue)
+                    ) {
+                        this.setInvalid(
+                            element,
+                            rowElement.name,
+                            this.errorInvalidElement
+                        );
+
+                        hasInvalidValue = true;
                     }
                 }
             }
 
-            if (!success) {
+            if (!hasValue) {
                 for (const rowElement of this.optionalFields) {
                     const element = this.getField(rowElement.field);
-                    element.addClass("is-invalid");
+
+                    this.setInvalidClass(element);
                 }
+
                 Toast.fire({
                     icon: "warning",
                     title: "Debe llenar al menos un campo de los filtros opcionales"
                 });
+
+                return false;
             }
 
-            return success;
-        } catch (e) {
+            return !hasInvalidValue;
+        } catch (error) {
             Toast.fire({
                 icon: "error",
                 title: "Ocurrió un error al validar los controles"
             });
-            console.error(e);
+
+            console.error(error);
+
             return false;
         }
     }
 
+    errorInvalidElement(element, elementName) {
+        Toast.fire({
+            icon: "warning",
+            title: `El valor de <b>${elementName}</b> no tiene un formato válido`
+        });
+    }
+
     setInvalid(element, name, errorFn) {
-        element.addClass("is-invalid");
-        errorFn(element, name);
+        const validationElement = this.setInvalidClass(element);
+
+        errorFn.call(
+            this,
+            validationElement,
+            name
+        );
     }
 
     getData() {
@@ -228,26 +372,102 @@ class ComponentHelper {
         return data;
     }
 
-    setData(data) {
-        Object.keys(data).forEach(key => {
+    setData(data, options = {}) {
+        const {
+            triggerChange = true
+        } = options;
+
+        Object.entries(data).forEach(([key, value]) => {
             const $field = this.getField(key);
-            if ($field.length) {
-                $field.val(data[key]).change();
+
+            if (!$field.length) {
+                return;
+            }
+
+            const flatpickrInstance = $field[0]._flatpickr;
+
+            if (flatpickrInstance) {
+                flatpickrInstance.setDate(
+                    value || null,
+                    triggerChange
+                );
+
+                this.removeInvalid($field);
+
+                return;
+            }
+
+            $field.val(value);
+
+            if ($field.is("select")) {
+                $field.trigger(
+                    triggerChange
+                        ? "change"
+                        : "change.select2"
+                );
+
+                return;
+            }
+
+            if (triggerChange) {
+                $field.trigger("change");
             }
         });
+
+        return this;
     }
 
     setText(name, value) {
         this.getBind(name).text(value);
     }
 
-    clear() {
-        this.$context.find('[data-field]').each(function () {
-            $(this)
-                .val('')
-                .removeClass('is-invalid')
-                .change();
-        });
+    clear(options = {}) {
+        const {
+            triggerChange = false
+        } = options;
+
+        const component = this;
+
+        this.$context
+            .find("[data-field]")
+            .each(function () {
+                const $field = $(this);
+
+                /*
+                 * Flatpickr debe limpiarse mediante su propia instancia.
+                 */
+                if ($field[0]._flatpickr) {
+                    $field[0]._flatpickr.clear();
+
+                    component.removeInvalid($field);
+
+                    if (triggerChange) {
+                        $field.trigger("change");
+                    }
+
+                    return;
+                }
+
+                $field.val("");
+
+                component.removeInvalid($field);
+
+                if ($field.is("select")) {
+                    $field.trigger(
+                        triggerChange
+                            ? "change"
+                            : "change.select2"
+                    );
+
+                    return;
+                }
+
+                if (triggerChange) {
+                    $field.trigger("change");
+                }
+            });
+
+        return this;
     }
 
     onAction(action, callback) {

@@ -14,6 +14,28 @@ class TableHelper {
                 url: "assets/vendor/datatables/json/language-es-MX.json"
             },
 
+            drawCallback: function () {
+                const table = this.api();
+                const $table = $(table.table().node());
+
+                const hasData = table
+                    .rows({
+                        search: "applied"
+                    })
+                    .count() > 0;
+
+                const previousState = $table.hasClass("dt-has-data");
+
+                $table.toggleClass("dt-has-data", hasData);
+                $table.toggleClass("dt-no-data", !hasData);
+
+                if (previousState !== hasData) {
+                    requestAnimationFrame(() => {
+                        table.columns.adjust();
+                    });
+                }
+            },
+
             ...configuration
         };
     }
@@ -38,6 +60,7 @@ class TableHelper {
         datatable.clear();
         datatable.rows.add(data);
         datatable.draw();
+        datatable.columns.adjust();
     }
 
     static destroy(datatable) {

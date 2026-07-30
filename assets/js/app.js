@@ -11,3 +11,11 @@ function scrollToElement(element) {
         scrollTop: element.$context.offset().top
     }, 500);
 }
+
+function clearValidation() {
+    $(".form-control").each(function (e) {
+        $(this).on("click select2:open", function (event) {
+            $(this).removeClass("is-invalid");
+        });
+    });
+}

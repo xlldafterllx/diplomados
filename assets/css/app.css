@@ -1,19 +1,23 @@
 .sidebar-image {
-    max-width: 35px !important;
+  max-width: 35px !important;
 }
 
 .sidebar-brand-fix {
-    padding: unset !important;
+  padding: unset !important;
 }
 
 .brand-text-fix {
-    margin-left: .2rem !important;
+  margin-left: 0.2rem !important;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 .max-w {
-    max-width: 1900px;
+  max-width: 1900px;
+}
+
+.form-control.is-invalid {
+  border-color: var(--bs-danger);
 }

@@ -1,0 +1,38 @@
+table.dataTable thead th {
+    white-space: nowrap;
+}
+
+table.dataTable thead th.dt-orderable-asc,
+table.dataTable thead th.dt-orderable-desc {
+    padding-right: 2rem !important;
+}
+
+table.dataTable.dt-has-data .dt-col-small {
+    min-width: 70px;
+    white-space: nowrap;
+}
+
+table.dataTable.dt-has-data .dt-col-date {
+    min-width: 140px;
+    white-space: nowrap;
+}
+
+table.dataTable.dt-has-data .dt-col-medium {
+    min-width: 190px;
+    max-width: 260px;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+table.dataTable.dt-has-data .dt-col-large {
+    min-width: 250px;
+    max-width: 350px;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+table.dataTable.dt-has-data .dt-col-actions {
+    min-width: 95px;
+    width: 95px;
+    white-space: nowrap;
+}

@@ -34,33 +34,34 @@ let tableActividadesData = [];
 
 $(function () {
     initialize();
+    loadDiplomados();
 });
 
 function initialize() {
     window.HttpClient = HttpClient;
     window.HttpException = HttpException;
-    components();
-    tables();
-    loadDiplomados();
+
+    initializeComponents();
+    initializeTables();
 }
 
-function components() {
+function initializeComponents() {
     diplomados = new ComponentHelper("#diplomados");
     modulos = new ComponentHelper("#modulos");
     actividades = new ComponentHelper("#actividades");
     modal = new ComponentHelper("#modal-generic");
 
-    cmpValidationFields();
-    cmpActions();
+    initializeComponentValidationFields();
+    initializeComponentActions();
 }
 
-function cmpValidationFields() {
+function initializeComponentValidationFields() {
     modal.setMandatoryFields([
         { field: "nombre", name: "Nombre", type: "input" }
     ]);
 }
 
-function cmpActions() {
+function initializeComponentActions() {
     diplomados.onAction("new", () => {
         modal.getBind("title").text("Agregar diplomado");
         modal.getBind("name").text("Nombre del diplomado");
@@ -117,13 +118,13 @@ function cmpActions() {
     });
 }
 
-function tables() {
-    tblDiplomados();
-    tblModulos();
-    tblActividades();
+function initializeTables() {
+    initializeTableDiplomados();
+    initializeTableModulos();
+    initializeTableActividades();
 }
 
-function tblDiplomados() {
+function initializeTableDiplomados() {
     const columns = [
         {
             data: 'nombre',
@@ -190,7 +191,7 @@ function tblDiplomados() {
     );
 }
 
-function tblModulos() {
+function initializeTableModulos() {
     const columns = [
         {
             data: 'orden',
@@ -262,7 +263,7 @@ function tblModulos() {
     );
 }
 
-function tblActividades() {
+function initializeTableActividades() {
     const columns = [
         {
             data: 'orden',
@@ -340,13 +341,13 @@ async function loadDiplomados() {
         tableDiplomadosData = result.data;
 
         TableHelper.update(tableDiplomados, tableDiplomadosData);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         Loader.hide();
@@ -366,13 +367,13 @@ async function loadModulos(diplomado, nombre) {
         TableHelper.update(tableModulos, tableModulosData);
 
         modal.getField("diplomado").val(diplomado);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         modulos.slideDown();
@@ -394,13 +395,13 @@ async function loadActividades(diplomado, modulo, nombre) {
 
         modal.getField("diplomado").val(diplomado);
         modal.getField("modulo").val(modulo);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         actividades.slideDown();
@@ -417,13 +418,13 @@ async function updateDiplomadosData() {
         tableDiplomadosData = result.data;
 
         TableHelper.update(tableDiplomados, tableDiplomadosData);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         Loader.hide();
@@ -440,13 +441,13 @@ async function updateModulosData(diplomado) {
         TableHelper.update(tableModulos, tableModulosData);
 
         modal.getField("diplomado").val(diplomado);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         Loader.hide();
@@ -464,13 +465,13 @@ async function updateActividadesData(diplomado, modulo) {
 
         modal.getField("diplomado").val(diplomado);
         modal.getField("modulo").val(modulo);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         actividades.slideDown();
@@ -492,13 +493,13 @@ async function newDiplomado() {
             icon: "success",
             title: "Diplomado creado"
         });
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         modal.buttonOn("save");
@@ -518,13 +519,13 @@ async function newModulo() {
             icon: "success",
             title: "Módulo creado"
         });
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         modal.buttonOn("save");
@@ -544,13 +545,13 @@ async function newActividad() {
             icon: "success",
             title: "Actividad creada"
         });
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         modal.buttonOn("save");
@@ -569,13 +570,13 @@ async function editDiplomado(diplomado) {
 
         const result = await HttpClient.post(diplomadosEditApi, { "diplomado": diplomado });
         modal.getField("nombre").val(result.data);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         Loader.hide();
@@ -596,13 +597,13 @@ async function editModulo(diplomado, modulo) {
 
         const result = await HttpClient.post(modulosEditApi, { "diplomado": diplomado, "modulo": modulo });
         modal.getField("nombre").val(result.data);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         Loader.hide();
@@ -624,13 +625,13 @@ async function editActividad(diplomado, modulo, actividad) {
 
         const result = await HttpClient.post(actividadesEditApi, { "diplomado": diplomado, "modulo": modulo, "actividad": actividad });
         modal.getField("nombre").val(result.data);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         Loader.hide();
@@ -651,13 +652,13 @@ async function updateDiplomado() {
             icon: "success",
             title: "Diplomado actualizado"
         });
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         modal.buttonOn("save");
@@ -677,13 +678,13 @@ async function updateModulo() {
             icon: "success",
             title: "Módulo actualizado"
         });
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         modal.buttonOn("save");
@@ -703,13 +704,13 @@ async function updateActividad() {
             icon: "success",
             title: "Actividad actualizada"
         });
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         modal.buttonOn("save");

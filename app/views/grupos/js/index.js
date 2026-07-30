@@ -1,7 +1,9 @@
 const gruposListApi = API_URL + "grupos/list.php";
+const gruposAllApi = API_URL + "grupos/all.php";
 
 // Components
 let grupos;
+let modalGrupo;
 
 // Tables
 let tableGrupos;
@@ -13,48 +15,112 @@ $(function () {
     initialize();
 });
 
-function initialize() {
+async function initialize() {
     window.HttpClient = HttpClient;
     window.HttpException = HttpException;
-    components();
-    tables();
-    //loadGrupos();
+    initializeComponents();
+    initializeSelects();
+    initializeDatesTimes();
+    initializeTables();
+    initializeInputs();
+    await loadAll();
+    clearValidation();
 }
 
-function components() {
+function initializeComponents() {
     grupos = new ComponentHelper("#grupos");
+    modalGrupo = new ComponentHelper("#modal-grupo");
 
-    cmpValidationFields();
-    cmpActions();
+    initializeComponentValidationFields();
+    initializeComponentActions();
 }
 
-function cmpValidationFields() {
-    /*modal.setMandatoryFields([
-        { field: "nombre", name: "Nombre", type: "input" }
-    ]);*/
+function initializeComponentValidationFields() {
+    modalGrupo.setMandatoryFields([
+        { field: "nombre", name: "Nombre", type: "input" },
+        { field: "diplomado", name: "Diplomado", type: "select" },
+        { field: "fecha-inicio", name: "Nombre", type: "datetimepicker" },
+        { field: "hora-inicio", name: "Nombre", type: "timepicker" },
+        { field: "clases", name: "Nombre", type: "input" },
+        { field: "dia", name: "Nombre", type: "select" },
+    ]);
 }
 
-function cmpActions() {
-    /*grupos.onAction("new", () => {
-        modal.getBind("title").text("Agregar grupo");
-        modal.getBind("name").text("Nombre del grupo");
-        modal.getContainer("button").attr("data-action", "save");
-        modal.getContainer("value").attr("data-value", "grupo");
-        modal.getField("nombre").val("");
-        modal.open();
-    });*/
+function initializeComponentActions() {
+    grupos.onAction("new", () => {
+        modalGrupo.clear();
+        modalGrupo.getBind("title").text("Agregar grupo");
+        modalGrupo.getContainer("button").attr("data-action", "save");
+        modalGrupo.getField("nombre").val("");
+        modalGrupo.open();
+    });
+
+    modalGrupo.onAction("save", () => {
+        const clases = modalGrupo.getField("clases");
+
+        if (!modalGrupo.validateMandatory()) return;
+        if (Number(clases.val()) < 1) {
+            modalGrupo.setInvalidClass(clases);
+            Toast.fire({
+                icon: "warning",
+                title: "La cantidad de clases de ser igual o mayor a 1.",
+            });
+            return;
+        }
+
+        console.log(modalGrupo.getData());        
+    });
 }
 
-function tables() {
-    tblGrupos();
+function initializeSelects() {
+    const options = {
+        context: modalGrupo,
+        triggerChange: false
+    }
+
+    SelectHelper.fill("diplomado", [], options);
+    SelectHelper.fill("dia", [], options);
 }
 
-function tblGrupos() {
+function initializeDatesTimes() {
+    DateHelper.date("fecha-inicio", {
+        context: modalGrupo,
+        minDate: TODAY
+    });
+
+    DateHelper.time("hora-inicio", {
+        context: modalGrupo,
+        minuteIncrement: 15
+    });
+}
+
+function initializeInputs() {
+    InputHelper.integer("clases", {
+        context: modalGrupo,
+        min: 1
+    });
+}
+
+function initializeTables() {
+    initializeTableGrupos();
+}
+
+function initializeTableGrupos() {
     const columns = [
         {
-            data: 'nombre',
-            name: 'nombre',
+            data: 'grupo_nombre',
+            name: 'grupo_nombre',
             title: 'Nombre del grupo'
+        },
+        {
+            data: 'diplomado_nombre',
+            name: 'diplomado_nombre',
+            title: 'Nombre del diplomado'
+        },
+        {
+            data: 'dia_semana',
+            name: 'dia_semana',
+            title: 'Cada (día)'
         },
         {
             data: 'fecha_creacion',
@@ -116,6 +182,35 @@ function tblGrupos() {
     );
 }
 
+async function loadAll() {
+    try {
+        Loader.show();
+
+        const result = await HttpClient.post(gruposAllApi, {});
+
+        tableGruposData = result.data.grupos;
+        TableHelper.update(tableGrupos, tableGruposData);
+
+        const options = {
+            context: modalGrupo,
+            triggerChange: false
+        }
+
+        SelectHelper.fill("diplomado", result.data.catalogos.diplomados, options);
+        SelectHelper.fill("dia", result.data.catalogos.dias, options);
+    } catch (error) {
+        console.log(error);
+
+        Toast.fire({
+            icon: "error",
+            title: "Ocurrió un error",
+            html: error.message
+        });
+    } finally {
+        Loader.hide();
+    }
+}
+
 async function loadGrupos() {
     try {
         Loader.show();
@@ -125,13 +220,13 @@ async function loadGrupos() {
         tableGruposData = result.data;
 
         TableHelper.update(tableGrupos, tableGruposData);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         Loader.hide();
@@ -146,13 +241,13 @@ async function updateGruposData() {
         tableGruposData = result.data;
 
         TableHelper.update(tableGrupos, tableGruposData);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         Loader.hide();
@@ -172,13 +267,13 @@ async function newGrupo() {
             icon: "success",
             title: "Grupo creado"
         });
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         modal.buttonOn("save");
@@ -197,13 +292,13 @@ async function editGrupo(grupo) {
 
         const result = await HttpClient.post(gruposEditApi, { "grupo": grupo });
         modal.getField("nombre").val(result.data);
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         Loader.hide();
@@ -224,13 +319,13 @@ async function updateGrupo() {
             icon: "success",
             title: "Grupo actualizado"
         });
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            html: error.message
         });
     } finally {
         modal.buttonOn("save");

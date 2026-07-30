@@ -11,30 +11,30 @@ let tableAlumnosData = [];
 
 $(function () {
     initialize();
+    //loadAlumnos();
 });
 
 function initialize() {
     window.HttpClient = HttpClient;
     window.HttpException = HttpException;
-    components();
-    tables();
-    //loadAlumnos();
+    initializeComponents();
+    initializeTables();
 }
 
-function components() {
+function initializeComponents() {
     alumnos = new ComponentHelper("#alumnos");
 
-    cmpValidationFields();
-    cmpActions();
+    initializeComponentValidationFields();
+    initializeComponentActions();
 }
 
-function cmpValidationFields() {
+function initializeComponentValidationFields() {
     /*modal.setMandatoryFields([
         { field: "nombre", name: "Nombre", type: "input" }
     ]);*/
 }
 
-function cmpActions() {
+function initializeComponentActions() {
     /*alumnos.onAction("new", () => {
         modal.getBind("title").text("Agregar alumno");
         modal.getBind("name").text("Nombre del alumno");
@@ -45,11 +45,11 @@ function cmpActions() {
     });*/
 }
 
-function tables() {
-    tblAlumnos();
+function initializeTables() {
+    initializeTableAlumnos();
 }
 
-function tblAlumnos() {
+function initializeTableAlumnos() {
     const columns = [
         {
             data: 'nombre',
