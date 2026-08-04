@@ -14,6 +14,7 @@ $grupos = $db->select(
             tg.id,
             tg.nombre 'grupo_nombre',
             td.nombre 'diplomado_nombre',
+            tg.fecha_inicio,
             cds.dia_semana,
 	        tg.fecha_creacion,
             concat(tu.nombre, ' ', tu.apellido_1, ' ', tu.apellido_2) 'usuario_creacion'

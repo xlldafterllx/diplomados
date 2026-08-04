@@ -12,9 +12,7 @@ const Theme = {
             .querySelectorAll("[data-bs-theme-value]")
             .forEach(button => {
                 button.addEventListener("click", () => {
-                    this.set(
-                        button.dataset.bsThemeValue
-                    );
+                    this.set(button.dataset.bsThemeValue);
                 });
             });
 
@@ -26,44 +24,36 @@ const Theme = {
                     this.updateUI();
                 }
             });
-
     },
 
     get() {
-        return localStorage.getItem(
-            this.STORAGE_KEY
-        ) ?? "auto";
+        return localStorage.getItem(this.STORAGE_KEY) ?? "auto";
+    },
+
+    getResolved() {
+        return this.resolve(this.get());
+    },
+
+    resolve(theme) {
+        if (theme === "light" || theme === "dark") {
+            return theme;
+        }
+
+        return window
+            .matchMedia("(prefers-color-scheme: dark)")
+            .matches
+                ? "dark"
+                : "light";
     },
 
     set(theme) {
-        localStorage.setItem(
-            this.STORAGE_KEY,
-            theme
-        );
+        localStorage.setItem(this.STORAGE_KEY, theme);
         this.apply(theme);
         this.updateUI();
     },
 
     apply(theme) {
-        const prefersDark = window.matchMedia(
-            "(prefers-color-scheme: dark)"
-        ).matches;
-
-        let resolvedTheme;
-
-        switch (theme) {
-            case "light":
-                resolvedTheme = "light";
-                break;
-            case "dark":
-                resolvedTheme = "dark";
-                break;
-            default:
-                resolvedTheme = prefersDark
-                    ? "dark"
-                    : "light";
-                break;
-        }
+        const resolvedTheme = this.resolve(theme);
 
         document.documentElement.setAttribute(
             "data-bs-theme",
@@ -72,16 +62,19 @@ const Theme = {
 
         document.documentElement.style.colorScheme =
             resolvedTheme;
+
+        document.dispatchEvent(
+            new CustomEvent("theme:changed", {
+                detail: {
+                    theme,
+                    resolvedTheme
+                }
+            })
+        );
     },
 
     updateUI() {
         const theme = this.get();
-
-        /*
-        |--------------------------------------------------------------------------
-        | ICONS
-        |--------------------------------------------------------------------------
-        */
 
         document
             .querySelectorAll("[data-lte-theme-icon]")
@@ -95,38 +88,18 @@ const Theme = {
             )
             ?.classList.remove("d-none");
 
-        /*
-        |--------------------------------------------------------------------------
-        | DROPDOWN OPTIONS
-        |--------------------------------------------------------------------------
-        */
-
         document
             .querySelectorAll("[data-bs-theme-value]")
             .forEach(button => {
-
                 const isActive =
                     button.dataset.bsThemeValue === theme;
 
-                button.classList.toggle(
-                    "active",
-                    isActive
-                );
+                button.classList.toggle("active", isActive);
+                button.setAttribute("aria-pressed", isActive);
 
-                button.setAttribute(
-                    "aria-pressed",
-                    isActive
-                );
-
-                const check =
-                    button.querySelector(".fa-check");
-
-                if (check) {
-                    check.classList.toggle(
-                        "d-none",
-                        !isActive
-                    );
-                }
+                button
+                    .querySelector(".fa-check")
+                    ?.classList.toggle("d-none", !isActive);
             });
     }
 };

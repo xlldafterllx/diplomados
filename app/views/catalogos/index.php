@@ -16,7 +16,7 @@
 <div class="app-content">
     <div class="container-fluid">
         <div class="row d-flex justify-content-center">
-            <div class="col-12 max-w">
+            <div class="col-12">
 
                 <div id="diplomados" class="card">
                     <div class="card-header">

@@ -202,6 +202,47 @@ class DateHelper {
     }
 
     //-------------------------------------------------------------------------
+    // Events
+    //-------------------------------------------------------------------------
+
+    static on(element, event, callback, context = null) {
+        const instance = this.getInstance(element, context);
+
+        if (instance) {
+
+            const hook = this.getHookName(event);
+
+            if (!hook) {
+                throw new Error(
+                    `Evento "${event}" no soportado.`
+                );
+            }
+
+            instance.config[hook].push(callback);
+
+            return;
+        }
+
+        context
+            ? context.getField(element).on(event, callback)
+            : $("#" + element).on(event, callback);
+    }
+
+    static getHookName(event) {
+        const hooks = {
+            change: "onChange",
+            open: "onOpen",
+            close: "onClose",
+            ready: "onReady",
+            monthChange: "onMonthChange",
+            yearChange: "onYearChange",
+            valueUpdate: "onValueUpdate"
+        };
+
+        return hooks[event] ?? null;
+    }
+
+    //-------------------------------------------------------------------------
     // Instance management
     //-------------------------------------------------------------------------
 
@@ -588,5 +629,17 @@ class DateHelper {
         if (typeof window[plugin] === "undefined") {
             throw new Error(message);
         }
+    }
+
+    static getDayName(element, context = null, format = "long") {
+        const date = this.getDate(element, context);
+
+        if (!date) {
+            return "";
+        }
+
+        return date.toLocaleDateString("es-MX", {
+            weekday: format
+        });
     }
 }

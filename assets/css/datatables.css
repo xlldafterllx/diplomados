@@ -2,9 +2,13 @@ table.dataTable thead th {
     white-space: nowrap;
 }
 
-table.dataTable thead th.dt-orderable-asc,
+/*table.dataTable thead th.dt-orderable-asc,
 table.dataTable thead th.dt-orderable-desc {
-    padding-right: 2rem !important;
+    padding-left: 2rem !important;
+}*/
+
+table.dataTable thead span.dt-column-order {
+    margin-left: 1rem !important;
 }
 
 table.dataTable.dt-has-data .dt-col-small {
@@ -12,23 +16,23 @@ table.dataTable.dt-has-data .dt-col-small {
     white-space: nowrap;
 }
 
-table.dataTable.dt-has-data .dt-col-date {
-    min-width: 140px;
-    white-space: nowrap;
-}
-
 table.dataTable.dt-has-data .dt-col-medium {
-    min-width: 190px;
-    max-width: 260px;
+    min-width: 250px;
+    max-width: 250px;
     white-space: normal;
     overflow-wrap: break-word;
 }
 
 table.dataTable.dt-has-data .dt-col-large {
-    min-width: 250px;
-    max-width: 350px;
+    min-width: 380px;
+    max-width: 380px;
     white-space: normal;
     overflow-wrap: break-word;
+}
+
+table.dataTable.dt-has-data .dt-col-date {
+    min-width: 140px;
+    white-space: nowrap;
 }
 
 table.dataTable.dt-has-data .dt-col-actions {

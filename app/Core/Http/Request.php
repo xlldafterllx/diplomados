@@ -309,7 +309,7 @@ class Request
             return $default;
         }
 
-        return $this->createDate($value, 'd/m/Y') ?? $default;
+        return $this->createDate($value, 'Y-m-d') ?? $default;
     }
 
     public function datetime(string $key, ?DateTimeImmutable $default = null): ?DateTimeImmutable
@@ -320,7 +320,7 @@ class Request
             return $default;
         }
 
-        return $this->createDate($value, 'd/m/Y H:i') ?? $default;
+        return $this->createDate($value, 'Y-m-d H:i') ?? $default;
     }
 
     public function input(?string $key = null, $default = null)

@@ -342,7 +342,7 @@ async function loadDiplomados() {
 
         TableHelper.update(tableDiplomados, tableDiplomadosData);
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -368,7 +368,7 @@ async function loadModulos(diplomado, nombre) {
 
         modal.getField("diplomado").val(diplomado);
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -396,7 +396,7 @@ async function loadActividades(diplomado, modulo, nombre) {
         modal.getField("diplomado").val(diplomado);
         modal.getField("modulo").val(modulo);
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -419,7 +419,7 @@ async function updateDiplomadosData() {
 
         TableHelper.update(tableDiplomados, tableDiplomadosData);
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -442,7 +442,7 @@ async function updateModulosData(diplomado) {
 
         modal.getField("diplomado").val(diplomado);
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -466,7 +466,7 @@ async function updateActividadesData(diplomado, modulo) {
         modal.getField("diplomado").val(diplomado);
         modal.getField("modulo").val(modulo);
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -494,7 +494,7 @@ async function newDiplomado() {
             title: "Diplomado creado"
         });
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -520,7 +520,7 @@ async function newModulo() {
             title: "Módulo creado"
         });
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -546,7 +546,7 @@ async function newActividad() {
             title: "Actividad creada"
         });
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -571,7 +571,7 @@ async function editDiplomado(diplomado) {
         const result = await HttpClient.post(diplomadosEditApi, { "diplomado": diplomado });
         modal.getField("nombre").val(result.data);
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -598,7 +598,7 @@ async function editModulo(diplomado, modulo) {
         const result = await HttpClient.post(modulosEditApi, { "diplomado": diplomado, "modulo": modulo });
         modal.getField("nombre").val(result.data);
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -626,7 +626,7 @@ async function editActividad(diplomado, modulo, actividad) {
         const result = await HttpClient.post(actividadesEditApi, { "diplomado": diplomado, "modulo": modulo, "actividad": actividad });
         modal.getField("nombre").val(result.data);
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -653,7 +653,7 @@ async function updateDiplomado() {
             title: "Diplomado actualizado"
         });
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -679,7 +679,7 @@ async function updateModulo() {
             title: "Módulo actualizado"
         });
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",
@@ -705,7 +705,7 @@ async function updateActividad() {
             title: "Actividad actualizada"
         });
     } catch (error) {
-        console.log(error);
+        console.log(error.response);
 
         Toast.fire({
             icon: "error",

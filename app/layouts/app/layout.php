@@ -7,9 +7,15 @@
 
         <?php require_once "sidebar.php"; ?>
 
+        <script src="<?= asset("assets/js/helpers/SidebarPersistence.js") ?>"></script>
+
         <main id="view-content" class="app-main">
 
-            <?php require_once $page["content"]; ?>
+            <div>
+                <div class="main-content">
+                    <?php require_once $page["content"]; ?>
+                </div>
+            </div>
 
         </main>
 

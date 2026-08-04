@@ -1,18 +1,19 @@
 <?php
 return [
     "header" => [
-        "assets/vendor/adminlte/css/adminlte.min.css",
+        // Base
         "assets/vendor/bootstrap/css/bootstrap.min.css",
+        "assets/vendor/adminlte/css/adminlte.min.css",
         "assets/vendor/fontawesome/css/all.min.css",
+        
+        // Componentes externos
         "assets/vendor/select2/css/select2.min.css",
         "assets/vendor/select2/css/select2-bootstrap-5-theme.min.css",
-        "assets/vendor/loader/css/loader.css",
+
         "assets/vendor/flatpickr/css/flatpickr.min.css",
         "assets/vendor/flatpickr/plugins/monthSelect/css/style.css",
-
-        "assets/css/datatables.css",
-        "assets/css/select2.css",
-        "assets/css/flatpickr.css",
+        
+        "assets/vendor/loader/css/loader.css",
 
         // Datatables
         "assets/vendor/datatables/css/dataTables.bootstrap5.min.css",
@@ -27,21 +28,32 @@ return [
         "assets/vendor/datatables/css/searchBuilder.bootstrap5.min.css",
         "assets/vendor/datatables/css/searchPanes.bootstrap5.min.css",
 
+        "assets/css/datatables.css",
+        "assets/css/select2.css",
+        "assets/css/flatpickr.css",
+
         "assets/css/app.css"
     ],
     "footer" => [
+        // Base
         "assets/vendor/jquery/js/jquery.min.js",
         "assets/vendor/bootstrap/js/bootstrap.bundle.min.js",
         "assets/vendor/adminlte/js/adminlte.min.js",
+
+        // Componentes externos
         "assets/vendor/sweetalert2/js/sweetalert2.all.min.js",
+
         "assets/vendor/moment/js/moment-with-locales.min.js",
+        
         "assets/vendor/select2/js/select2.min.js",
         "assets/vendor/select2/js/es.min.js",
-        "assets/vendor/loader/js/loader.js",
+
         "assets/vendor/flatpickr/js/flatpickr.min.js",
         "assets/vendor/flatpickr/js/es.min.js",
         "assets/vendor/flatpickr/plugins/shortcutButtons/js/shortcut-buttons-flatpickr.min.js",
         "assets/vendor/flatpickr/plugins/monthSelect/js/index.js",
+        
+        "assets/vendor/loader/js/loader.js",
         
         // Datatables
         "assets/vendor/datatables/js/jszip.min.js",
@@ -72,11 +84,11 @@ return [
         "assets/js/classes/HttpClient.js",
         "assets/js/classes/HttpException.js",
         "assets/js/classes/ComponentHelper.js",
+        "assets/js/classes/ArrayHelper.js",
         "assets/js/classes/SelectHelper.js",
         "assets/js/classes/InputHelper.js",
-        "assets/js/classes/TableHelper.js",
         "assets/js/classes/DateHelper.js",
-        "assets/js/helpers/sidebarPersistence.js",
+        "assets/js/classes/TableHelper.js",
         "assets/js/helpers/toast.js",
         "assets/js/helpers/theme.js",
 

@@ -1,23 +1,40 @@
+:root {
+  --lte-sidebar-width: 280px;
+}
+
 .sidebar-image {
   max-width: 35px !important;
 }
 
-.sidebar-brand-fix {
+.sidebar-brand {
   padding: unset !important;
 }
 
-.brand-text-fix {
+.brand-text {
+  font-weight: 700 !important;
   margin-left: 0.2rem !important;
 }
 
-.hidden {
-  display: none;
-}
-
-.max-w {
-  max-width: 1900px;
-}
-
 .form-control.is-invalid {
-  border-color: var(--bs-danger);
+  border-color: var(--bs-danger) !important;
+}
+
+input.disabled:hover {
+  cursor: not-allowed;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.main-content {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.card-footer::after {
+  content: unset;
 }

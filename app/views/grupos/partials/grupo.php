@@ -8,7 +8,7 @@
             <div class="modal-body">
                 <div class="row">
 					<div class="col-lg-12">
-                        <input data-field="grupo" type="text" class="form-control hidden" disabled>
+                        <input data-field="grupo-id" type="text" class="form-control d-none" disabled>
 
                         <div class="row">
                             <div class="form-group col-xl-4 mb-3 col-md-6">
@@ -72,7 +72,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="form-group">
-                                        <select data-field="dia" class="form-control js-select"></select>
+                                        <select data-field="dia" class="form-control js-select" disabled></select>
                                     </div>
                                 </div>
                             </div>
