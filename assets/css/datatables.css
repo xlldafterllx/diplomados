@@ -2,15 +2,6 @@ table.dataTable thead th {
     white-space: nowrap;
 }
 
-/*table.dataTable thead th.dt-orderable-asc,
-table.dataTable thead th.dt-orderable-desc {
-    padding-left: 2rem !important;
-}*/
-
-table.dataTable thead span.dt-column-order {
-    margin-left: 1rem !important;
-}
-
 table.dataTable.dt-has-data .dt-col-small {
     min-width: 70px;
     white-space: nowrap;
@@ -39,4 +30,14 @@ table.dataTable.dt-has-data .dt-col-actions {
     min-width: 95px;
     width: 95px;
     white-space: nowrap;
+}
+
+[data-bs-theme="dark"]
+.dtfc-top-blocker {
+    background-color: var(--bs-body-bg) !important;
+}
+
+[data-bs-theme="dark"]
+.dtfc-bottom-blocker {
+    background-color: var(--bs-body-bg) !important;
 }

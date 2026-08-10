@@ -1,0 +1,48 @@
+.ui-autocomplete {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 0.375rem 0;
+  margin: 0;
+
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+
+  box-shadow: var(--bs-box-shadow);
+
+  z-index: 1060;
+}
+
+/* Items */
+.ui-autocomplete .ui-menu-item {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ui-autocomplete .ui-menu-item-wrapper {
+  padding: 0.5rem 0.75rem;
+
+  color: var(--bs-body-color);
+  background-color: transparent;
+
+  border: 0;
+
+  cursor: pointer;
+
+}
+
+/* Active / Hover */
+.ui-autocomplete .ui-state-active,
+.ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
+  margin: 0;
+
+  color: var(--bs-primary-text-emphasis);
+  background-color: var(--bs-primary-bg-subtle);
+
+  border: 0;
+}

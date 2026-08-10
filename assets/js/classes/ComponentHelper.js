@@ -59,12 +59,20 @@ class ComponentHelper {
         return this.$context.find(`[data-container="${name}"]`);
     }
 
-    getAction(name) {
+    getAction(name = null) {
+        if (name === null) {
+            return this.$context.find("[data-action]");
+        }
+
         return this.$context.find(`[data-action="${name}"]`);
     }
 
     getTable(name) {
         return this.$context.find(`[data-table="${name}"]`);
+    }
+
+    getElement(selector) {
+        return this.$context.find(selector);
     }
 
     setMandatoryFields(fields) {
@@ -77,13 +85,13 @@ class ComponentHelper {
 
     open() {
         if (this.isModal) {
-            this.$context.modal('show');
+            this.$context.modal("show");
         }
     }
 
     close() {
         if (this.isModal) {
-            this.$context.modal('hide');
+            this.$context.modal("hide");
         }
     }
 
@@ -152,6 +160,50 @@ class ComponentHelper {
         return validationElement;
     }
 
+    getFieldValue(name) {
+        const $field = this.getField(name);
+        const value = $field.val();
+
+        if (typeof value === "string") {
+            return value.trim();
+        }
+
+        return value;
+    }
+
+    isMandatoryField(rowElement) {
+        const requiredWhen = rowElement.requiredWhen;
+
+        /*
+         * Cuando no existe una condición, el campo siempre es obligatorio.
+         */
+        if (requiredWhen == null) {
+            return true;
+        }
+
+        /*
+         * También permitimos declarar directamente true o false.
+         */
+        if (typeof requiredWhen === "boolean") {
+            return requiredWhen;
+        }
+
+        if (typeof requiredWhen !== "function") {
+            throw new TypeError(
+                `La condición requiredWhen del campo "${rowElement.field}" debe ser una función o un booleano`
+            );
+        }
+
+        return Boolean(
+            requiredWhen({
+                component: this,
+                getField: name => this.getField(name),
+                getValue: name => this.getFieldValue(name),
+                getData: () => this.getData()
+            })
+        );
+    }
+
     validateMandatory() {
         try {
             let success = true;
@@ -159,11 +211,32 @@ class ComponentHelper {
             for (const rowElement of this.mandatoryFields) {
                 const element = this.getField(rowElement.field);
 
+                if (!element.length) {
+                    console.warn(
+                        `No se encontró el campo obligatorio "${rowElement.field}"`
+                    );
+
+                    continue;
+                }
+
                 const type = rowElement.type;
                 const validation = rowElement.validation ?? null;
                 const value = element.val();
 
+                /*
+                 * Primero retiramos cualquier estado inválido anterior.
+                 *
+                 * Esto también limpia el campo cuando antes era obligatorio,
+                 * pero dejó de serlo debido al cambio de otro control.
+                 */
                 this.removeInvalid(element);
+
+                /*
+                 * Si la condición no se cumple, el campo no debe validarse.
+                 */
+                if (!this.isMandatoryField(rowElement)) {
+                    continue;
+                }
 
                 if (type === "select") {
                     if (value == null || value === "") {
@@ -180,7 +253,7 @@ class ComponentHelper {
                 }
 
                 if (type === "select-multiple") {
-                    if (!value || value.length < 1) {
+                    if (!Array.isArray(value) || value.length < 1) {
                         this.setInvalid(
                             element,
                             rowElement.name,
@@ -223,7 +296,7 @@ class ComponentHelper {
                         this.setInvalid(
                             element,
                             rowElement.name,
-                            this.errorMandatoryElement
+                            this.errorInvalidElement
                         );
 
                         success = false;
@@ -356,12 +429,12 @@ class ComponentHelper {
 
         this.$context.find('[data-field]').each(function () {
             const $element = $(this);
-            const key = $element.data('field');
+            const key = $element.data("field");
 
             data[key] = $element.val();
 
-            if ($element.is('select')) {
-                data[`${key}-des`] = $element.find('option:selected').text().trim();
+            if ($element.is("select")) {
+                data[`${key}-des`] = $element.find("option:selected").text().trim();
             }
 
             if ($element.is(":file")) {
@@ -370,6 +443,20 @@ class ComponentHelper {
         });
 
         return data;
+    }
+
+    setBinds(data) {
+        Object.entries(data).forEach(([key, value]) => {
+            const $field = this.getBind(key);
+
+            if (!$field.length) {
+                return;
+            }
+
+            $field.text(value);
+        });
+
+        return this;
     }
 
     setData(data, options = {}) {
@@ -421,6 +508,12 @@ class ComponentHelper {
         this.getBind(name).text(value);
     }
 
+    setHtml(html) {
+        this.$context.html(html);
+
+        return this;
+    }
+
     clear(options = {}) {
         const {
             triggerChange = false
@@ -470,32 +563,178 @@ class ComponentHelper {
         return this;
     }
 
-    onAction(action, callback) {
-        this.$context.on('click', `[data-action="${action}"]`, callback);
+    onAction(action, callback, namespace = "component") {
+        const event = `click.${namespace}`;
+
+        const selector = action
+            ? `[data-action="${action}"]`
+            : "[data-action]";
+
+        this.$context
+            .off(event, selector)
+            .on(event, selector, callback);
+
+        return this;
     }
 
-    slideDown(time = 300) {
-        this.$context.slideDown(time);
+    resolveElement(element = null) {
+        if (element === null) {
+            return this.$context;
+        }
+
+        if (element instanceof jQuery) {
+            return element;
+        }
+
+        if (
+            element instanceof HTMLElement ||
+            element === document ||
+            element === window
+        ) {
+            return $(element);
+        }
+
+        if (typeof element === "string") {
+            return this.$context.find(element);
+        }
+
+        throw new TypeError(
+            "El elemento debe ser un selector, HTMLElement o instancia de jQuery"
+        );
     }
 
-    slideUp(time = 300) {
-        this.$context.slideUp(time);
+    disableElementFields(element) {
+        const $element = this.resolveElement(element);
+
+        $element
+            .find(":input")
+            .addBack(":input")
+            .each(function () {
+                const $field = $(this);
+
+                /*
+                 * Solo marcamos los campos que estaban habilitados.
+                 */
+                if (!$field.prop("disabled")) {
+                    $field
+                        .attr(
+                            "data-component-disabled",
+                            "true"
+                        )
+                        .prop("disabled", true);
+                }
+            });
+
+        $element.addClass("disabled-container");
+
+        return $element;
     }
 
-    fadeIn(time = 300) {
-        this.$context.fadeIn(time);
+    enableElementFields(element) {
+        const $element = this.resolveElement(element);
+
+        $element
+            .find(
+                '[data-component-disabled="true"]'
+            )
+            .addBack(
+                '[data-component-disabled="true"]'
+            )
+            .each(function () {
+                $(this)
+                    .prop("disabled", false)
+                    .removeAttr(
+                        "data-component-disabled"
+                    );
+            });
+
+        $element.removeClass("disabled-container");
+
+        return $element;
     }
 
-    fadeOut(time = 300) {
-        this.$context.fadeOut(time);
+    hideFieldContainer(name, effect = "fadeOut", time = 300) {
+        const element = this.getFieldContainer(name);
+        element.addClass("disabled");
+
+        if (typeof this[effect] !== "function") {
+            throw new Error(
+                `El efecto "${effect}" no está disponible`
+            );
+        }
+
+        this[effect](element, time);
+
+        return this;
     }
 
-    show(time = 300) {
-        this.$context.show(time);
+    showFieldContainer(name, effect = "fadeIn", time = 300) {
+        const element = this.getFieldContainer(name);
+        element.removeClass("disabled")
+
+        if (typeof this[effect] !== "function") {
+            throw new Error(
+                `El efecto "${effect}" no está disponible`
+            );
+        }
+
+        this[effect](element, time);
+
+        return this;
     }
 
-    hide(time = 300) {
-        this.$context.hide(time);
+    slideDown(element = null, time = 300) {
+        const $element = this.resolveElement(element);
+
+        this.enableElementFields($element);
+        $element.stop(true, true).slideDown(time);
+
+        return this;
+    }
+
+    slideUp(element = null, time = 300) {
+        const $element = this.resolveElement(element);
+
+        this.disableElementFields($element);
+        $element.stop(true, true).slideUp(time);
+
+        return this;
+    }
+
+    fadeIn(element = null, time = 300) {
+        const $element = this.resolveElement(element);
+
+        this.enableElementFields($element);
+        $element.stop(true, true).fadeIn(time);
+
+        return this;
+    }
+
+    fadeOut(element = null, time = 300) {
+        const $element = this.resolveElement(element);
+
+        this.disableElementFields($element);
+        $element.stop(true, true).fadeOut(time);
+
+        return this;
+    }
+
+    show(element = null, time = 300) {
+        const $element = this.resolveElement(element);
+
+        this.enableElementFields($element);
+        $element.stop(true, true).show(time);
+
+        return this;
+    }
+
+    hide(element = null, time = 300) {
+        const $element = this.resolveElement(element);
+
+        this.disableElementFields($element);
+        $element.stop(true, true).hide(time);
+
+        return this;
     }
 
     validators = {

@@ -27,6 +27,27 @@ $nombre = $request->string("nombre");
 
 $db = ConnectionManager::connection();
 
+$exist = $db->first(
+    "
+        select
+            td.id,
+            td.nombre
+        from tbl_diplomado td
+        where
+            td.status_id = 1 and
+            td.nombre = ?
+    ",
+    [
+        $nombre
+    ]
+);
+
+if ($exist)
+    ApiResponse::conflict("Ya existe un diplomado con el mismo nombre.", [
+        "id" => $exist["id"],
+        "nombre" => $exist["nombre"]
+    ]);
+
 $db->insert(
     "
         insert into tbl_diplomado

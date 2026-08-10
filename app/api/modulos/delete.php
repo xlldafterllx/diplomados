@@ -33,10 +33,13 @@ $db->update(
     "
     update tbl_modulo tm
     set
-        status = -1
-    where tm.status = 1 and tm.diplomado_id = ? and tm.id = ?
+        status_id = -1,
+        usuario_eliminacion_id = ?,
+        fecha_eliminacion = current_timestamp()
+    where tm.status_id = 1 and tm.diplomado_id = ? and tm.id = ?
     ",
     [
+        Session::get("auth.id"),
         $diplomado,
         $modulo
     ]

@@ -76,4 +76,10 @@ setlocale(LC_TIME, Config::get("app.locale"));
 
 define("APP_NAME", Config::get("app.name"));
 define("BASE_URL", Config::get("app.base_url"));
+
+
+$protocol = isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] === "on" ? "https" : "http";
+$fullUrl = $protocol . "://" . $_SERVER["HTTP_HOST"] . BASE_URL;
+
+define("FULL_URL", $fullUrl);
 ?>

@@ -26,7 +26,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= BASE_URL ?>alumnos"
+                        <!---<a href="<?= BASE_URL ?>alumnos"-->
+                        <a href="javascript:void(0);" onclick="notReadyJet(); return false;"
                             class="nav-link <?= $page["current"] === "alumnos" ? "active" : "" ?>">
                             <i class="nav-icon fa-solid fa-user-graduate"></i>
                             <p>Alumnos</p>

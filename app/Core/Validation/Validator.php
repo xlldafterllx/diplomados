@@ -9,7 +9,11 @@ class Validator
      *
      * [
      *     "nombre" => "required|string|max:100"
+     *     "edad"   => "requiredIf:campo,valor1,valor2"
      * ]
+     * 
+     * Estructura
+     *  required|requiredIf|tipo|min|max|minValue|maxValue
      */
     private array $rules = [];
 
@@ -34,6 +38,8 @@ class Validator
      */
     private array $messages = [
         "required" => "El campo :field es obligatorio.",
+        "requiredIf" => "El campo :field es obligatorio cuando :other tenga uno de los siguientes valores: :values.",
+        "requiredUnless" => "El campo :field es obligatorio, excepto cuando :other tenga uno de los siguientes valores: :values.",
         "string" => "El campo :field debe ser una cadena de texto.",
         "integer" => "El campo :field debe ser un número entero.",
         "float" => "El campo :field debe ser un número.",
@@ -45,8 +51,10 @@ class Validator
         "file" => "El campo :field debe contener un archivo.",
         "mimetype" => "El archivo del campo :field no tiene un formato permitido.",
         "maxFileSize" => "El archivo del campo :field excede el tamaño permitido.",
-        "min" => "El campo :field no cumple el tamaño mínimo.",
-        "max" => "El campo :field excede el tamaño máximo.",
+        "min" => "El campo :field debe contener al menos :value caracteres.",
+        "max" => "El campo :field no debe contener más de :value caracteres.",
+        "minValue" => "El campo :field debe tener un valor mínimo de :value.",
+        "maxValue" => "El campo :field debe tener un valor máximo de :value.",
     ];
 
     private function __construct()
@@ -112,14 +120,37 @@ class Validator
         foreach ($this->rules as $field => $rules) {
             $parsedRules = $this->parseRules($rules);
 
+            $ruleNames = array_column(
+                $parsedRules,
+                "name"
+            );
+
+            if (
+                in_array("nullable", $ruleNames, true) &&
+                $this->skipEmpty($field)
+            ) {
+                continue;
+            }
+
             foreach ($parsedRules as $rule) {
-                $method = $this->validatorMethod($rule["name"]);
+                if ($rule["name"] === "nullable") {
+                    continue;
+                }
+
+                $method = $this->validatorMethod(
+                    $rule["name"]
+                );
 
                 if ($method === null) {
                     continue;
                 }
 
-                if (!$this->$method($field, $rule["parameter"])) {
+                if (
+                    !$this->$method(
+                        $field,
+                        $rule["parameter"]
+                    )
+                ) {
                     break;
                 }
             }
@@ -258,9 +289,90 @@ class Validator
         return $this->fail($field, "required");
     }
 
-    private function validateNullable(string $field, $parameter): bool
+    private function validateRequiredIf(string $field, $parameter): bool
     {
-        return !$this->skipEmpty($field);
+        $condition = $this->parseConditionalParameter($parameter);
+
+        if ($condition === null) {
+            return true;
+        }
+
+        $otherValue = $this->request->value(
+            $condition["field"]
+        );
+
+        $required = in_array(
+            (string) $otherValue,
+            array_map(
+                "strval",
+                $condition["values"]
+            ),
+            true
+        );
+
+        if (!$required || !$this->skipEmpty($field)) {
+            return true;
+        }
+
+        return $this->fail(
+            $field,
+            "requiredIf",
+            [
+                ":other" => $condition["field"],
+                ":values" => implode(
+                    ", ",
+                    $condition["values"]
+                )
+            ]
+        );
+    }
+
+    private function validateRequiredUnless(string $field, $parameter): bool
+    {
+        $condition = $this->parseConditionalParameter($parameter);
+
+        if ($condition === null) {
+            return true;
+        }
+
+        $otherValue = $this->request->value(
+            $condition["field"]
+        );
+
+        $excludedValues = array_map(
+            "strval",
+            $condition["values"]
+        );
+
+        /*
+         * Si el otro campo tiene uno de los valores excluidos,
+         * el campo actual no es obligatorio.
+         */
+        if (
+            in_array(
+                (string) $otherValue,
+                $excludedValues,
+                true
+            )
+        ) {
+            return true;
+        }
+
+        if (!$this->skipEmpty($field)) {
+            return true;
+        }
+
+        return $this->fail(
+            $field,
+            "requiredUnless",
+            [
+                ":other" => $condition["field"],
+                ":values" => implode(
+                    ", ",
+                    $condition["values"]
+                )
+            ]
+        );
     }
 
     private function validateString(string $field, $parameter): bool
@@ -389,20 +501,16 @@ class Validator
             return true;
         }
 
-        $value = $this->request->string($field);
-
-        if ($value === null) {
-            return $this->fail(
-                $field,
-                "min",
-                [
-                    ":value" => $parameter
-                ]
-            );
+        if (!$this->isNonNegativeInteger($parameter)) {
+            return true;
         }
 
+        $value = $this->request->string($field);
 
-        if (mb_strlen($value) >= (int) $parameter) {
+        if (
+            $value !== null &&
+            mb_strlen($value) >= (int) $parameter
+        ) {
             return true;
         }
 
@@ -421,20 +529,16 @@ class Validator
             return true;
         }
 
-        $value = $this->request->string($field);
-
-        if ($value === null) {
-            return $this->fail(
-                $field,
-                "max",
-                [
-                    ":value" => $parameter
-                ]
-            );
+        if (!$this->isNonNegativeInteger($parameter)) {
+            return true;
         }
 
+        $value = $this->request->string($field);
 
-        if (mb_strlen($value) <= (int) $parameter) {
+        if (
+            $value !== null &&
+            mb_strlen($value) <= (int) $parameter
+        ) {
             return true;
         }
 
@@ -447,12 +551,60 @@ class Validator
         );
     }
 
+    private function validateMinValue(string $field, $parameter): bool
+    {
+        if ($this->skipEmpty($field)) {
+            return true;
+        }
+
+        $values = $this->numericValues(
+            $field,
+            $parameter
+        );
+
+        if ($values === null || $values[0] < $values[1]) {
+            return $this->fail(
+                $field,
+                "minValue",
+                [
+                    ":value" => $parameter
+                ]
+            );
+        }
+
+        return true;
+    }
+
+    private function validateMaxValue(string $field, $parameter): bool
+    {
+        if ($this->skipEmpty($field)) {
+            return true;
+        }
+
+        $values = $this->numericValues(
+            $field,
+            $parameter
+        );
+
+        if ($values === null || $values[0] > $values[1]) {
+            return $this->fail(
+                $field,
+                "maxValue",
+                [
+                    ":value" => $parameter
+                ]
+            );
+        }
+
+        return true;
+    }
+
     private function validateMimetype(string $field, $parameter): bool
     {
         if ($this->skipEmpty($field)) {
             return true;
         }
-        
+
         $file = $this->request->value($field);
 
         if (!$file instanceof UploadedFile) {
@@ -484,5 +636,77 @@ class Validator
         return $file->getSize() <= (int) $parameter
             ? true
             : $this->fail($field, "maxFileSize");
+    }
+
+    private function failRequiredIf(string $field, string $otherField, array $values): bool
+    {
+        return $this->fail(
+            $field,
+            "requiredIf",
+            [
+                ":other" => $otherField,
+                ":values" => implode(", ", $values)
+            ]
+        );
+    }
+
+    private function isNonNegativeInteger($value): bool
+    {
+        return filter_var(
+            $value,
+            FILTER_VALIDATE_INT,
+            [
+                "options" => [
+                    "min_range" => 0
+                ]
+            ]
+        ) !== false;
+    }
+
+    private function numericValues(string $field, $parameter): ?array
+    {
+        $value = $this->request->value($field);
+
+        if (
+            !is_numeric($value) ||
+            !is_numeric($parameter)
+        ) {
+            return null;
+        }
+
+        return [
+            (float) $value,
+            (float) $parameter
+        ];
+    }
+
+    private function parseConditionalParameter($parameter): ?array
+    {
+        if (
+            $parameter === null ||
+            trim((string) $parameter) === ""
+        ) {
+            return null;
+        }
+
+        $parameters = array_map(
+            "trim",
+            explode(",", $parameter)
+        );
+
+        $field = array_shift($parameters);
+
+        if (
+            $field === null ||
+            $field === "" ||
+            empty($parameters)
+        ) {
+            return null;
+        }
+
+        return [
+            "field" => $field,
+            "values" => $parameters
+        ];
     }
 }

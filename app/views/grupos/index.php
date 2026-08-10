@@ -30,79 +30,162 @@
                     </div>
 
                     <div class="card-body" data-container="grupos">
-                        <div data-field-container="grupos">
-                            <table class="table table-striped table-hover" data-table="grupos">
-                            </table>
-                        </div>
+                        <table class="table table-striped table-hover" data-table="grupos">
+                        </table>
                     </div>
 
                     <div class="card-footer text-center">
-                        <button type="button" class="btn btn-outline-secondary" data-action="new">Nuevo grupo</button>
+                        <button type="button" class="btn btn-outline-secondary btn-size" data-action="add">Nuevo
+                            grupo</button>
                     </div>
                 </div>
 
-                <div id="grupo-data" class="card mt-4" data-tab-actions>
-                    <div class="card-header p-0 border-bottom-0">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="detalles-tab" data-bs-toggle="tab"
-                                    data-bs-target="#detalles" type="button" role="tab" aria-selected="true">
-                                    Detalles
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="alumnos-tab" data-bs-toggle="tab" data-bs-target="#alumnos"
-                                    type="button" role="tab" aria-selected="false" tabindex="-1">
-                                    Alumnos
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="clases-tab" data-bs-toggle="tab" data-bs-target="#clases"
-                                    type="button" role="tab" aria-selected="false" tabindex="-1">
-                                    Clases
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div id="grupo-data" class="card p-3 mt-4 hidden" data-tab-actions>
+                            <div id="detalles" class="row">
 
-                    <div class="card-body">
-                        <div class="tab-content">
+                                <input data-field="id" type="text" class="form-control d-none" disabled>
 
-                            <div class="tab-pane fade active show" id="detalles" role="tabpanel"
-                                aria-labelledby="detalles-tab">
-                                DETALLES
+                                <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Nombre</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="nombre"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Diplomado</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="diplomado"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-xl-2 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Fecha de inicio</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="fecha-inicio"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-xl-2 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Hora de inicio</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="hora-inicio"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-xl-2 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Alumnos inscritos</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="alumnos"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Fecha de creación</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="fecha-creacion"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Usuario que lo creo</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="usuario-creacion"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">URL para asistencia</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="url"></span>
+                                            <a href="#" target="_blank" data-field="url" class="btn btn-outline-primary fa-2xs">
+                                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
 
-                            <div class="tab-pane fade" id="alumnos" role="tabpanel" aria-labelledby="alumnos-tab">
-                                <table class="table table-striped table-hover" data-table="alumnos">
-                                </table>
+                            <div class="row mt-4">
+                                <nav>
+                                    <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="alumnos-tab" data-bs-toggle="tab"
+                                                data-bs-target="#alumnos" type="button" role="tab" aria-selected="true">
+                                                Alumnos
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="clases-tab" data-bs-toggle="tab"
+                                                data-bs-target="#clases" type="button" role="tab" aria-selected="false"
+                                                tabindex="-1">
+                                                Clases
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="asistencia-tab" data-bs-toggle="tab"
+                                                data-bs-target="#asistencia" type="button" role="tab"
+                                                aria-selected="false" tabindex="-1">
+                                                Asistencia
+                                            </button>
+                                        </li>
+                                    </div>
+                                </nav>
+
+                                <div class="tab-content p-2" id="nav-tabContent">
+
+                                    <div class="tab-pane fade active show" id="alumnos" role="tabpanel"
+                                        aria-labelledby="alumnos-tab">
+                                        <?php require_once VIEWS_PATH . "/grupos/partials/panels/alumnos.php"; ?>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="clases" role="tabpanel" aria-labelledby="clases-tab">
+                                        <?php require_once VIEWS_PATH . "/grupos/partials/panels/clases.php"; ?>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="asistencia" role="tabpanel"
+                                        aria-labelledby="asistencia-tab">
+                                        <?php require_once VIEWS_PATH . "/grupos/partials/panels/asistencia.php"; ?>
+                                    </div>
+
+                                </div>
                             </div>
 
-                            <div class="tab-pane fade" id="clases" role="tabpanel" aria-labelledby="clases-tab">
-                                <table class="table table-striped table-hover" data-table="clases">
-                                </table>
-                            </div>
                         </div>
-                    </div>
-
-                    <div class="card-footer d-flex justify-content-center justify-content-evenly">
-                        <button type="button" class="btn btn-outline-secondary" data-action="detalles-edit"
-                            data-tab-action="detalles">Editar
-                            datos</button>
-
-                        <button type="button" class="btn btn-outline-secondary" data-action="alumnos-add"
-                            data-tab-action="alumnos">Agregar
-                            alumno</button>
-                        <button type="button" class="btn btn-outline-secondary" data-action="alumnos-import"
-                            data-tab-action="alumnos">Importar
-                            alumnos</button>
-                        <button type="button" class="btn btn-outline-secondary" data-action="alumnos-template"
-                            data-tab-action="alumnos">Descargar
-                            plantilla</button>
-
-                        <button type="button" class="btn btn-outline-secondary" data-action="clases-add"
-                            data-tab-action="clases">Agregar
-                            clase</button>
                     </div>
                 </div>
 

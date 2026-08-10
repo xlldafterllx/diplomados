@@ -1,5 +1,5 @@
 <div class="modal fade" id="modal-generic" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="title">
-    <div class="modal-dialog modal-md modal-fullscreen-lg-down">
+    <div class="modal-dialog modal-md modal-fullscreen-md-down">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" data-bind="title"></h1>
@@ -20,9 +20,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <input data-field="diplomado" type="text" class="form-control hidden" disabled>
-                            <input data-field="modulo" type="text" class="form-control hidden" disabled>
-                            <input data-field="actividad" type="text" class="form-control hidden" disabled>
+                            <input data-field="diplomado" type="text" class="form-control d-none" disabled>
+                            <input data-field="modulo" type="text" class="form-control d-none" disabled>
+                            <input data-field="actividad" type="text" class="form-control d-none" disabled>
                         </div>
 
 					</div>

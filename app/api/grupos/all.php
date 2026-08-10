@@ -15,17 +15,15 @@ $grupos = $db->select(
             tg.nombre 'grupo_nombre',
             td.nombre 'diplomado_nombre',
             tg.fecha_inicio,
-            cds.dia_semana,
+            tg.hora_inicio,
 	        tg.fecha_creacion,
             concat(tu.nombre, ' ', tu.apellido_1, ' ', tu.apellido_2) 'usuario_creacion'
         from tbl_grupo tg
         inner join tbl_diplomado td on
             tg.diplomado_id = td.id
-        inner join cat_dia_semana cds on
-            tg.dia_semana_id = cds.id
         inner join tbl_usuarios tu on
             td.usuario_creacion_id = tu.id
-        where tg.status = 1
+        where tg.status_id = 1
     ",
     []
 );
@@ -36,17 +34,18 @@ $diplomados = $db->select(
             td.id 'id',
             td.nombre 'text' 
         from tbl_diplomado td
-        where td.status = 1
+        where td.status_id = 1
     ",
     []
 );
 
-$dias = $db->select(
+$tiempo = $db->select(
     "
         select
-            cds.id 'id',
-            cds.dia_semana 'text' 
-        from cat_dia_semana cds
+            tmp.id,
+            tmp.tiempo 'text'
+        from cat_tiempo tmp
+        order by tmp.id
     ",
     []
 );
@@ -55,6 +54,6 @@ ApiResponse::success([
     "grupos" => $grupos,
     "catalogos" => [
         "diplomados" => $diplomados,
-        "dias" => $dias
+        "tiempo" => $tiempo
     ]
 ]);

@@ -39,7 +39,7 @@ $modulos = $db->select(
         from tbl_modulo tm
         inner join tbl_usuarios tu on
             tm.usuario_creacion_id = tu.id
-        where tm.status = 1 and tm.diplomado_id = ?
+        where tm.status_id = 1 and tm.diplomado_id = ?
     ",
     [
         $diplomado

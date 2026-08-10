@@ -37,7 +37,7 @@
                     </div>
 
                     <div class="card-footer text-center">
-                        <button type="button" class="btn btn-outline-secondary" data-action="new">Nuevo
+                        <button type="button" class="btn btn-outline-secondary btn-size" data-action="new">Nuevo
                             diplomado</button>
                     </div>
                 </div>
@@ -61,7 +61,8 @@
                     </div>
 
                     <div class="card-footer text-center">
-                        <button type="button" class="btn btn-outline-secondary" data-action="new">Nuevo módulo</button>
+                        <button type="button" class="btn btn-outline-secondary btn-size" data-action="new">Nuevo
+                            módulo</button>
                     </div>
                 </div>
 
@@ -84,7 +85,7 @@
                     </div>
 
                     <div class="card-footer text-center">
-                        <button type="button" class="btn btn-outline-secondary" data-action="new">Nueva
+                        <button type="button" class="btn btn-outline-secondary btn-size" data-action="new">Nueva
                             actividad</button>
                     </div>
                 </div>

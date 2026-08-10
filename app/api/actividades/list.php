@@ -43,7 +43,7 @@ $actividades = $db->select(
         from tbl_actividad ta
         inner join tbl_usuarios tu on
             ta.usuario_creacion_id = tu.id
-        where ta.status = 1 and ta.diplomado_id = ? and ta.modulo_id = ?
+        where ta.status_id = 1 and ta.diplomado_id = ? and ta.modulo_id = ?
     ",
     [
         $diplomado,

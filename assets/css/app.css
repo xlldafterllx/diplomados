@@ -38,3 +38,13 @@ input.disabled:hover {
 .card-footer::after {
   content: unset;
 }
+
+.btn-size {
+  width: fit-content;
+  padding-right: 1rem !important;
+  padding-left: 1rem !important;
+}
+
+.hidden {
+  display: none;
+}

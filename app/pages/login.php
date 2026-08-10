@@ -9,7 +9,7 @@ $page = [
             "assets/vendor/bootstrap/css/bootstrap.min.css",
             "assets/vendor/fontawesome/css/all.min.css",
             "assets/vendor/sweetalert2/css/sweetalert2.min.css",
-            "assets/css/login.css"
+            "app/views/login/css/index.css"
         ],
         "footer" => [
             "assets/vendor/jquery/js/jquery.min.js",
@@ -18,10 +18,11 @@ $page = [
             "assets/js/classes/ComponentHelper.js",
             "assets/js/classes/HttpClient.js",
             "assets/js/classes/HttpException.js",
+            "assets/js/helpers/theme.js",
             "assets/js/helpers/toast.js",
             "app/views/login/js/index.js"
         ]
     ]
 ];
 
-require LAYOUTS_PATH . "/guest/layout.php";
+require_once LAYOUTS_PATH . "/guest/layout.php";

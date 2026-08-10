@@ -31,6 +31,31 @@ $modulo = $request->integer("modulo");
 
 $db = ConnectionManager::connection();
 
+$exist = $db->first(
+    "
+        select
+            ta.id,
+            ta.nombre
+        from tbl_actividad ta
+        where
+            ta.status_id = 1 and
+            ta.diplomado_id = ? and
+            ta.modulo_id = ? and
+            ta.nombre = ?
+    ",
+    [
+        $diplomado,
+        $modulo,
+        $nombre
+    ]
+);
+
+if ($exist)
+    ApiResponse::conflict("Ya existe una actividad con el mismo nombre.", [
+        "id" => $exist["id"],
+        "nombre" => $exist["nombre"]
+    ]);
+
 $last = $db->value(
     "
     select

@@ -29,15 +29,41 @@ $diplomado = $request->integer("diplomado");
 
 $db = ConnectionManager::connection();
 
+$exist = $db->first(
+    "
+        select
+            td.id,
+            td.nombre
+        from tbl_diplomado td
+        where
+            td.status_id = 1 and
+            td.id <> ? and
+            td.nombre = ?
+    ",
+    [
+        $diplomado,
+        $nombre
+    ]
+);
+
+if ($exist)
+    ApiResponse::conflict("Ya existe un diplomado con el mismo nombre.", [
+        "id" => $exist["id"],
+        "nombre" => $exist["nombre"]
+    ]);
+
 $db->update(
     "
     update tbl_diplomado td
     set
-        nombre = ?
-    where td.status = 1 and  td.id = ?
+        nombre = ?,
+        usuario_actualizacion_id = ?,
+        fecha_actualizacion = current_timestamp()
+    where td.status_id = 1 and td.id = ?
     ",
     [
         $nombre,
+        Session::get("auth.id"),
         $diplomado
     ]
 );

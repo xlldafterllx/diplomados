@@ -2,6 +2,7 @@
 return [
     "header" => [
         // Base
+        "assets/vendor/jquery/css/jquery-ui.min.css",
         "assets/vendor/bootstrap/css/bootstrap.min.css",
         "assets/vendor/adminlte/css/adminlte.min.css",
         "assets/vendor/fontawesome/css/all.min.css",
@@ -15,28 +16,16 @@ return [
         
         "assets/vendor/loader/css/loader.css",
 
-        // Datatables
-        "assets/vendor/datatables/css/dataTables.bootstrap5.min.css",
-        "assets/vendor/datatables/css/buttons.bootstrap5.min.css",
-        "assets/vendor/datatables/css/fixedColumns.bootstrap5.min.css",
-        "assets/vendor/datatables/css/fixedHeader.bootstrap5.min.css",
-        "assets/vendor/datatables/css/keyTable.bootstrap5.min.css",
-        "assets/vendor/datatables/css/responsive.bootstrap5.min.css",
-        "assets/vendor/datatables/css/rowGroup.bootstrap5.min.css",
-        "assets/vendor/datatables/css/rowReorder.bootstrap5.min.css",
-        "assets/vendor/datatables/css/scroller.bootstrap5.min.css",
-        "assets/vendor/datatables/css/searchBuilder.bootstrap5.min.css",
-        "assets/vendor/datatables/css/searchPanes.bootstrap5.min.css",
-
-        "assets/css/datatables.css",
         "assets/css/select2.css",
         "assets/css/flatpickr.css",
+        "assets/css/autocomplete.css",
 
         "assets/css/app.css"
     ],
     "footer" => [
         // Base
         "assets/vendor/jquery/js/jquery.min.js",
+        "assets/vendor/jquery/js/jquery-ui.min.js",
         "assets/vendor/bootstrap/js/bootstrap.bundle.min.js",
         "assets/vendor/adminlte/js/adminlte.min.js",
 
@@ -55,7 +44,34 @@ return [
         
         "assets/vendor/loader/js/loader.js",
         
-        // Datatables
+        "assets/js/classes/HttpClient.js",
+        "assets/js/classes/HttpException.js",
+        "assets/js/classes/ComponentHelper.js",
+        "assets/js/classes/ArrayHelper.js",
+        "assets/js/classes/SelectHelper.js",
+        "assets/js/classes/InputHelper.js",
+        "assets/js/classes/DateHelper.js",
+        "assets/js/classes/AutocompleteHelper.js",
+        "assets/js/helpers/theme.js",
+        "assets/js/helpers/toast.js",
+
+        "assets/js/app.js"
+    ],
+    "header-datatables" => [
+        "assets/vendor/datatables/css/dataTables.bootstrap5.min.css",
+        "assets/vendor/datatables/css/buttons.bootstrap5.min.css",
+        "assets/vendor/datatables/css/fixedColumns.bootstrap5.min.css",
+        "assets/vendor/datatables/css/fixedHeader.bootstrap5.min.css",
+        "assets/vendor/datatables/css/keyTable.bootstrap5.min.css",
+        "assets/vendor/datatables/css/responsive.bootstrap5.min.css",
+        "assets/vendor/datatables/css/rowGroup.bootstrap5.min.css",
+        "assets/vendor/datatables/css/rowReorder.bootstrap5.min.css",
+        "assets/vendor/datatables/css/scroller.bootstrap5.min.css",
+        "assets/vendor/datatables/css/searchBuilder.bootstrap5.min.css",
+        "assets/vendor/datatables/css/searchPanes.bootstrap5.min.css",
+        "assets/css/datatables.css",
+    ],
+    "footer-datatables" => [
         "assets/vendor/datatables/js/jszip.min.js",
         "assets/vendor/datatables/js/pdfmake.min.js",
         "assets/vendor/datatables/js/vfs_fonts.js",
@@ -80,18 +96,6 @@ return [
         "assets/vendor/datatables/js/dataTables.select.min.js",
         "assets/vendor/datatables/js/searchBuilder.bootstrap5.min.js",
         "assets/vendor/datatables/js/searchPanes.bootstrap5.min.js",
-
-        "assets/js/classes/HttpClient.js",
-        "assets/js/classes/HttpException.js",
-        "assets/js/classes/ComponentHelper.js",
-        "assets/js/classes/ArrayHelper.js",
-        "assets/js/classes/SelectHelper.js",
-        "assets/js/classes/InputHelper.js",
-        "assets/js/classes/DateHelper.js",
         "assets/js/classes/TableHelper.js",
-        "assets/js/helpers/toast.js",
-        "assets/js/helpers/theme.js",
-
-        "assets/js/app.js"
     ]
 ];

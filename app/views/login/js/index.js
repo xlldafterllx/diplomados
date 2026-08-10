@@ -1,4 +1,4 @@
-const API_LOGIN = BASE_URL + "app/api/auth/login.php";
+const API_LOGIN = API_URL + "auth/login.php";
 const login = new ComponentHelper("#login-form");
 
 $(".form-control").each(function (e) {
@@ -18,13 +18,14 @@ login.onAction("login", async () => {
     try {
         await HttpClient.post(API_LOGIN, login.getData());
         window.location.reload();
-    } catch (err) {
-        console.log(err.response);
+    } catch (error) {
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
-            html: err.message
+            theme: "light",
+            html: error.message,
         });
     }
 });

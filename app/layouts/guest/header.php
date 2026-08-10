@@ -29,6 +29,9 @@ function asset(string $path): string
     <?php require_once "header-assets.php"; ?>
 
     <Script>
+        const APP_NAME = "<?= APP_NAME ?>";
         const BASE_URL = "<?= BASE_URL ?>";
+        const API_URL = BASE_URL + "app/api/";
+        const TODAY = "<?= date("Y-m-d"); ?>";
     </Script>
 </head>

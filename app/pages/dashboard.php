@@ -13,4 +13,4 @@ $page = [
     ]
 ];
 
-require LAYOUTS_PATH . "/app/layout.php";
+require_once LAYOUTS_PATH . "/app/layout.php";

@@ -18,7 +18,7 @@ $diplomados = $db->select(
         from tbl_diplomado td
         inner join tbl_usuarios tu on
             td.usuario_creacion_id = tu.id
-        where td.status = 1
+        where td.status_id = 1
     ",
     []
 );

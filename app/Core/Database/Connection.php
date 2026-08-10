@@ -83,7 +83,8 @@ class Connection
         }
     }
 
-    private function execute(string $sql, array $parameters = []): mysqli_stmt {
+    private function execute(string $sql, array $parameters = []): mysqli_stmt
+    {
         try {
             $statement = $this->prepare($sql);
 
@@ -205,5 +206,41 @@ class Connection
             $this->connection->rollback();
             throw $e;
         }
+    }
+
+    public function interpolatedSql(string $sql, array $parameters = []): string
+    {
+        foreach ($parameters as $parameter) {
+
+            $value = $this->formatParameter($parameter);
+
+            $sql = preg_replace(
+                '/\?/',
+                $value,
+                $sql,
+                1
+            );
+        }
+
+        return $sql;
+    }
+
+    private function formatParameter($value): string
+    {
+        if ($value === null) {
+            return "NULL";
+        }
+
+        if (is_bool($value)) {
+            return $value ? "1" : "0";
+        }
+
+        if (is_numeric($value)) {
+            return (string) $value;
+        }
+
+        return "'" .
+            str_replace("'", "''", (string) $value)
+            . "'";
     }
 }

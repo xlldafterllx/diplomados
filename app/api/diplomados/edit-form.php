@@ -32,7 +32,7 @@ $nombre = $db->value(
         select
             td.nombre
         from tbl_diplomado td
-        where td.status = 1 and td.id = ?
+        where td.status_id = 1 and td.id = ?
     ",
     [
         $diplomado

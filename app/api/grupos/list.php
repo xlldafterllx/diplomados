@@ -15,17 +15,15 @@ $grupos = $db->select(
             tg.nombre 'grupo_nombre',
             td.nombre 'diplomado_nombre',
             tg.fecha_inicio,
-            cds.dia_semana,
+            tg.hora_inicio,
 	        tg.fecha_creacion,
             concat(tu.nombre, ' ', tu.apellido_1, ' ', tu.apellido_2) 'usuario_creacion'
         from tbl_grupo tg
         inner join tbl_diplomado td on
             tg.diplomado_id = td.id
-        inner join cat_dia_semana cds on
-            tg.dia_semana_id = cds.id
         inner join tbl_usuarios tu on
             td.usuario_creacion_id = tu.id
-        where tg.status = 1
+        where tg.status_id = 1
     ",
     []
 );

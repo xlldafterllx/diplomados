@@ -31,6 +31,29 @@ $diplomado = $request->integer("diplomado");
 
 $db = ConnectionManager::connection();
 
+$exist = $db->first(
+    "
+        select
+            tm.id,
+            tm.nombre
+        from tbl_modulo tm
+        where
+            tm.status_id = 1 and
+            tm.diplomado_id = ? and
+            tm.nombre = ?
+    ",
+    [
+        $diplomado,
+        $nombre
+    ]
+);
+
+if ($exist)
+    ApiResponse::conflict("Ya existe un módulo con el mismo nombre.", [
+        "id" => $exist["id"],
+        "nombre" => $exist["nombre"]
+    ]);
+
 $last = $db->value(
     "
     select

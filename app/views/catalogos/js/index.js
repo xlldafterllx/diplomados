@@ -43,6 +43,7 @@ function initialize() {
 
     initializeComponents();
     initializeTables();
+    initializeEvents();
 }
 
 function initializeComponents() {
@@ -63,7 +64,7 @@ function initializeComponentValidationFields() {
 
 function initializeComponentActions() {
     diplomados.onAction("new", () => {
-        modal.getBind("title").text("Agregar diplomado");
+        modal.getBind("title").text("Crear diplomado");
         modal.getBind("name").text("Nombre del diplomado");
         modal.getContainer("button").attr("data-action", "save");
         modal.getContainer("value").attr("data-value", "diplomado");
@@ -72,7 +73,7 @@ function initializeComponentActions() {
     });
 
     modulos.onAction("new", () => {
-        modal.getBind("title").text("Agregar módulo");
+        modal.getBind("title").text("Crear módulo");
         modal.getBind("name").text("Nombre del módulo");
         modal.getContainer("button").attr("data-action", "save");
         modal.getContainer("value").attr("data-value", "modulo");
@@ -81,7 +82,7 @@ function initializeComponentActions() {
     });
 
     actividades.onAction("new", () => {
-        modal.getBind("title").text("Agregar actividad");
+        modal.getBind("title").text("Crear actividad");
         modal.getBind("name").text("Nombre de la actividad");
         modal.getContainer("button").attr("data-action", "save");
         modal.getContainer("value").attr("data-value", "actividad");
@@ -118,6 +119,70 @@ function initializeComponentActions() {
     });
 }
 
+function initializeEvents() {
+    diplomados
+        .getTable("diplomados")
+        .off("click.diplomados")
+        .on("click.diplomados", "[data-action]", function () {
+            const action = $(this).data("action");
+            const diplomado = $(this).data("id");
+            const nombre = decodeURIComponent($(this).data("nombre"));
+
+            if (action === "load") {
+                loadModulos(diplomado, nombre);
+            }
+
+            if (action === "edit") {
+                editDiplomado(diplomado);
+            }
+
+            if (action === "delete") {
+                deleteDiplomado(diplomado, nombre);
+            }
+        });
+
+    modulos
+        .getTable("modulos")
+        .off("click.modulos")
+        .on("click.modulos", "[data-action]", function () {
+            const action = $(this).data("action");
+            const diplomado = $(this).data("diplomado");
+            const modulo = $(this).data("id");
+            const nombre = decodeURIComponent($(this).data("nombre"));
+
+            if (action === "load") {
+                loadActividades(diplomado, modulo, nombre);
+            }
+
+            if (action === "edit") {
+                editModulo(diplomado, modulo);
+            }
+
+            if (action === "delete") {
+                deleteModulo(diplomado, modulo, nombre);
+            }
+        });
+
+    actividades
+        .getTable("actividades")
+        .off("click.actividades")
+        .on("click.actividades", "[data-action]", function () {
+            const action = $(this).data("action");
+            const diplomado = $(this).data("diplomado");
+            const modulo = $(this).data("modulo");
+            const actividad = $(this).data("id");
+            const nombre = decodeURIComponent($(this).data("nombre"));
+
+            if (action === "edit") {
+                editActividad(diplomado, modulo, actividad);
+            }
+
+            if (action === "delete") {
+                deleteActividad(diplomado, modulo, actividad, nombre);
+            }
+        });
+}
+
 function initializeTables() {
     initializeTableDiplomados();
     initializeTableModulos();
@@ -148,20 +213,21 @@ function initializeTableDiplomados() {
             title: '',
             render: function (data, type, row, meta) {
                 if (type === 'display') {
-                    data =
-                        '<div class="d-flex justify-content-around align-items-stretch">' +
-                        '<button type="button" title="Ver módulos" class="btn btn-outline-primary" onclick="loadModulos(' + data + ', \'' + row["nombre"] + '\'' + ')">' +
-                        '<i class="fa-solid fa-file-arrow-down"></i>' +
-                        '</button>' +
-                        '&nbsp' +
-                        '<button type="button" title="Editar diplomado" class="btn btn-outline-success" onclick="editDiplomado(' + data + ')">' +
-                        '<i class="fa-solid fa-pen-to-square"></i>' +
-                        '</button>' +
-                        '&nbsp' +
-                        '<button type="button" title="Eliminar diplomado" class="btn btn-outline-danger" onclick="deleteDiplomado(' + data + ', \'' + row["nombre"] + '\'' + ')">' +
-                        '<i class="fa-solid fa-trash-can"></i>' +
-                        '</button>' +
-                        '</div>';
+                    data = `
+                        <div class="d-flex justify-content-around align-items-stretch">
+                            <button type="button" title="Ver módulos" class="btn btn-outline-primary" data-action="load" data-id="${data}" data-nombre="${encodeURIComponent(row.nombre)}">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                            </button>
+                            &nbsp;
+                            <button type="button" title="Editar diplomado" class="btn btn-outline-success" data-action="edit" data-id="${data}">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            &nbsp;
+                            <button type="button" title="Eliminar diplomado" class="btn btn-outline-danger" data-action="delete" data-id="${data}" data-nombre="${encodeURIComponent(row.nombre)}">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                        `;
                 }
                 return data;
             }
@@ -220,20 +286,21 @@ function initializeTableModulos() {
             title: '',
             render: function (data, type, row, meta) {
                 if (type === 'display') {
-                    data =
-                        '<div class="d-flex justify-content-around align-items-stretch">' +
-                        '<button type="button" title="Ver actividades" class="btn btn-outline-primary" onclick="loadActividades(' + row["diplomado_id"] + ', ' + data + ', \'' + row["nombre"] + '\'' + ')">' +
-                        '<i class="fa-solid fa-file-arrow-down"></i>' +
-                        '</button>' +
-                        '&nbsp' +
-                        '<button type="button" title="Editar módulo" class="btn btn-outline-success" onclick="editModulo(' + row["diplomado_id"] + ', ' + data + ')">' +
-                        '<i class="fa-solid fa-pen-to-square"></i>' +
-                        '</button>' +
-                        '&nbsp' +
-                        '<button type="button" title="Eliminar módulo" class="btn btn-outline-danger" onclick="deleteModulo(' + row["diplomado_id"] + ', ' + data + ', \'' + row["nombre"] + '\'' + ')">' +
-                        '<i class="fa-solid fa-trash-can"></i>' +
-                        '</button>' +
-                        '</div>';
+                    data = `
+                        <div class="d-flex justify-content-around align-items-stretch">
+                            <button type="button" title="Ver actividades" class="btn btn-outline-primary" data-action="load" data-id="${data}" data-diplomado="${row.diplomado_id}" data-nombre="${encodeURIComponent(row.nombre)}">
+                                <i class="fa-solid fa-file-arrow-down"></i>
+                            </button>
+                            &nbsp;
+                            <button type="button" title="Editar módulo" class="btn btn-outline-success" data-action="edit" data-id="${data}" data-diplomado="${row.diplomado_id}">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            &nbsp;
+                            <button type="button" title="Eliminar módulo" class="btn btn-outline-danger" data-action="delete" data-id="${data}" data-diplomado="${row.diplomado_id}" data-nombre="${encodeURIComponent(row.nombre)}">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                        `;
                 }
                 return data;
             }
@@ -292,16 +359,17 @@ function initializeTableActividades() {
             title: '',
             render: function (data, type, row, meta) {
                 if (type === 'display') {
-                    data =
-                        '<div class="d-flex justify-content-around align-items-stretch">' +
-                        '<button type="button" title="Editar actividad" class="btn btn-outline-success" onclick="editActividad(' + row["diplomado_id"] + ', ' + row["modulo_id"] + ', ' + data + ')">' +
-                        '<i class="fa-solid fa-pen-to-square"></i>' +
-                        '</button>' +
-                        '&nbsp' +
-                        '<button type="button" title="Eliminar actividad" class="btn btn-outline-danger" onclick="deleteActividad(' + row["diplomado_id"] + ', ' + row["modulo_id"] + ', ' + data + ', \'' + row["nombre"] + '\'' + ')">' +
-                        '<i class="fa-solid fa-trash-can"></i>' +
-                        '</button>' +
-                        '</div>';
+                    data = `
+                        <div class="d-flex justify-content-around align-items-stretch">
+                            <button type="button" title="Editar actividad" class="btn btn-outline-success" data-action="edit" data-id="${data}" data-diplomado="${row.diplomado_id}" data-modulo="${row.modulo_id}">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            &nbsp;
+                            <button type="button" title="Eliminar actividad" class="btn btn-outline-danger" data-action="delete" data-id="${data}" data-diplomado="${row.diplomado_id}" data-modulo="${row.modulo_id}" data-nombre="${encodeURIComponent(row.nombre)}">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                        `;
                 }
                 return data;
             }
@@ -342,7 +410,7 @@ async function loadDiplomados() {
 
         TableHelper.update(tableDiplomados, tableDiplomadosData);
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -367,17 +435,18 @@ async function loadModulos(diplomado, nombre) {
         TableHelper.update(tableModulos, tableModulosData);
 
         modal.getField("diplomado").val(diplomado);
+
+        modulos.slideDown();
+        scrollToElement(modulos);
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
             html: error.message
         });
-    } finally {
-        modulos.slideDown();
-        scrollToElement(modulos);
+    } finally {        
         Loader.hide();
     }
 }
@@ -395,17 +464,18 @@ async function loadActividades(diplomado, modulo, nombre) {
 
         modal.getField("diplomado").val(diplomado);
         modal.getField("modulo").val(modulo);
+
+        actividades.slideDown();
+        scrollToElement(actividades);
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
             title: "Ocurrió un error",
             html: error.message
         });
-    } finally {
-        actividades.slideDown();
-        scrollToElement(actividades);
+    } finally {        
         Loader.hide();
     }
 }
@@ -419,7 +489,7 @@ async function updateDiplomadosData() {
 
         TableHelper.update(tableDiplomados, tableDiplomadosData);
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -442,7 +512,7 @@ async function updateModulosData(diplomado) {
 
         modal.getField("diplomado").val(diplomado);
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -465,8 +535,11 @@ async function updateActividadesData(diplomado, modulo) {
 
         modal.getField("diplomado").val(diplomado);
         modal.getField("modulo").val(modulo);
+
+        actividades.slideDown();
+        scrollToElement(actividades);
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -474,8 +547,6 @@ async function updateActividadesData(diplomado, modulo) {
             html: error.message
         });
     } finally {
-        actividades.slideDown();
-        scrollToElement(actividades);
         Loader.hide();
     }
 }
@@ -494,7 +565,7 @@ async function newDiplomado() {
             title: "Diplomado creado"
         });
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -520,7 +591,7 @@ async function newModulo() {
             title: "Módulo creado"
         });
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -546,7 +617,7 @@ async function newActividad() {
             title: "Actividad creada"
         });
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -570,8 +641,10 @@ async function editDiplomado(diplomado) {
 
         const result = await HttpClient.post(diplomadosEditApi, { "diplomado": diplomado });
         modal.getField("nombre").val(result.data);
+        
+        modal.open();
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -580,7 +653,6 @@ async function editDiplomado(diplomado) {
         });
     } finally {
         Loader.hide();
-        modal.open();
     }
 }
 
@@ -597,8 +669,10 @@ async function editModulo(diplomado, modulo) {
 
         const result = await HttpClient.post(modulosEditApi, { "diplomado": diplomado, "modulo": modulo });
         modal.getField("nombre").val(result.data);
+        
+        modal.open();
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -607,7 +681,6 @@ async function editModulo(diplomado, modulo) {
         });
     } finally {
         Loader.hide();
-        modal.open();
     }
 }
 
@@ -625,8 +698,10 @@ async function editActividad(diplomado, modulo, actividad) {
 
         const result = await HttpClient.post(actividadesEditApi, { "diplomado": diplomado, "modulo": modulo, "actividad": actividad });
         modal.getField("nombre").val(result.data);
+        
+        modal.open();
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -635,7 +710,6 @@ async function editActividad(diplomado, modulo, actividad) {
         });
     } finally {
         Loader.hide();
-        modal.open();
     }
 }
 
@@ -653,7 +727,7 @@ async function updateDiplomado() {
             title: "Diplomado actualizado"
         });
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -679,7 +753,7 @@ async function updateModulo() {
             title: "Módulo actualizado"
         });
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -705,7 +779,7 @@ async function updateActividad() {
             title: "Actividad actualizada"
         });
     } catch (error) {
-        console.log(error.response);
+        console.log(error.response ?? error);
 
         Toast.fire({
             icon: "error",
@@ -721,8 +795,7 @@ function deleteDiplomado(diplomado, nombre) {
     Swal.fire({
         title: "¿Quieres borrar este diplomado?",
         text: nombre,
-        theme: "auto",
-        reverseButtons: true,
+        theme: Theme.getResolved(),
         showCancelButton: true,
         cancelButtonColor: "#6c757d",
         confirmButtonColor: "#dc3545",
@@ -757,8 +830,7 @@ function deleteModulo(diplomado, modulo, nombre) {
     Swal.fire({
         title: "¿Quieres borrar este módulo?",
         text: nombre,
-        theme: "auto",
-        reverseButtons: true,
+        theme: Theme.getResolved(),
         showCancelButton: true,
         cancelButtonColor: "#6c757d",
         confirmButtonColor: "#dc3545",
@@ -792,8 +864,7 @@ function deleteActividad(diplomado, modulo, actividad, nombre) {
     Swal.fire({
         title: "¿Quieres borrar esta actividad?",
         text: nombre,
-        theme: "auto",
-        reverseButtons: true,
+        theme: Theme.getResolved(),
         showCancelButton: true,
         cancelButtonColor: "#6c757d",
         confirmButtonColor: "#dc3545",
