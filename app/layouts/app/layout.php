@@ -7,7 +7,7 @@
 
         <?php require_once "sidebar.php"; ?>
 
-        <script src="<?= asset("assets/js/helpers/SidebarPersistence.js") ?>"></script>
+        <script src="<?= asset("assets/js/helpers/sidebarPersistence.js") ?>"></script>
 
         <main id="view-content" class="app-main">
 
