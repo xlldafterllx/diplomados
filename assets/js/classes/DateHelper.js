@@ -82,8 +82,8 @@ class DateHelper {
                 time_24hr: false,
 
                 altInput: true,
-                altFormat: "H:i",
-                dateFormat: "h:i K",
+                dateFormat: "H:i",
+                altFormat: "h:i K",
 
                 minuteIncrement,
 
