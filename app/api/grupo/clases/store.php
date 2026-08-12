@@ -38,6 +38,8 @@ $db->transaction(function (Connection $db) use ($request) {
     $cada = $request->integer("cada");
     $tiempo = $request->integer("tiempo");
     $fechaClase = DateTime::createFromImmutable($fechaInicio);
+    $hora = DateTime::createFromFormat("H:i", $horaInicio);
+    $horaInicio = $hora ? $hora->format("H:i:s") : null;
 
     $tiempoType = $db->value(
         "

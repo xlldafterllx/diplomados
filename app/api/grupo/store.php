@@ -30,6 +30,8 @@ $nombre = $request->string("nombre");
 $diplomado = $request->integer("diplomado");
 $fechaInicio = $request->date("fecha-inicio");
 $horaInicio = $request->string("hora-inicio");
+$hora = DateTime::createFromFormat("H:i", $horaInicio);
+$horaInicio = $hora ? $hora->format("H:i:s") : null;
 
 $db = ConnectionManager::connection();
 
