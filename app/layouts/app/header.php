@@ -24,7 +24,7 @@ function asset(string $path): string
         <?= APP_NAME ?>
     </title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="<?= BASE_URL ?>/assets/img/logo.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="<?= BASE_URL ?>assets/img/logo.png" />
 
     <?php require_once "header-assets.php"; ?>
 
