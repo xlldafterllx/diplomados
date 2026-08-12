@@ -9,8 +9,10 @@ class Router
             if (empty($route))
                 $route = Config::get("app.home");
         } else {
-            echo '<script>history.replaceState({}, "", "' . BASE_URL . '");</script>';
-            $route = "login";
+            if ($route != "check") {
+                echo '<script>history.replaceState({}, "", "' . BASE_URL . '");</script>';
+                $route = "login";
+            }
         }
 
         /*$route = Session::has("auth.id")
