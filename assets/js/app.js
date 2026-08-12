@@ -36,6 +36,8 @@ function notReadyJet() {
 }
 
 function formatDateTime(value) {
+    if(!value) return value;
+
     const strVal = value.replaceAll("-", "/");
 
     const date = strVal instanceof Date
@@ -55,6 +57,8 @@ function formatDateTime(value) {
 }
 
 function formatDate(value) {
+    if(!value) return value;
+
     const strVal = value.replaceAll("-", "/");
 
     const date = strVal instanceof Date
@@ -71,6 +75,8 @@ function formatDate(value) {
 }
 
 function formatTime(value) {
+    if(!value) return value;
+    
     const date = value instanceof Date
         ? value
         : new Date(value);
