@@ -81,7 +81,10 @@ class DateHelper {
                 noCalendar: true,
                 time_24hr: false,
 
+                altInput: true,
+                altFormat: "H:i",
                 dateFormat: "h:i K",
+
                 minuteIncrement,
 
                 minTime,
@@ -129,7 +132,7 @@ class DateHelper {
                 altInput: true,
                 altInputClass: "form-control",
                 altFormat: "d/m/Y h:i K",
-                dateFormat: "Y-m-d h:i K",
+                dateFormat: "Y-m-d H:i",
 
                 minuteIncrement,
 
