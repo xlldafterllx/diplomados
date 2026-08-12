@@ -458,7 +458,7 @@ async function listGrupos() {
     try {
         Loader.show();
 
-        const result = await HttpClient.post(API_GRUPO_LIST, {});
+        const result = await HttpClient.post(API_GRUPOS_LIST, {});
         tableGruposData = result.data;
 
         TableHelper.update(tableGrupos, tableGruposData);
