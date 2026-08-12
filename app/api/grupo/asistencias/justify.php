@@ -95,7 +95,7 @@ $db->insert(
             ?, ?, ?, ?
         ) on duplicate key update
             motivo = ?,
-            status_id = 1
+            status_id = 1,
             fecha_actualizacion = current_timestamp(),
             usuario_actualizacion_id = ?
     ",
