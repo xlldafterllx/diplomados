@@ -9,7 +9,7 @@
         <nav class="mt-2">
             <ul class="nav sidebar-menu flex-column nav-indent" data-lte-toggle="treeview" role="menu" data-accordion="false">
 
-                <?php if (Session::get("auth.role_id") == 1 || Session::get("auth.role_id") == 2) { ?>
+                <?php if (Session::get("auth.role_id") != 99) { ?>
                     <li class="nav-item">
                         <a href="<?= BASE_URL ?>catalogos"
                             class="nav-link <?= $page["current"] === "catalogos" ? "active" : "" ?>">
