@@ -7,7 +7,8 @@ body {
 }
 
 .brand-image {
-  width: 40%;
+  border-radius: 50%;
+  width: 50%;
   min-width: 150px;
   max-width: 300px;
 }
@@ -57,5 +58,9 @@ body {
 }
 
 .box {
-    max-width: 500px;
+  max-width: 500px;
+}
+
+.hidden {
+  display: none;
 }

@@ -1,8 +1,7 @@
 <aside class="app-sidebar bg-body-secondary shadow" data-enable-persistence="true" data-bs-theme="dark">
     <div class="sidebar-brand sidebar-brand-fix">
         <a href="<?= BASE_URL ?>dashboard" class="brand-link">
-            <img src="<?= BASE_URL ?>assets/img/logo.png" alt="Logo" class="brand-image opacity-75 sidebar-image">
-            <span class="brand-text fw-light brand-text-fix">Gestión de diplomados</span>
+            <img src="<?= BASE_URL ?>assets/img/logo-crs-white.png" alt="Logo" class="brand-image opacity-75 sidebar-image">
         </a>
     </div>
 

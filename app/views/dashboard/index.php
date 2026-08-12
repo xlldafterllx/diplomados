@@ -18,7 +18,9 @@
         <div class="row d-flex justify-content-center">
             <div class="col-12 max-w">
 
-                
+                <div id="welcome" class="row welcome mt-4 hidden">
+                    <span class="upper">BIENVENIDO/A<br><?= Session::get("auth.name") ?></span>
+                </div>
 
             </div>
         </div>

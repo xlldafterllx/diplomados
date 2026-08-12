@@ -10,13 +10,23 @@ $(function () {
 });
 
 function initialize() {
-    asistencia.setMandatoryFields([
-        { field: "correo", name: "Correo electrónico", type: "input" }
-    ]);
-
     asistencia.onAction("check", async () => {
+        const correo = asistencia.getField("correo");
+
+        if (correo.val().trim() == "") {
+            correo.addClass("is-invalid");
+            Toast.fire({
+                icon: "warning",
+                title: "El correo electrónico es obligatorio",
+                theme: "light"
+            });
+            return;
+        }
+
         try {
-            await HttpClient.post(API_CHECK, { "token": TOKEN, "correo": asistencia.getField("correo").val() });
+            asistencia.buttonOff("check");
+            
+            await HttpClient.post(API_CHECK, { "token": TOKEN, "correo": correo.val() });
             Toast.fire({
                 icon: "success",
                 title: "Asistencia registrada correctamente.",
@@ -30,16 +40,18 @@ function initialize() {
                 title: error.message,
                 theme: "light"
             });
+        } finally {
+            asistencia.buttonOn("check");
         }
     });
+
     asistencia.$context[0].addEventListener("keydown", (e) => { if (e.keyCode == 13) asistencia.getAction("check").click() });
 }
 
 async function load() {
-    asistencia.buttonOff("check");
     try {
         const result = await HttpClient.post(API_DETAILS, { "token": TOKEN });
-        
+
         asistencia.setBinds({
             "diplomado": `Diplomado: ${result.data.diplomado_nombre}`,
             "grupo": `Grupo: ${result.data.grupo_nombre}`
@@ -54,8 +66,6 @@ async function load() {
             theme: "light",
             html: error.message,
         });
-    } finally {
-        asistencia.buttonOn("check");
     }
 }
 

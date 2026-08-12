@@ -21,10 +21,10 @@ function asset(string $path): string
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>
-        <?= Config::get("app.name") ?>
+        <?= APP_NAME ?>
     </title>
 
-    <link rel="shortcut icon" type="image/x-icon" href="<?= BASE_URL ?>assets/img/logo.png" />
+    <link rel="shortcut icon" type="image/x-icon" class="tab-icon" href="<?= BASE_URL ?>assets/img/logo-rounded.png" />
 
     <?php require_once "header-assets.php"; ?>
 

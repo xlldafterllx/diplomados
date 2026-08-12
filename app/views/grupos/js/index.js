@@ -285,7 +285,7 @@ function initializeEvents() {
             }
 
             if (action === "cancel") {
-                cancelClase(id);
+                cancelClase(id, $(this).data("fecha"));
             }
 
             if (action === "delete") {
@@ -825,7 +825,7 @@ async function rescheduleFormClase(clase) {
     }
 }
 
-function cancelClase(clase, fecha) {
+function cancelClase(clase, fecha) {    
     Swal.fire({
         title: `¿Quieres cancelar la clase del ${formatDate(fecha + " ")}?`,
         text: "La clase seguirá aparenciendo en la lista y en las asistencias con estatus de cancelada.",

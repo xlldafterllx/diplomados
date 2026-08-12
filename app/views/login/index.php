@@ -1,9 +1,9 @@
 <form class="login-box">
     <div class="rounded shadow bg-white p-3 text-color">
-        <div class="text-center mt-4">
-            <img src="<?= BASE_URL ?>assets/img/logo.png" alt="Logo" class="brand-image opacity-75">
+        <div class="text-center">
+            <img src="<?= BASE_URL ?>assets/img/logo.jpeg" alt="Logo" class="brand-image opacity-75">
         </div>
-        <h3 class="mt-4 text-center upper">
+        <h3 class="mt-2 text-center upper">
             <?= strtoupper(Config::get("app.name")) ?>
         </h3>
         <div id="login-form" autocomplete="off" class="mt-3 pl-2 pr-2">

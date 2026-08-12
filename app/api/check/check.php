@@ -33,7 +33,7 @@ $grupoId = $db->value(
         from tbl_grupo gpo
         where 
             gpo.status_id = 1 and 
-            gpo.token = ?  
+            gpo.token = ?
     ",
     [
         $token
@@ -135,3 +135,9 @@ $db->insert(
 );
 
 ApiResponse::success("Asistencia registrada");
+
+function checkLog($request, $msg) {
+    $db = ConnectionManager::connection();
+
+    $db->insert("");
+}

@@ -6,7 +6,9 @@ $page = [
     "current" => "dashboard",
     "content" => VIEWS_PATH . "/dashboard/index.php",
     "assets" => [
-        "header" => [],
+        "header" => [
+            "app/views/dashboard/css/index.css"
+        ],
         "footer" => [
             "app/views/dashboard/js/index.js"
         ]
