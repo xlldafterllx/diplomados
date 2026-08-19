@@ -40,8 +40,11 @@ $grupoId = $db->value(
     ]
 );
 
-if (!$grupoId)
-    ApiResponse::notFound("El grupo no existe.");
+if (!$grupoId) {
+    $msg = "El grupo no existe.";
+    checkLog($request, null, $msg);
+    ApiResponse::notFound($msg);
+}
 
 $alumnoId = $db->value(
     "
@@ -61,8 +64,11 @@ $alumnoId = $db->value(
     ]
 );
 
-if (!$alumnoId)
-    ApiResponse::notFound("No estás inscrito a este grupo.");
+if (!$alumnoId) {
+    $msg = "No estás inscrito a este grupo.";
+    checkLog($request, null, $msg);
+    ApiResponse::notFound($msg);
+}
 
 $clase = $db->first(
     "
@@ -83,8 +89,11 @@ $clase = $db->first(
     ]
 );
 
-if (!$clase)
-    ApiResponse::notFound("Hoy no hay clase disponible para registrar asistencia.");
+if (!$clase) {
+    $msg = "Hoy no hay clase disponible para registrar asistencia.";
+    checkLog($request, null, $msg);
+    ApiResponse::notFound($msg);
+}
 
 $asistencia = $db->value(
     "
@@ -101,8 +110,11 @@ $asistencia = $db->value(
     ]
 );
 
-if ($asistencia)
-    ApiResponse::conflict("Tu asistencia ya fue registrada.");
+if ($asistencia) {
+    $msg = "Tu asistencia ya fue registrada.";
+    checkLog($request, $clase["id"], $msg);
+    ApiResponse::conflict($msg);
+}
 
 $claseId = $db->value(
     "
@@ -134,6 +146,7 @@ if (!$claseId) {
     $msg = "Tu asistencia no será registrada ya que la tolerancia para tomar asistencia es de " .
         $antes . $conector . $despues . " de iniciar la clase.";
 
+    checkLog($request, $clase["id"], $msg);
     ApiResponse::serverError($msg);
 }
 
@@ -170,11 +183,44 @@ $db->insert(
     ]
 );
 
-ApiResponse::success("Asistencia registrada");
+$msg = "Asistencia registrada.";
+checkLog($request, $claseId, $msg);
+ApiResponse::success($msg);
 
-function checkLog($request, $msg)
+function checkLog($request, $claseId, $msg)
 {
+    $token = $request->string("token");
+    $correo = $request->string("correo");
+    $ip = $_SERVER["REMOTE_ADDR"] ?? null;
+    $userAgent = $_SERVER["HTTP_USER_AGENT"] ?? null;
+
     $db = ConnectionManager::connection();
 
-    $db->insert("");
+    $db->insert(
+        "
+            insert into tbl_asistencia_intentos (
+                clase_id,
+                grupo_token,
+                correo,
+                mensaje,
+                ip,
+                user_agent
+            ) values (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+        ",
+        [
+            $claseId,
+            $token,
+            $correo,
+            $msg,
+            $ip,
+            $userAgent
+        ]
+    );
 }
