@@ -31,7 +31,9 @@ $clase = $db->first(
     "
         select 
             cls.fecha,
-            cls.hora_inicio
+            cls.hora_inicio,
+            cls.tolerancia_antes,
+            cls.tolerancia_despues
         from tbl_clase cls
         where 
             cls.status_id = 1 and 

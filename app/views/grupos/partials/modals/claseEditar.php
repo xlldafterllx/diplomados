@@ -1,8 +1,8 @@
-<div class="modal fade" id="modal-reprogramar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="title">
+<div class="modal fade" id="modal-clase-editar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="title">
     <div class="modal-dialog modal-md modal-fullscreen-md-down">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" data-bind="title">Reprogramar clase</h1>
+                <h1 class="modal-title fs-5" data-bind="title">Editar clase</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -29,6 +29,22 @@
                                 <div class="row">
                                     <div class="form-group">
                                         <input data-field="hora-inicio" type="text" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group field col-xl-12 mb-3">
+                                <div class="row">
+                                    <label>Tolerancia (en minutos)</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label>Antes</label>
+                                        <input data-field="tolerancia-antes" type="text" class="form-control">
+                                    </div>
+                                    <div class="col-6">
+                                        <label>Después</label>
+                                        <input data-field="tolerancia-despues" type="text" class="form-control">
                                     </div>
                                 </div>
                             </div>

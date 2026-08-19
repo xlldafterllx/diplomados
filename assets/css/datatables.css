@@ -22,7 +22,7 @@ table.dataTable.dt-has-data .dt-col-large {
 }
 
 table.dataTable.dt-has-data .dt-col-date {
-    min-width: 140px;
+    width: 100px;
     white-space: nowrap;
 }
 

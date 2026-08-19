@@ -34,6 +34,8 @@ $clases = $db->select(
             cls.fecha,
             count(asis.clase_id) 'asistencias',
             cls.hora_inicio,
+            cls.tolerancia_antes,
+            cls.tolerancia_despues,
             cec.estado
         from tbl_clase cls
         left join tbl_asistencia asis on

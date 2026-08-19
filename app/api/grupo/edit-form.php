@@ -33,7 +33,9 @@ $result = $db->first(
             tg.nombre,
             tg.diplomado_id 'diplomado',
             tg.fecha_inicio,
-            tg.hora_inicio
+            tg.hora_inicio,
+            tg.tolerancia_antes,
+            tg.tolerancia_despues            
         from tbl_grupo tg
         where tg.status_id = 1 and tg.id = ?
     ",

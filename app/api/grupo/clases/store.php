@@ -13,6 +13,8 @@ $validator = Validator::make(
         "id" => "required|integer",
         "fecha-inicio" => "required|date",
         "hora-inicio" => "required|string",
+        "tolerancia-antes" => "nullabe|integer",
+        "tolerancia-despues" => "nullabe|integer",
         "cantidad" => "required|integer|minValue:1|maxValue:100",
         "cada" => "required|integer|minValue:1|maxValue:50",
         "tiempo" => "required|integer"
@@ -33,13 +35,17 @@ $db = ConnectionManager::connection();
 $db->transaction(function (Connection $db) use ($request) {
     $grupoId = $request->integer("id");
     $fechaInicio = $request->date("fecha-inicio");
+    $fechaClase = DateTime::createFromImmutable($fechaInicio);
+
     $horaInicio = $request->string("hora-inicio");
+    $hora = DateTime::createFromFormat("H:i", $horaInicio);
+    $horaInicio = $hora ? $hora->format("H:i:s") : null;
+
+    $tolerancia_antes = $request->integer("tolerancia-antes");
+    $tolerancia_despues = $request->integer("tolerancia-despues");
     $cantidad = $request->integer("cantidad");
     $cada = $request->integer("cada");
     $tiempo = $request->integer("tiempo");
-    $fechaClase = DateTime::createFromImmutable($fechaInicio);
-    $hora = DateTime::createFromFormat("H:i", $horaInicio);
-    $horaInicio = $hora ? $hora->format("H:i:s") : null;
 
     $tiempoType = $db->value(
         "
@@ -60,14 +66,20 @@ $db->transaction(function (Connection $db) use ($request) {
                     grupo_id,
                     fecha,
                     hora_inicio,
+                    tolerancia_antes,
+                    tolerancia_despues,
                     usuario_creacion_id
                 ) values (
+                    ?,
+                    ?,
                     ?,
                     ?,
                     ?,
                     ?
                 ) on duplicate key update
                     status_id = 1,
+                    tolerancia_antes = ?,
+                    tolerancia_despues = ?,
                     fecha_actualizacion = current_timestamp(),
                     usuario_actualizacion_id = ?
             ",
@@ -75,7 +87,11 @@ $db->transaction(function (Connection $db) use ($request) {
                 $grupoId,
                 $fechaClase?->format("Y-m-d"),
                 $horaInicio,
+                $tolerancia_antes,
+                $tolerancia_despues,
                 Session::get("auth.id"),
+                $tolerancia_antes,
+                $tolerancia_despues,
                 Session::get("auth.id")
             ]
         );
@@ -85,4 +101,4 @@ $db->transaction(function (Connection $db) use ($request) {
 
 });
 
-ApiResponse::created("Se han creado las clases con éxito.");
+ApiResponse::created("Clases creadas.");

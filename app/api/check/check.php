@@ -64,10 +64,13 @@ $alumnoId = $db->value(
 if (!$alumnoId)
     ApiResponse::notFound("No estás inscrito a este grupo.");
 
-$claseId = $db->value(
+$clase = $db->first(
     "
         select
-            cls.id
+            cls.id,
+            cls.hora_inicio,
+            cls.tolerancia_antes,
+            cls.tolerancia_despues
         from tbl_clase cls 
         where 
             cls.status_id = 1 and
@@ -80,7 +83,7 @@ $claseId = $db->value(
     ]
 );
 
-if (!$claseId)
+if (!$clase)
     ApiResponse::notFound("Hoy no hay clase disponible para registrar asistencia.");
 
 $asistencia = $db->value(
@@ -94,12 +97,45 @@ $asistencia = $db->value(
     ",
     [
         $alumnoId,
-        $claseId
+        $clase["id"]
     ]
 );
 
 if ($asistencia)
     ApiResponse::conflict("Tu asistencia ya fue registrada.");
+
+$claseId = $db->value(
+    "
+        select
+            cls.id
+        from tbl_clase cls
+        where cls.grupo_id = ?
+        and cls.fecha = curdate()
+        and (
+            cls.tolerancia_antes is null
+            or now() >= date_sub(timestamp(cls.fecha, cls.hora_inicio), interval cls.tolerancia_antes minute)
+        )
+        and (
+            cls.tolerancia_despues is null
+            or now() <= date_add(timestamp(cls.fecha, cls.hora_inicio), interval cls.tolerancia_despues minute)
+        );
+    ",
+    [
+        $grupoId
+    ]
+);
+
+if (!$claseId) {
+    $antes = $clase["tolerancia_antes"] ? $clase["tolerancia_antes"] . " minutos antes" : "";
+    $despues = $clase["tolerancia_despues"] ? $clase["tolerancia_despues"] . " minutos después" : "";
+
+    $conector = $antes && $despues ? " y " : "";
+
+    $msg = "Tu asistencia no será registrada ya que la tolerancia para tomar asistencia es de " .
+        $antes . $conector . $despues . " de iniciar la clase.";
+
+    ApiResponse::serverError($msg);
+}
 
 $ip = $_SERVER["REMOTE_ADDR"] ?? null;
 $userAgent = $_SERVER["HTTP_USER_AGENT"] ?? null;
@@ -136,7 +172,8 @@ $db->insert(
 
 ApiResponse::success("Asistencia registrada");
 
-function checkLog($request, $msg) {
+function checkLog($request, $msg)
+{
     $db = ConnectionManager::connection();
 
     $db->insert("");

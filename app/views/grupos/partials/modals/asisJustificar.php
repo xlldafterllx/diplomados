@@ -11,7 +11,7 @@
                         <input data-field="id" type="text" class="form-control d-none" disabled>
 
                         <div class="row">
-                            <div class="form-group col-xl-6 col-md-6 mb-3" data-field-container="alumnos">
+                            <div class="form-group field col-xl-6 col-md-6 mb-3" data-field-container="alumnos">
                                 <div class="row">
                                     <label>Alumno</label>
                                 </div>
@@ -22,7 +22,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group col-xl-6 col-md-6 mb-3" data-field-container="clases">
+                            <div class="form-group field col-xl-6 col-md-6 mb-3" data-field-container="clases">
                                 <div class="row">
                                     <label>Clase</label>
                                 </div>
@@ -33,7 +33,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group col-xl-12 mb-3">
+                            <div class="form-group field col-xl-12 mb-3">
                                 <div class="row">
                                     <label>Motivo</label>
                                 </div>

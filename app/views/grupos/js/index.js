@@ -13,7 +13,7 @@ const API_ASISTENCIAS_JUSTIFY = API_URL + "grupo/asistencias/justify.php";
 const API_ASISTENCIAS_LIST = API_URL + "grupo/asistencias/list.php";
 
 const API_CLASES_LIST = API_URL + "grupo/clases/list.php";
-const API_CLASES_FORM = API_URL + "grupo/clases/form.php";
+const API_CLASES_FORM = API_URL + "grupo/clases/edit-form.php";
 const API_CLASES_UPDATE = API_URL + "grupo/clases/update.php";
 const API_CLASES_CANCEL = API_URL + "grupo/clases/cancel.php";
 const API_CLASES_DELETE = API_URL + "grupo/clases/delete.php";
@@ -33,8 +33,8 @@ let grupoData;
 let modalGrupo;
 let modalAlumno;
 let modalJustificar;
-let modalReprogramar;
 let modalClaseCrear;
+let modalClaseEditar;
 
 let panelAlumnos;
 let panelClases;
@@ -77,8 +77,8 @@ function initializeComponent() {
     modalGrupo = new ComponentHelper("#modal-grupo");
     modalAlumno = new ComponentHelper("#modal-alumno");
     modalJustificar = new ComponentHelper("#modal-justificar");
-    modalReprogramar = new ComponentHelper("#modal-reprogramar");
     modalClaseCrear = new ComponentHelper("#modal-clase-crear");
+    modalClaseEditar = new ComponentHelper("#modal-clase-editar");
 
     panelAlumnos = new ComponentHelper("#alumnos");
     panelClases = new ComponentHelper("#clases");
@@ -108,7 +108,7 @@ function initializeComponentValidationFields() {
         { field: "clase", name: "Clase", type: "select" }
     ]);
 
-    modalReprogramar.setMandatoryFields([
+    modalClaseEditar.setMandatoryFields([
         { field: "fecha", name: "Fecha", type: "datetimepicker" },
         { field: "hora-iniio", name: "Hora de inicio", type: "timepicker" }
     ]);
@@ -175,6 +175,8 @@ function initializeComponentActions() {
                 "id": detalle.id,
                 "fecha-inicio": detalle.fecha_inicio,
                 "hora-inicio": detalle.hora_inicio,
+                "tolerancia-antes": detalle.tolerancia_antes,
+                "tolerancia-despues": detalle.tolerancia_despues
             });
         } catch (error) {
             console.log(error.response ?? error);
@@ -191,7 +193,7 @@ function initializeComponentActions() {
         modalClaseCrear.open();
     });
 
-    modalReprogramar.onAction("save", () => {
+    modalClaseEditar.onAction("save", () => {
         updateClase();
     });
 
@@ -213,8 +215,8 @@ function initializeDatesTimes() {
     DateHelper.date("fecha-inicio", { context: modalGrupo });
     DateHelper.time("hora-inicio", { context: modalGrupo, minuteIncrement: 15 });
 
-    DateHelper.date("fecha", { context: modalReprogramar });
-    DateHelper.time("hora-inicio", { context: modalReprogramar, minuteIncrement: 15 });
+    DateHelper.date("fecha", { context: modalClaseEditar });
+    DateHelper.time("hora-inicio", { context: modalClaseEditar, minuteIncrement: 15 });
 
     DateHelper.date("fecha-inicio", { context: modalClaseCrear });
     DateHelper.time("hora-inicio", { context: modalClaseCrear, minuteIncrement: 15 });
@@ -226,9 +228,33 @@ function initializeInputs() {
         min: 1,
         max: 240
     });
-    
+
     InputHelper.digits("tolerancia-despues", {
         context: modalGrupo,
+        min: 1,
+        max: 240
+    });
+
+    InputHelper.digits("tolerancia-antes", {
+        context: modalClaseCrear,
+        min: 1,
+        max: 240
+    });
+
+    InputHelper.digits("tolerancia-despues", {
+        context: modalClaseCrear,
+        min: 1,
+        max: 240
+    });
+
+    InputHelper.digits("tolerancia-antes", {
+        context: modalClaseEditar,
+        min: 1,
+        max: 240
+    });
+
+    InputHelper.digits("tolerancia-despues", {
+        context: modalClaseEditar,
         min: 1,
         max: 240
     });
@@ -243,7 +269,7 @@ function initializeInputs() {
         context: modalClaseCrear,
         min: 1,
         max: 50
-    });    
+    });
 }
 
 function initializeEvents() {
@@ -292,8 +318,8 @@ function initializeEvents() {
             const action = $(this).data("action");
             const id = $(this).data("id");
 
-            if (action === "reschedule") {
-                rescheduleFormClase(id);
+            if (action === "edit") {
+                editFormClase(id);
             }
 
             if (action === "cancel") {
@@ -393,14 +419,17 @@ async function loadAll() {
 
 
 async function loadDataGrupo(grupo) {
-    Loader.show();
-
     try {
+        Loader.show();
+
         const result = await HttpClient.post(API_GRUPO_ALL, { "grupo": grupo });
         const { detalle, alumnos, clases, asistencias } = result.data;
 
         grupoData.getField("id").val(detalle.id);
         grupoData.getField("url").prop("href", detalle.asistencia_url);
+
+        const tolAntes = detalle.tolerancia_antes ? detalle.tolerancia_antes + " minutos" : "Sin límite";
+        const tolDespues = detalle.tolerancia_despues ? detalle.tolerancia_despues + " minutos" : "Sin límite";
 
         grupoData.setBinds({
             "nombre": detalle.grupo_nombre,
@@ -408,6 +437,8 @@ async function loadDataGrupo(grupo) {
             "fecha-inicio": formatDate(detalle.fecha_inicio + " "),
             "hora-inicio": formatTime(TODAY + " " + detalle.hora_inicio),
             "fecha-creacion": formatDateTime(detalle.fecha_creacion),
+            "tolerancia-antes": tolAntes,
+            "tolerancia-despues": tolDespues,
             "alumnos": detalle.alumnos,
             "usuario-creacion": detalle.usuario_creacion,
             "url": detalle.asistencia_url
@@ -441,12 +472,17 @@ async function loadDetailsGrupo(grupo) {
         grupoData.getField("id").val(detalle.id);
         grupoData.getField("url").prop("href", detalle.asistencia_url);
 
+        const tolAntes = detalle.tolerancia_antes ? detalle.tolerancia_antes + " minutos" : "Sin límite";
+        const tolDespues = detalle.tolerancia_despues ? detalle.tolerancia_despues + " minutos" : "Sin límite";
+
         grupoData.setBinds({
             "nombre": detalle.grupo_nombre,
             "diplomado": detalle.diplomado_nombre,
             "fecha-inicio": formatDate(detalle.fecha_inicio + " "),
             "hora-inicio": formatTime(TODAY + " " + detalle.hora_inicio),
             "fecha-creacion": formatDateTime(detalle.fecha_creacion),
+            "tolerancia-antes": tolAntes,
+            "tolerancia-despues": tolDespues,
             "alumnos": detalle.alumnos,
             "usuario-creacion": detalle.usuario_creacion,
             "url": detalle.asistencia_url
@@ -502,7 +538,9 @@ async function editFormGrupo(grupo) {
             "nombre": result.data.nombre,
             "diplomado": result.data.diplomado,
             "fecha-inicio": result.data.fecha_inicio,
-            "hora-inicio": result.data.hora_inicio
+            "hora-inicio": result.data.hora_inicio,
+            "tolerancia-antes": result.data.tolerancia_antes,
+            "tolerancia-despues": result.data.tolerancia_despues
         });
 
         modalGrupo.open();
@@ -559,7 +597,7 @@ async function storeGrupo() {
     if (!modalGrupo.validateMandatory()) return;
 
     const tolAntes = modalGrupo.getField("tolerancia-antes");
-    const tolDespues = modalGrupo.getField("tolerancia-antes");
+    const tolDespues = modalGrupo.getField("tolerancia-despues");
 
     if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
         modalGrupo.setInvalidClass(tolAntes);
@@ -606,10 +644,9 @@ async function storeGrupo() {
 
 async function updateGrupo() {
     if (!modalGrupo.validateMandatory()) return;
-    modalGrupo.buttonOff("save");
 
     const tolAntes = modalGrupo.getField("tolerancia-antes");
-    const tolDespues = modalGrupo.getField("tolerancia-antes");
+    const tolDespues = modalGrupo.getField("tolerancia-despues");
 
     if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
         modalGrupo.setInvalidClass(tolAntes);
@@ -631,7 +668,7 @@ async function updateGrupo() {
 
     try {
         Loader.show();
-        
+
         await HttpClient.post(API_GRUPO_UPDATE, modalGrupo.getData());
         listGrupos();
 
@@ -653,7 +690,7 @@ async function updateGrupo() {
             html: error.message
         });
     } finally {
-        modalGrupo.buttonOn("save");
+        Loader.hide();
     }
 }
 
@@ -805,10 +842,9 @@ async function addAlumno() {
 
 async function updateAlumno() {
     if (!modalAlumno.validateMandatory()) return;
-    modalAlumno.buttonOff("save");
-    Loader.show();
-
+    
     try {
+        Loader.show();
         const [result, asistencias] = await Promise.all([
             HttpClient.post(API_ALUMNOS_UPDATE, modalAlumno.getData()),
             HttpClient.post(API_ASISTENCIAS_LIST, { "grupo": grupoData.getField("id").val() })
@@ -832,17 +868,16 @@ async function updateAlumno() {
             html: error.message
         });
     } finally {
-        modalAlumno.buttonOn("save");
         Loader.hide();
     }
 }
 
 
 
-async function listClases() {
-    Loader.show();
-
+async function listClases() {    
     try {
+        Loader.show();
+
         const result = await HttpClient.post(API_CLASES_LIST, { "grupo": grupoData.getField("id").val() });
         const clases = result.data;
 
@@ -860,20 +895,23 @@ async function listClases() {
     }
 }
 
-async function rescheduleFormClase(clase) {
+async function editFormClase(clase) {
     try {
         Loader.show();
-        modalReprogramar.clear();
+
+        modalClaseEditar.clear();
 
         const result = await HttpClient.post(API_CLASES_FORM, { "clase": clase });
 
-        modalReprogramar.setData({
+        modalClaseEditar.setData({
             "id": clase,
             "fecha": result.data.fecha,
-            "hora-inicio": result.data.hora_inicio
+            "hora-inicio": result.data.hora_inicio,
+            "tolerancia-antes": result.data.tolerancia_antes,
+            "tolerancia-despues": result.data.tolerancia_despues
         });
 
-        modalReprogramar.open();
+        modalClaseEditar.open();
     } catch (error) {
         console.log(error.response ?? error);
 
@@ -887,7 +925,7 @@ async function rescheduleFormClase(clase) {
     }
 }
 
-function cancelClase(clase, fecha) {    
+function cancelClase(clase, fecha) {
     Swal.fire({
         title: `¿Quieres cancelar la clase del ${formatDate(fecha + " ")}?`,
         text: "La clase seguirá aparenciendo en la lista y en las asistencias con estatus de cancelada.",
@@ -899,10 +937,10 @@ function cancelClase(clase, fecha) {
         cancelButtonText: "Cancelar",
         confirmButtonText: "Si, cancelar clase",
     }).then(async (result) => {
-        if (result.isConfirmed) {
-            Loader.show();
-
+        if (result.isConfirmed) {            
             try {
+                Loader.show();
+
                 const [result, asistencias] = await Promise.all([
                     HttpClient.post(API_CLASES_CANCEL, { "clase": clase }),
                     HttpClient.post(API_ASISTENCIAS_LIST, { "grupo": grupoData.getField("id").val() })
@@ -910,8 +948,6 @@ function cancelClase(clase, fecha) {
 
                 listClases();
                 updateTableAsistencias(asistencias.data);
-
-                modalReprogramar.close();
 
                 Toast.fire({
                     icon: "success",
@@ -944,10 +980,10 @@ function deleteClase(clase, fecha) {
         cancelButtonText: "Cancelar",
         confirmButtonText: "Si, borrar",
     }).then(async (result) => {
-        if (result.isConfirmed) {
-            Loader.show();
-
+        if (result.isConfirmed) {            
             try {
+                Loader.show();
+
                 const [result, asistencias] = await Promise.all([
                     HttpClient.post(API_CLASES_DELETE, { "clase": clase }),
                     HttpClient.post(API_ASISTENCIAS_LIST, { "grupo": grupoData.getField("id").val() })
@@ -955,8 +991,6 @@ function deleteClase(clase, fecha) {
 
                 listClases();
                 updateTableAsistencias(asistencias.data);
-
-                modalReprogramar.close();
 
                 Toast.fire({
                     icon: "success",
@@ -982,9 +1016,11 @@ async function addClases() {
 
     const cantidad = modalClaseCrear.getField("cantidad");
     const cada = modalClaseCrear.getField("cada");
+    const tolAntes = modalClaseCrear.getField("tolerancia-antes");
+    const tolDespues = modalClaseCrear.getField("tolerancia-despues");
 
     if (Number(cantidad.val()) < 1 || Number(cantidad.val()) > 100) {
-        modalGrupo.setInvalidClass(cantidad);
+        modalClaseCrear.setInvalidClass(cantidad);
         Toast.fire({
             icon: "warning",
             title: "El valor de la cantidad de clases de estar entre 1 y 100.",
@@ -993,7 +1029,7 @@ async function addClases() {
     }
 
     if (Number(cada.val()) < 1 || Number(cada.val()) > 100) {
-        modalGrupo.setInvalidClass(cada);
+        modalClaseCrear.setInvalidClass(cada);
         Toast.fire({
             icon: "warning",
             title: "El valor de cada cuando de estar entre 1 y 50.",
@@ -1001,9 +1037,26 @@ async function addClases() {
         return;
     }
 
+    if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
+        modalClaseCrear.setInvalidClass(tolAntes);
+        Toast.fire({
+            icon: "warning",
+            title: "El valor de la tolerancia antes debe estar entre 1 y 240.",
+        });
+        return;
+    }
+
+    if (tolDespues.val() && (Number(tolDespues.val()) < 1 || Number(tolDespues.val()) > 240)) {
+        modalClaseCrear.setInvalidClass(tolDespues);
+        Toast.fire({
+            icon: "warning",
+            title: "El valor de la tolerancia después debe estar entre 1 y 240.",
+        });
+        return;
+    }
+
     try {
         Loader.show();
-        modalClaseCrear.buttonOff("add");
 
         const [result, asistencias] = await Promise.all([
             HttpClient.post(API_CLASES_STORE, modalClaseCrear.getData()),
@@ -1017,7 +1070,7 @@ async function addClases() {
 
         Toast.fire({
             icon: "success",
-            title: result.dat
+            title: result.data
         });
     } catch (error) {
         console.log(error.response ?? error);
@@ -1029,23 +1082,41 @@ async function addClases() {
         });
     } finally {
         Loader.hide();
-        modalClaseCrear.buttonOn("add");
     }
 }
 
 async function updateClase() {
-    if (!modalReprogramar.validateMandatory()) return;
-    modalReprogramar.buttonOff("save");
-    Loader.show();
+    if (!modalClaseEditar.validateMandatory()) return;
+
+    const tolAntes = modalClaseEditar.getField("tolerancia-antes");
+    const tolDespues = modalClaseEditar.getField("tolerancia-despues");
+
+    if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
+        modalClaseEditar.setInvalidClass(tolAntes);
+        Toast.fire({
+            icon: "warning",
+            title: "El valor de la tolerancia antes debe estar entre 1 y 240.",
+        });
+        return;
+    }
+
+    if (tolDespues.val() && (Number(tolDespues.val()) < 1 || Number(tolDespues.val()) > 240)) {
+        modalClaseEditar.setInvalidClass(tolDespues);
+        Toast.fire({
+            icon: "warning",
+            title: "El valor de la tolerancia después debe estar entre 1 y 240.",
+        });
+        return;
+    }
 
     const params = {
-        "clase": modalReprogramar.getField("id").val(),
         "grupo": grupoData.getField("id").val(),
-        "fecha": modalReprogramar.getField("fecha").val(),
-        "hora-inicio": modalReprogramar.getField("hora-inicio").val()
+        ...modalClaseEditar.getData()
     }
 
     try {
+        Loader.show();
+
         const [clase, asistencias] = await Promise.all([
             HttpClient.post(API_CLASES_UPDATE, params),
             HttpClient.post(API_ASISTENCIAS_LIST, { "grupo": grupoData.getField("id").val() })
@@ -1054,7 +1125,7 @@ async function updateClase() {
         listClases();
         updateTableAsistencias(asistencias.data);
 
-        modalReprogramar.close();
+        modalClaseEditar.close();
 
         Toast.fire({
             icon: "success",
@@ -1070,7 +1141,6 @@ async function updateClase() {
             html: error.message
         });
     } finally {
-        modalReprogramar.buttonOn("save");
         Loader.hide();
     }
 }
@@ -1078,10 +1148,11 @@ async function updateClase() {
 
 
 async function formJustificar() {
-    Loader.show();
     modalJustificar.clear();
-
+    
     try {
+        Loader.show();
+
         const result = await HttpClient.post(API_ASISTENCIAS_JUSTIFY_FORM, { "grupo": grupoData.getField("id").val() });
         const { alumnos, clases } = result.data;
 
@@ -1109,7 +1180,6 @@ async function formJustificar() {
 
 async function storeJustficacion() {
     if (!modalJustificar.validateMandatory()) return;
-    modalJustificar.buttonOff("save");
 
     try {
         Loader.show();
@@ -1134,19 +1204,17 @@ async function storeJustficacion() {
         });
     } finally {
         Loader.hide();
-        modalJustificar.buttonOn("save");
     }
 }
 
 async function loadAsistencias() {
-    Loader.show();
-
+    
     try {
+        Loader.show();
+        
         const result = await HttpClient.post(API_ASISTENCIAS_LIST, { "grupo": grupoData.getField("id").val() });
 
         updateTableAsistencias(result.data);
-
-        modalReprogramar.close();
 
         Toast.fire({
             icon: "success",
@@ -1238,7 +1306,8 @@ function initializeTableGrupos() {
             order: [{ name: "fecha_creacion", dir: "desc" }],
             columnDefs: [
                 { targets: "actions:name", width: 1, orderable: false, className: "notexport" },
-                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" }
+                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
+                { targets: ["diplomado_nombre:name", "fecha_creacion:name"], className: "dt-body-nowrap" }
             ],
             ...TableHelper.exportButtons({
                 title: "Grupos",
@@ -1352,6 +1421,28 @@ function initializeTableClases() {
             }
         },
         {
+            data: 'tolerancia_antes',
+            name: 'tolerancia_antes',
+            title: 'Tolerancia antes',
+            render: function (data, type, row) {
+                if (type === "display") {
+                    return data ? data + " minutos" : "Sin límite";
+                }
+                return data;
+            }
+        },
+        {
+            data: 'tolerancia_despues',
+            name: 'tolerancia_despues',
+            title: 'Tolerancia después',
+            render: function (data, type, row) {
+                if (type === "display") {
+                    return data ? data + " minutos" : "Sin límite";
+                }
+                return data;
+            }
+        },
+        {
             data: 'estado',
             name: 'estado',
             title: 'Estatus'
@@ -1369,8 +1460,8 @@ function initializeTableClases() {
                 if (type === 'display') {
                     data = `
                         <div class="d-flex justify-content-around align-items-stretch">
-                            <button type="button" title="Reprogramar clase" class="btn btn-outline-success" data-action="reschedule" data-id="${data}">
-                                <i class="fa-solid fa-arrows-rotate"></i>
+                            <button type="button" title="Editar clase" class="btn btn-outline-success" data-action="edit" data-id="${data}">
+                                <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             &nbsp;
                             <button type="button" title="Cancelar clase" class="btn btn-outline-warning" data-action="cancel" data-id="${data}" data-fecha="${row.fecha}">
@@ -1446,7 +1537,7 @@ function updateTableAsistencias(asistencias) {
                 }
             ],
             columnDefs: [
-                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
+                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left dt-foot-left" },
                 { targets: "alumno:name", className: "dt-col-medium" },
             ],
             footerCallback: function () {
@@ -1461,7 +1552,7 @@ function updateTableAsistencias(asistencias) {
                 filename: "asistencias",
                 buttons: [
                     {
-                        text: '<i class="fas fa-rotate"></i> Actualizar',
+                        text: `<i class="fas fa-rotate"></i> Actualizar`,
                         action: function () {
                             loadAsistencias();
                         }
@@ -1560,8 +1651,7 @@ function renderAsistenciasFooter(table, clases, totales) {
         table
             .column(`clase-${clase.id}:name`)
             .footer()
-            .textContent =
-            totales.clases[clase.id]?.asistencias ?? 0;
+            .textContent = totales.clases[clase.id]?.asistencias ?? 0;
     });
 
     table
@@ -1582,6 +1672,5 @@ function renderAsistenciasFooter(table, clases, totales) {
     table
         .column("promedio:name")
         .footer()
-        .textContent =
-        Number(totales.promedio).toFixed(1);
+        .textContent = Number(totales.promedio).toFixed(1);
 }

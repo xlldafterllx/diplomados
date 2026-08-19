@@ -37,6 +37,8 @@ $detalle = $db->first(
             count(gpoalm.id) 'alumnos',
             gpo.fecha_inicio,
             gpo.hora_inicio,
+            gpo.tolerancia_antes,
+            gpo.tolerancia_despues,
             gpo.fecha_creacion,
             concat(tu.nombre, ' ', tu.apellido_1, ' ', tu.apellido_2) 'usuario_creacion'
         from tbl_grupo gpo
@@ -87,6 +89,8 @@ $clases = $db->select(
             cls.fecha,
             count(asis.clase_id) 'asistencias',
             cls.hora_inicio,
+            cls.tolerancia_antes,
+            cls.tolerancia_despues,
             cec.estado
         from tbl_clase cls
         left join tbl_asistencia asis on

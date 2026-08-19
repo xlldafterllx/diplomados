@@ -2,11 +2,3 @@ table.dataTable tfoot th {
   font-weight: 600;
   white-space: nowrap;
 }
-
-table.dataTable tfoot th:not(:first-child) {
-  text-align: center;
-}
-
-.field {
-  font-weight: 700;
-}

@@ -21,5 +21,5 @@ require_once LAYOUTS_PATH . "/app/layout.php";
 require_once VIEWS_PATH . "/grupos/partials/modals/alumno.php";
 require_once VIEWS_PATH . "/grupos/partials/modals/grupo.php";
 require_once VIEWS_PATH . "/grupos/partials/modals/asisJustificar.php";
-require_once VIEWS_PATH . "/grupos/partials/modals/claseReprogramar.php";
 require_once VIEWS_PATH . "/grupos/partials/modals/claseCrear.php";
+require_once VIEWS_PATH . "/grupos/partials/modals/claseEditar.php";

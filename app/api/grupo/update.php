@@ -14,7 +14,9 @@ $validator = Validator::make(
         "nombre" => "required|string",
         "diplomado" => "required|integer",
         "fecha-inicio" => "required|date",
-        "hora-inicio" => "required|string"
+        "hora-inicio" => "required|string",
+        "tolerancia-antes" => "nullabe|integer",
+        "tolerancia-despues" => "nullabe|integer"
     ]
 );
 
@@ -30,8 +32,6 @@ if ($validator->fails())
 $id = $request->integer("id");
 $nombre = $request->string("nombre");
 $diplomado = $request->integer("diplomado");
-$fechaInicio = $request->date("fecha-inicio");
-$horaInicio = $request->string("hora-inicio");
 
 $db = ConnectionManager::connection();
 
@@ -62,26 +62,62 @@ if ($grupo)
         "diplomado_nombre" => $grupo["diplomado_nombre"],
     ]);
 
-$grupoId = $db->insert(
-    "
-        update tbl_grupo tg 
-        set 
-            nombre = ?,
-            diplomado_id = ?,
-            fecha_inicio = ?,
-            hora_inicio = ?,
-            usuario_actualizacion_id = ?,
-            fecha_actualizacion = current_timestamp()
-        where tg.status_id = 1 and tg.id = ?
-    ",
-    [
-        $nombre,
-        $diplomado,
-        $fechaInicio?->format("Y-m-d"),
-        $horaInicio,
-        Session::get("auth.id"),
-        $id
-    ]
-);
+$db->transaction(function (Connection $db) use ($request) {
+    $id = $request->integer("id");
+    $nombre = $request->string("nombre");
+    $diplomado = $request->integer("diplomado");
+    $fechaInicio = $request->date("fecha-inicio");
 
-ApiResponse::created($grupoId);
+    $horaInicio = $request->string("hora-inicio");
+    $hora = DateTime::createFromFormat("H:i", $horaInicio);
+    $horaInicio = $hora ? $hora->format("H:i:s") : null;
+
+    $tolerancia_antes = $request->integer("tolerancia-antes");
+    $tolerancia_despues = $request->integer("tolerancia-despues");
+
+    $db->update(
+        "
+            update tbl_grupo tg 
+            set 
+                nombre = ?,
+                diplomado_id = ?,
+                fecha_inicio = ?,
+                hora_inicio = ?,
+                tolerancia_antes = ?,
+                tolerancia_despues = ?,
+                usuario_actualizacion_id = ?,
+                fecha_actualizacion = current_timestamp()
+            where tg.status_id = 1 and tg.id = ?
+        ",
+        [
+            $nombre,
+            $diplomado,
+            $fechaInicio?->format("Y-m-d"),
+            $horaInicio,
+            $tolerancia_antes,
+            $tolerancia_despues,
+            Session::get("auth.id"),
+            $id
+        ]
+    );
+
+    /*$db->update(
+        "
+            update tbl_clase tc
+            set
+                tolerancia_antes = ?,
+                tolerancia_despues = ?,
+                usuario_actualizacion_id = ?,
+                fecha_actualizacion = current_timestamp()
+            where tc.status_id = 1 and tc.grupo_id = ?
+        ",
+        [
+            $tolerancia_antes,
+            $tolerancia_despues,
+            Session::get("auth.id"),
+            $id
+        ]
+    );*/
+});
+
+ApiResponse::created("Grupo actualizado.");

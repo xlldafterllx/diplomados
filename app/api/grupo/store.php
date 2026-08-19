@@ -13,7 +13,9 @@ $validator = Validator::make(
         "nombre" => "required|string",
         "diplomado" => "required|integer",
         "fecha-inicio" => "required|date",
-        "hora-inicio" => "required|string"
+        "hora-inicio" => "required|string",
+        "tolerancia-antes" => "nullabe|integer",
+        "tolerancia-despues" => "nullabe|integer"
     ]
 );
 
@@ -29,9 +31,13 @@ if ($validator->fails())
 $nombre = $request->string("nombre");
 $diplomado = $request->integer("diplomado");
 $fechaInicio = $request->date("fecha-inicio");
+
 $horaInicio = $request->string("hora-inicio");
 $hora = DateTime::createFromFormat("H:i", $horaInicio);
 $horaInicio = $hora ? $hora->format("H:i:s") : null;
+
+$tolerancia_antes = $request->integer("tolerancia-antes");
+$tolerancia_despues = $request->integer("tolerancia-despues");
 
 $db = ConnectionManager::connection();
 
@@ -69,9 +75,13 @@ $grupoId = $db->insert(
             diplomado_id,
             fecha_inicio,
             hora_inicio,
+            tolerancia_antes,
+            tolerancia_despues,
             token,
             usuario_creacion_id
         ) values (
+            ?,
+            ?,
             ?,
             ?,
             ?,
@@ -85,6 +95,8 @@ $grupoId = $db->insert(
         $diplomado,
         $fechaInicio?->format("Y-m-d"),
         $horaInicio,
+        $tolerancia_antes,
+        $tolerancia_despues,
         $token,
         Session::get("auth.id")
     ]

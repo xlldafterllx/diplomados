@@ -10,7 +10,7 @@
 					<div class="col-lg-12">
 
                         <div class="row">
-                            <div class="form-group col-xl-12">
+                            <div class="form-group field col-xl-12">
                                 <div class="row">
                                     <label data-bind="name"></label>
                                 </div>

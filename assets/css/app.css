@@ -3,6 +3,10 @@
   --lte-bar-height: 3.5rem;
 }
 
+.field {
+  font-weight: 700;
+}
+
 .app-header {
   height: var(--lte-bar-height) !important;
 }

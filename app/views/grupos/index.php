@@ -69,29 +69,18 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group col-xl-2 col-lg-4 col-md-6 mb-3">
+                                <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
                                     <div class="row">
-                                        <label class="field">Fecha de inicio</label>
+                                        <label class="field">Fecha de creación</label>
                                     </div>
                                     <div class="row">
                                         <div class="form-group">
-                                            <span data-bind="fecha-inicio"></span>
+                                            <span data-bind="fecha-creacion"></span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="form-group col-xl-2 col-lg-4 col-md-6 mb-3">
-                                    <div class="row">
-                                        <label class="field">Hora de inicio</label>
-                                    </div>
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <span data-bind="hora-inicio"></span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group col-xl-2 col-lg-4 col-md-6 mb-3">
+                                <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
                                     <div class="row">
                                         <label class="field">Alumnos inscritos</label>
                                     </div>
@@ -104,11 +93,44 @@
 
                                 <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
                                     <div class="row">
-                                        <label class="field">Fecha de creación</label>
+                                        <label class="field">Fecha de inicio</label>
                                     </div>
                                     <div class="row">
                                         <div class="form-group">
-                                            <span data-bind="fecha-creacion"></span>
+                                            <span data-bind="fecha-inicio"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Hora de inicio</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="hora-inicio"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Tolerancia antes</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="tolerancia-antes"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-xl-3 col-lg-4 col-md-6 mb-3">
+                                    <div class="row">
+                                        <label class="field">Tolerancia después</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <span data-bind="tolerancia-despues"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -124,7 +146,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group col-md-6 mb-3">
+                                <div class="form-group col-xl-9 col-lg-12 mb-3">
                                     <div class="row">
                                         <label class="field">URL para asistencia</label>
                                     </div>

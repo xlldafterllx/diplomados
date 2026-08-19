@@ -37,6 +37,8 @@ $detalle = $db->first(
             count(cls.id) 'clases',
             gpo.fecha_inicio,
             gpo.hora_inicio,
+            gpo.tolerancia_antes,
+            gpo.tolerancia_despues,
             gpo.fecha_creacion,
             concat(tu.nombre, ' ', tu.apellido_1, ' ', tu.apellido_2) 'usuario_creacion'
         from tbl_grupo gpo

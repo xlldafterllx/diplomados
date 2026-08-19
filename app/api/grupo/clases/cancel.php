@@ -42,4 +42,4 @@ $db->update(
     ]
 );
 
-ApiResponse::success("Clase cancelada con éxito.");
+ApiResponse::success("Clase cancelada.");

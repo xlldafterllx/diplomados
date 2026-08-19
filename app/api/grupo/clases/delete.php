@@ -74,4 +74,4 @@ $db->transaction(function (Connection $db) use ($claseId) {
     );
 });
 
-ApiResponse::success("Clase eliminada con éxito.");
+ApiResponse::success("Clase eliminada.");
