@@ -11,7 +11,7 @@
                         <input data-field="id" type="text" class="form-control d-none" disabled>
 
                         <div class="row">
-                            <div class="form-group col-xl-6 col-md-6 mb-3">
+                            <div class="form-group field col-xl-6 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Nombre</label>
                                 </div>
@@ -22,7 +22,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group col-xl-6 col-md-6 mb-3" data-field-container="diplomado">
+                            <div class="form-group field col-xl-6 col-md-6 mb-3" data-field-container="diplomado">
                                 <div class="row">
                                     <label>Diplomado</label>
                                 </div>
@@ -33,7 +33,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group col-xl-3 col-md-6 mb-3">
+                            <div class="form-group field col-xl-3 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Fecha de inicio</label>
                                 </div>
@@ -44,13 +44,29 @@
                                 </div>
                             </div>
 
-                            <div class="form-group col-xl-3 col-md-6 mb-3">
+                            <div class="form-group field col-xl-3 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Hora de inicio</label>
                                 </div>
                                 <div class="row">
                                     <div class="form-group">
                                         <input data-field="hora-inicio" type="text" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group field col-xl-6 col-md-6 mb-3">
+                                <div class="row">
+                                    <label>Tolerancia (en minutos)</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label>Antes</label>
+                                        <input data-field="tolerancia-antes" type="text" class="form-control">
+                                    </div>
+                                    <div class="col-6">
+                                        <label>Después</label>
+                                        <input data-field="tolerancia-despues" type="text" class="form-control">
                                     </div>
                                 </div>
                             </div>

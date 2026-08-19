@@ -221,17 +221,29 @@ function initializeDatesTimes() {
 }
 
 function initializeInputs() {
-    InputHelper.integer("cantidad", {
+    InputHelper.digits("tolerancia-antes", {
+        context: modalGrupo,
+        min: 1,
+        max: 240
+    });
+    
+    InputHelper.digits("tolerancia-despues", {
+        context: modalGrupo,
+        min: 1,
+        max: 240
+    });
+
+    InputHelper.digits("cantidad", {
         context: modalClaseCrear,
         min: 1,
         max: 100
     });
 
-    InputHelper.integer("cada", {
+    InputHelper.digits("cada", {
         context: modalClaseCrear,
         min: 1,
         max: 50
-    });
+    });    
 }
 
 function initializeEvents() {
@@ -546,6 +558,27 @@ function deleteGrupo(grupo, nombre) {
 async function storeGrupo() {
     if (!modalGrupo.validateMandatory()) return;
 
+    const tolAntes = modalGrupo.getField("tolerancia-antes");
+    const tolDespues = modalGrupo.getField("tolerancia-antes");
+
+    if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
+        modalGrupo.setInvalidClass(tolAntes);
+        Toast.fire({
+            icon: "warning",
+            title: "El valor de la tolerancia antes debe estar entre 1 y 240.",
+        });
+        return;
+    }
+
+    if (tolDespues.val() && (Number(tolDespues.val()) < 1 || Number(tolDespues.val()) > 240)) {
+        modalGrupo.setInvalidClass(tolDespues);
+        Toast.fire({
+            icon: "warning",
+            title: "El valor de la tolerancia después debe estar entre 1 y 240.",
+        });
+        return;
+    }
+
     try {
         Loader.show();
 
@@ -553,6 +586,11 @@ async function storeGrupo() {
         listGrupos();
 
         modalGrupo.close();
+
+        Toast.fire({
+            icon: "success",
+            title: "Grupo creado"
+        });
     } catch (error) {
         console.log(error.response ?? error);
 
@@ -570,9 +608,33 @@ async function updateGrupo() {
     if (!modalGrupo.validateMandatory()) return;
     modalGrupo.buttonOff("save");
 
+    const tolAntes = modalGrupo.getField("tolerancia-antes");
+    const tolDespues = modalGrupo.getField("tolerancia-antes");
+
+    if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
+        modalGrupo.setInvalidClass(tolAntes);
+        Toast.fire({
+            icon: "warning",
+            title: "El valor de la tolerancia antes debe estar entre 1 y 240.",
+        });
+        return;
+    }
+
+    if (tolDespues.val() && (Number(tolDespues.val()) < 1 || Number(tolDespues.val()) > 240)) {
+        modalGrupo.setInvalidClass(tolDespues);
+        Toast.fire({
+            icon: "warning",
+            title: "El valor de la tolerancia después debe estar entre 1 y 240.",
+        });
+        return;
+    }
+
     try {
-        const result = await HttpClient.post(API_GRUPO_UPDATE, modalGrupo.getData());
+        Loader.show();
+        
+        await HttpClient.post(API_GRUPO_UPDATE, modalGrupo.getData());
         listGrupos();
+
         modalGrupo.close();
 
         if (grupoData.getField("id").val() == modalGrupo.getField("id").val())
