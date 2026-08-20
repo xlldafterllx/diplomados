@@ -11,6 +11,10 @@
   height: var(--lte-bar-height) !important;
 }
 
+.card-title {
+  font-weight: 700 !important;
+}
+
 .sidebar-image {
   width: 100% !important;
   max-height: 50px !important;
