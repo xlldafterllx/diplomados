@@ -261,6 +261,9 @@ class Validator
             $rules
         );
 
+        $this->validated = false;
+        $this->errors = [];
+
         return $this;
     }
 

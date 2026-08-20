@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="form-group col-6">
                                         <select data-field="tiempo" class="form-control js-select"></select>
-                                    </div>                                    
+                                    </div>
                                 </div>
                             </div>
                         </div>
