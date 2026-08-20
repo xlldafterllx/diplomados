@@ -52,6 +52,7 @@ return [
         "assets/js/classes/InputHelper.js",
         "assets/js/classes/DateHelper.js",
         "assets/js/classes/AutocompleteHelper.js",
+        "assets/js/classes/Validator.js",
         "assets/js/helpers/theme.js",
         "assets/js/helpers/toast.js",
 
