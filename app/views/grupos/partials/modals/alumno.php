@@ -11,7 +11,7 @@
                         <input data-field="id" type="text" class="form-control d-none" disabled>
 
                         <div class="row" data-container="buscar">
-                            <div class="field field-adjust col-xl-8 col-md-12 mb-3">
+                            <div class="field field-adjust col-xl-8 col-md-12">
                                 <div class="row">
                                     <label>Buscar alumno</label>
                                 </div>
@@ -24,7 +24,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="field field-adjust col-xl-4 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-4 col-md-6">
                                 <div class="row">
                                     <label>Nombre</label>
                                 </div>
@@ -36,7 +36,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-4 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-4 col-md-6">
                                 <div class="row">
                                     <label>Primer apellido</label>
                                 </div>
@@ -48,7 +48,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-4 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-4 col-md-6">
                                 <div class="row">
                                     <label>Segundo apellido</label>
                                 </div>
@@ -60,7 +60,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-6 col-md-6">
                                 <div class="row">
                                     <label>Correo electrónico</label>
                                 </div>
@@ -72,7 +72,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-6 col-md-6">
                                 <div class="row">
                                     <label>Institución</label>
                                 </div>

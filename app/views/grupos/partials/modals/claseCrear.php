@@ -11,7 +11,7 @@
                         <input data-field="id" type="text" class="form-control d-none" disabled>
 
                         <div class="row">
-                            <div class="field field-adjust col-xl-3 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-3 col-md-6">
                                 <div class="row">
                                     <label>A partir del</label>
                                 </div>
@@ -23,7 +23,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-3 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-3 col-md-6">
                                 <div class="row">
                                     <label>A las</label>
                                 </div>
@@ -35,7 +35,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-6 col-md-6">
                                 <div class="row">
                                     <label>Tolerancia (en minutos)</label>
                                 </div>
@@ -53,7 +53,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-3 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-3 col-md-6">
                                 <div class="row">
                                     <label>Cantidad de clases</label>
                                 </div>
@@ -65,7 +65,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-6 col-md-6">
                                 <div class="row">
                                     <label>Cada cuando</label>
                                 </div>

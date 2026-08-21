@@ -82,6 +82,10 @@ input.disabled:hover {
   visibility: hidden;
 }
 
+.field .invalid-feedback.validation-visible {
+  visibility: visible;
+}
+
 input::-webkit-input-placeholder {
   text-transform: none;
 }

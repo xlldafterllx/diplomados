@@ -11,7 +11,7 @@
                         <input data-field="id" type="text" class="form-control d-none" disabled>
 
                         <div class="row">
-                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-6 col-md-6">
                                 <div class="row">
                                     <label>Nombre</label>
                                 </div>
@@ -23,7 +23,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-6 col-md-6 mb-3" data-field-container="diplomado">
+                            <div class="field field-adjust col-xl-6 col-md-6" data-field-container="diplomado">
                                 <div class="row">
                                     <label>Diplomado</label>
                                 </div>
@@ -35,7 +35,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-3 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-3 col-md-6">
                                 <div class="row">
                                     <label>Fecha de inicio</label>
                                 </div>
@@ -47,7 +47,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-3 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-3 col-md-6">
                                 <div class="row">
                                     <label>Hora de inicio</label>
                                 </div>
@@ -59,7 +59,7 @@
                                 </div>
                             </div>
 
-                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-6 col-md-6">
                                 <div class="row">
                                     <label>Tolerancia (en minutos)</label>
                                 </div>
