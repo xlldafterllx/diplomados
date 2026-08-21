@@ -174,28 +174,22 @@ class ComponentHelper {
                 ? element
                 : $(element);
 
-        const $validationElement =
-            this.getValidationElement(
-                $element
-            );
+        const $validationElement = this.getValidationElement($element);
 
-        $element.removeClass(
-            "is-invalid"
-        );
+        $element.removeClass("is-invalid");
 
-        $validationElement.removeClass(
-            "is-invalid"
-        );
+        $validationElement.removeClass("is-invalid");
 
-        const fieldName =
-            $element.data("field");
+        const fieldName = $element.data("field");
 
         if (fieldName) {
             this.getFieldContainer(fieldName)
                 .find(".invalid-feedback")
                 .first()
                 .text("")
-                .removeClass("d-block");
+                .removeClass(
+                    "validation-visible"
+                );
         }
 
         return $validationElement;
@@ -253,8 +247,7 @@ class ComponentHelper {
     }
 
     setInvalid(name, message = "") {
-        const $field =
-            this.getField(name);
+        const $field = this.getField(name);
 
         if (!$field.length) {
             return this;
@@ -268,7 +261,7 @@ class ComponentHelper {
             .find(".invalid-feedback")
             .first()
             .text(message)
-            .addClass("d-block");
+            .addClass("validation-visible");
 
         return this;
     }
