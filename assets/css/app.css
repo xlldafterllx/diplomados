@@ -75,3 +75,15 @@ input.disabled:hover {
 .invalid-group {
   font-size: 0.9em;
 }
+
+input::-webkit-input-placeholder {
+  text-transform: none;
+}
+
+input::-moz-placeholder {
+  text-transform: none;
+}
+
+input:-ms-input-placeholder {
+  text-transform: none;
+}
