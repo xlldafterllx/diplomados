@@ -432,6 +432,8 @@ class ComponentHelper {
                 }
             });
 
+        this.clearValidationGroups();
+
         return this;
     }
 
