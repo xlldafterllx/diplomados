@@ -50,3 +50,8 @@
 select.is-invalid + .select2-container--bootstrap-5 .select2-selection {
   border-color: var(--bs-danger) !important;
 }
+
+.select2-container {
+  width: 100% !important;
+  max-width: 100%;
+}

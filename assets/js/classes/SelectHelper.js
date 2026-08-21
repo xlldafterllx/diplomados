@@ -129,6 +129,7 @@ class SelectHelper {
 
         control.select2({
             theme: "bootstrap-5",
+            width: "100%",
             dropdownParent: parent,
             placeholder: settings.placeholder,
             allowClear: settings.clearOption,
