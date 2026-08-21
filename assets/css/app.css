@@ -57,6 +57,24 @@ input.disabled:hover {
   text-transform: uppercase;
 }
 
+input::-webkit-input-placeholder {
+  text-transform: none;
+}
+
+input::-moz-placeholder {
+  text-transform: none;
+}
+
+input:-ms-input-placeholder {
+  text-transform: none;
+}
+
+
+.field {
+  --feedback-height: 1.25rem;
+  --feedback-margin: 0.25rem;
+}
+
 .invalid-feedback {
   font-size: 0.7em;
 }
@@ -75,25 +93,24 @@ input.disabled:hover {
   justify-content: flex-end;
 }
 
-.field .invalid-feedback {
-  display: block;
-  min-height: 1.25rem;
-  margin-top: 0.25rem;
-  visibility: hidden;
-}
-
+/* Mostrar mensaje cuando exista una validación */
 .field .invalid-feedback.validation-visible {
   visibility: visible;
 }
 
-input::-webkit-input-placeholder {
-  text-transform: none;
+/* Espacio reservado para mensajes de validación */
+.field .invalid-feedback {
+  display: block;
+  min-height: var(--feedback-height);
+  margin-top: var(--feedback-margin);
+  visibility: hidden;
 }
 
-input::-moz-placeholder {
-  text-transform: none;
-}
-
-input:-ms-input-placeholder {
-  text-transform: none;
+/* Campos que NO tienen invalid-feedback:
+   reservar exactamente el mismo espacio */
+.field-adjust:not(:has(.invalid-feedback))::after {
+  content: "";
+  display: block;
+  min-height: var(--feedback-height);
+  margin-top: var(--feedback-margin);
 }
