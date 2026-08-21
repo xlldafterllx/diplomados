@@ -27,6 +27,8 @@ $grupo = $request->integer("grupo");
 
 $db = ConnectionManager::connection();
 
+//#when timestamp(cls.fecha, '23:59:59') > now()
+
 $asistencias = $db->select(
     "
         select
@@ -42,7 +44,7 @@ $asistencias = $db->select(
                     then 'ASISTENCIA'
                 when jus.id is not null
                     then 'JUSTIFICADA'
-                when timestamp(cls.fecha, '23:59:59') > now()
+                when date_add(timestamp(cls.fecha, cls.hora_inicio), interval coalesce(cls.tolerancia_despues, 0) minute) > now()                
                     then 'PENDIENTE'
                 else 'FALTA'
             end as estado
