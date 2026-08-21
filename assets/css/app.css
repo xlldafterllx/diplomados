@@ -7,6 +7,13 @@
   font-weight: 700;
 }
 
+.field-adjust {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
 .app-header {
   height: var(--lte-bar-height) !important;
 }
@@ -36,13 +43,6 @@
 
 input.disabled:hover {
   cursor: not-allowed;
-}
-
-.field-adjust {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  margin-bottom: 1rem;
 }
 
 .main-content {
