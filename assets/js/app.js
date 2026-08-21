@@ -90,16 +90,19 @@ function formatTime(value) {
     return formatter.format(date);
 }
 
-function validateFields(component, rules) {
+function validateFields(component, rules, groupRules = {}) {
     component.clearValidation();
+    component.clearValidationGroups();
 
-    const validator = Validator.make(component, rules);
+    const validator = Validator.make(component, rules, groupRules);
 
     if (validator.fails()) {
-        const errors = validator.errors();
-
-        for (const [field, messages] of Object.entries(errors)) {
+        for (const [field, messages] of Object.entries(validator.errors())) {
             component.setInvalid(field, messages[0]);
+        }
+
+        for (const [group, error] of Object.entries(validator.groupErrors())) {
+            component.setInvalidGroup(error.fields, group, error.message);
         }
 
         Toast.fire({

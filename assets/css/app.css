@@ -71,3 +71,7 @@ input.disabled:hover {
 .invalid-feedback {
   font-size: 0.7em;
 }
+
+.invalid-group {
+  font-size: 0.9em;
+}

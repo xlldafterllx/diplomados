@@ -1,9 +1,13 @@
 class Validator {
     constructor() {
         this.component = null;
+
         this.rules = {};
+        this.groupRules = {};
 
         this.validationErrors = {};
+        this.validationGroupErrors = {};
+
         this.isValidated = false;
 
         /*this.messages = {
@@ -123,11 +127,12 @@ class Validator {
     // Construction
     //-------------------------------------------------------------------------
 
-    static make(component, rules) {
+    static make(component, rules, groupRules = {}) {
         const validator = new Validator();
 
         validator.component = component;
         validator.rules = rules;
+        validator.groupRules = groupRules;
 
         return validator;
     }
@@ -139,7 +144,10 @@ class Validator {
     fails() {
         this.validate();
 
-        return Object.keys(this.validationErrors).length > 0;
+        return (
+            Object.keys(this.validationErrors).length > 0 ||
+            Object.keys(this.validationGroupErrors).length > 0
+        );
     }
 
     passes() {
@@ -207,6 +215,11 @@ class Validator {
 
         this.isValidated = true;
 
+        this.validateFields();
+        this.validateGroups();
+    }
+
+    validateFields() {
         for (const [field, config] of Object.entries(this.rules)) {
 
             const $field = this.field(field);
@@ -277,6 +290,72 @@ class Validator {
                 }
             }
         }
+    }
+
+    validateGroups() {
+        for (const [group, config] of Object.entries(this.groupRules)) {
+            const parsedRules = this.parseRules(config.rules ?? "");
+
+            for (const rule of parsedRules) {
+                const method = this.groupValidatorMethod(rule.name);
+
+                if (!method) {
+                    continue;
+                }
+
+                if (!this[method](group, config, rule.parameter)) {
+                    break;
+                }
+            }
+        }
+    }
+
+    groupErrors() {
+        this.validate();
+
+        return this.validationGroupErrors;
+    }
+
+    groupValidatorMethod(rule) {
+        const method =
+            "validateGroup" +
+            rule.charAt(0).toUpperCase() +
+            rule.slice(1);
+
+        return typeof this[method] === "function"
+            ? method
+            : null;
+    }
+
+    validateGroupRequiredAny(group, config, parameter) {
+        const fields = config.fields ?? [];
+
+        const hasValue = fields.some(
+            field => {
+                /*
+                 * Si el campo está deshabilitado,
+                 * no participa.
+                 */
+                if (this.isDisabled(field)) {
+                    return false;
+                }
+
+                return !this.skipEmpty(field);
+            }
+        );
+
+        if (hasValue) {
+            return true;
+        }
+
+        this.validationGroupErrors[group] = {
+            fields,
+            message:
+                config.message ??
+                "Debe llenar al menos uno de los campos."
+        };
+
+        return false;
     }
 
     parseRules(rules) {
@@ -514,7 +593,9 @@ class Validator {
             "requiredIf",
             {
                 ":other":
-                    this.fieldName(condition.field),
+                    this.fieldName(
+                        condition.field
+                    ),
 
                 ":values":
                     condition.values.join(", ")

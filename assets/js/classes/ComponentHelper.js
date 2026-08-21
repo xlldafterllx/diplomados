@@ -232,6 +232,15 @@ class ComponentHelper {
         return this;
     }
 
+    clearValidationGroups() {
+        this.$context
+            .find("[data-validation-group]")
+            .text("")
+            .removeClass("d-block");
+
+        return this;
+    }
+
     getFieldValue(name) {
         const $field = this.getField(name);
         const value = $field.val();
@@ -244,17 +253,43 @@ class ComponentHelper {
     }
 
     setInvalid(name, message = "") {
-        const $field = this.getField(name);
+        const $field =
+            this.getField(name);
 
         if (!$field.length) {
             return this;
         }
 
-        this.setInvalidClass($field);
+        this.setInvalidClass(
+            $field
+        );
 
         this.getFieldContainer(name)
             .find(".invalid-feedback")
             .first()
+            .text(message)
+            .addClass("d-block");
+
+        return this;
+    }
+
+    setInvalidGroup(fields, group, message = "") {
+        for (const field of fields) {
+            const $element = this.getField(field);
+
+            if (!$element.length) {
+                continue;
+            }
+
+            this.setInvalidClass(
+                $element
+            );
+        }
+
+        this.$context
+            .find(
+                `[data-validation-group="${group}"]`
+            )
             .text(message)
             .addClass("d-block");
 
