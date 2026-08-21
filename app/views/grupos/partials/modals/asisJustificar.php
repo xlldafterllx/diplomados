@@ -11,35 +11,38 @@
                         <input data-field="id" type="text" class="form-control d-none" disabled>
 
                         <div class="row">
-                            <div class="form-group field col-xl-6 col-md-6 mb-3" data-field-container="alumnos">
+                            <div class="field field-adjust col-xl-6 col-md-6 mb-3" data-field-container="alumnos">
                                 <div class="row">
                                     <label>Alumno</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <select data-field="alumno" class="form-control js-select"></select>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-6 col-md-6 mb-3" data-field-container="clases">
+                            <div class="field field-adjust col-xl-6 col-md-6 mb-3" data-field-container="clases">
                                 <div class="row">
                                     <label>Clase</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <select data-field="clase" class="form-control js-select"></select>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-12 mb-3">
+                            <div class="field field-adjust col-xl-12 mb-3">
                                 <div class="row">
                                     <label>Motivo</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="motivo" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>

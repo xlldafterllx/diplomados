@@ -11,12 +11,12 @@
                         <input data-field="id" type="text" class="form-control d-none" disabled>
 
                         <div class="row" data-container="buscar">
-                            <div class="form-group field col-xl-8 col-md-12 mb-3">
+                            <div class="field field-adjust col-xl-8 col-md-12 mb-3">
                                 <div class="row">
                                     <label>Buscar alumno</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="buscar" type="text" class="form-control">
                                     </div>
                                 </div>
@@ -24,57 +24,62 @@
                         </div>
 
                         <div class="row">
-                            <div class="form-group field col-xl-4 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-4 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Nombre</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="nombre" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-4 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-4 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Primer apellido</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="apellido-1" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-4 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-4 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Segundo apellido</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="apellido-2" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-6 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Correo electrónico</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="correo" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-6 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Institución</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="institucion" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>

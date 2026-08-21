@@ -18,6 +18,7 @@ $page = [
             "assets/js/classes/ComponentHelper.js",
             "assets/js/classes/HttpClient.js",
             "assets/js/classes/HttpException.js",
+            "assets/js/classes/Validator.js",
             "assets/js/helpers/theme.js",
             "assets/js/helpers/toast.js",
             "app/views/login/js/index.js"

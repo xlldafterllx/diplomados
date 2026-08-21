@@ -32,6 +32,14 @@ let tableDiplomadosData = [];
 let tableModulosData = [];
 let tableActividadesData = [];
 
+// Rules
+const rules = {
+    "nombre": {
+        name: "Nombre",
+        rules: "required|string"
+    }
+};
+
 $(function () {
     initialize();
     loadDiplomados();
@@ -52,18 +60,12 @@ function initializeComponents() {
     actividades = new ComponentHelper("#actividades");
     modal = new ComponentHelper("#modal-generic");
 
-    initializeComponentValidationFields();
     initializeComponentActions();
-}
-
-function initializeComponentValidationFields() {
-    modal.setMandatoryFields([
-        { field: "nombre", name: "Nombre", type: "input" }
-    ]);
 }
 
 function initializeComponentActions() {
     diplomados.onAction("new", () => {
+        modal.clearValidation();
         modal.getBind("title").text("Crear diplomado");
         modal.getBind("name").text("Nombre del diplomado");
         modal.getContainer("button").attr("data-action", "save");
@@ -73,6 +75,7 @@ function initializeComponentActions() {
     });
 
     modulos.onAction("new", () => {
+        modal.clearValidation();
         modal.getBind("title").text("Crear módulo");
         modal.getBind("name").text("Nombre del módulo");
         modal.getContainer("button").attr("data-action", "save");
@@ -82,6 +85,7 @@ function initializeComponentActions() {
     });
 
     actividades.onAction("new", () => {
+        modal.clearValidation();
         modal.getBind("title").text("Crear actividad");
         modal.getBind("name").text("Nombre de la actividad");
         modal.getContainer("button").attr("data-action", "save");
@@ -552,7 +556,7 @@ async function updateActividadesData(diplomado, modulo) {
 }
 
 async function newDiplomado() {
-    if (!modal.validateMandatory()) return;
+    if (!validateFields(modal, rules)) return;
     modal.buttonOff("save");
 
     try {
@@ -578,7 +582,7 @@ async function newDiplomado() {
 }
 
 async function newModulo() {
-    if (!modal.validateMandatory()) return;
+    if (!validateFields(modal, rules)) return;
     modal.buttonOff("save");
 
     try {
@@ -604,7 +608,7 @@ async function newModulo() {
 }
 
 async function newActividad() {
-    if (!modal.validateMandatory()) return;
+    if (!validateFields(modal, rules)) return;
     modal.buttonOff("save");
 
     try {
@@ -714,7 +718,7 @@ async function editActividad(diplomado, modulo, actividad) {
 }
 
 async function updateDiplomado() {
-    if (!modal.validateMandatory()) return;
+    if (!validateFields(modal, rules)) return;
     modal.buttonOff("save");
 
     try {
@@ -740,7 +744,7 @@ async function updateDiplomado() {
 }
 
 async function updateModulo() {
-    if (!modal.validateMandatory()) return;
+    if (!validateFields(modal, rules)) return;
     modal.buttonOff("save");
 
     try {
@@ -766,7 +770,7 @@ async function updateModulo() {
 }
 
 async function updateActividad() {
-    if (!modal.validateMandatory()) return;
+    if (!validateFields(modal, rules)) return;
     modal.buttonOff("save");
 
     try {

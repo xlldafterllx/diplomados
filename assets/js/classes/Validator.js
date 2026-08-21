@@ -514,9 +514,7 @@ class Validator {
             "requiredIf",
             {
                 ":other":
-                    this.fieldName(
-                        condition.field
-                    ),
+                    this.fieldName(condition.field),
 
                 ":values":
                     condition.values.join(", ")

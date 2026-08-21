@@ -11,40 +11,44 @@
                         <input data-field="id" type="text" class="form-control d-none" disabled>
 
                         <div class="row">
-                            <div class="form-group field col-xl-6 mb-3">
+                            <div class="field field-adjust col-xl-6 mb-3">
                                 <div class="row">
                                     <label>Fecha</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="fecha" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-6 mb-3">
+                            <div class="field field-adjust col-xl-6 mb-3">
                                 <div class="row">
                                     <label>Hora de inicio</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="hora-inicio" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-12 mb-3">
+                            <div class="field field-adjust col-xl-12 mb-3">
                                 <div class="row">
                                     <label>Tolerancia (en minutos)</label>
                                 </div>
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="field col-6">
                                         <label>Antes</label>
                                         <input data-field="tolerancia-antes" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="field col-6">
                                         <label>Después</label>
                                         <input data-field="tolerancia-despues" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>

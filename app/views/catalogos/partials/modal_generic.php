@@ -15,8 +15,9 @@
                                     <label data-bind="name"></label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group col box ui-front">
+                                    <div>
                                         <input data-field="nombre" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>

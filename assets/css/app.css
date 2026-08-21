@@ -3,7 +3,7 @@
   --lte-bar-height: 3.5rem;
 }
 
-.field {
+.field label {
   font-weight: 700;
 }
 
@@ -38,7 +38,7 @@ input.disabled:hover {
   cursor: not-allowed;
 }
 
-.field {
+.field-adjust {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -66,4 +66,8 @@ input.disabled:hover {
 
 .upper {
   text-transform: uppercase;
+}
+
+.invalid-feedback {
+  font-size: 0.7em;
 }

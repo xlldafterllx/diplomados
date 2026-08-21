@@ -7,13 +7,15 @@
             <?= strtoupper(Config::get("app.name")) ?>
         </h3>
         <div id="login-form" autocomplete="off" class="mt-3 pl-2 pr-2">
-            <div class="mb-4">
+            <div class="field mb-4">
                 <label class="form-label">Usuario</label>
                 <input data-field="username" type="text" autocomplete="username" class="form-control">
+                <div class="invalid-feedback"></div>
             </div>
-            <div class="mb-4">
+            <div class="field mb-4">
                 <label class="form-label">Contraseña</label>
                 <input data-field="password" type="password" autocomplete="current-password" class="form-control">
+                <div class="invalid-feedback"></div>
             </div>
             <div class="mb-3 text-center">
                 <button data-action="login" type="button" class="btn btn-outline-primary"> Iniciar sesión </button>

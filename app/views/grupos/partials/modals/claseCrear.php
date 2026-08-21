@@ -11,65 +11,72 @@
                         <input data-field="id" type="text" class="form-control d-none" disabled>
 
                         <div class="row">
-                            <div class="form-group field col-xl-3 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-3 col-md-6 mb-3">
                                 <div class="row">
                                     <label>A partir del</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="fecha-inicio" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-3 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-3 col-md-6 mb-3">
                                 <div class="row">
                                     <label>A las</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="hora-inicio" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-6 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Tolerancia (en minutos)</label>
                                 </div>
                                 <div class="row">
-                                    <div class="col-6">
+                                    <div class="field col-6">
                                         <label>Antes</label>
                                         <input data-field="tolerancia-antes" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="field col-6">
                                         <label>Después</label>
                                         <input data-field="tolerancia-despues" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-3 col-md-6 mb-3">
+                            <div class="field field-adjust col-xl-3 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Cantidad de clases</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group">
+                                    <div>
                                         <input data-field="cantidad" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group field col-xl-6 col-md-6 mb-3" data-field-container="tiempo">
+                            <div class="field field-adjust col-xl-6 col-md-6 mb-3">
                                 <div class="row">
                                     <label>Cada cuando</label>
                                 </div>
                                 <div class="row">
-                                    <div class="form-group col-6">
-                                        <input data-field="cada" type="text" class="form-control">                                        
+                                    <div class="field col-6">
+                                        <input data-field="cada" type="text" class="form-control">
+                                        <div class="invalid-feedback"></div>
                                     </div>
-                                    <div class="form-group col-6">
+                                    <div class="field col-6" data-field-container="tiempo">
                                         <select data-field="tiempo" class="form-control js-select"></select>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>

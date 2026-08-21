@@ -1,5 +1,17 @@
 const API_LOGIN = API_URL + "auth/login.php";
+
 const login = new ComponentHelper("#login-form");
+
+const rules = {
+    "username": {
+        name: "Usuario",
+        rules: "required|string"
+    },
+    "password": {
+        name: "Contraseña",
+        rules: "required|string"
+    }
+};
 
 $(".form-control").each(function (e) {
     $(this).on("click select2:open", function (event) {
@@ -7,13 +19,26 @@ $(".form-control").each(function (e) {
     });
 });
 
-login.setMandatoryFields([
-    { field: "username", name: "Usuario", type: "input" },
-    { field: "password", name: "Contraseña", type: "input" },
-]);
-
 login.onAction("login", async () => {
-    if (!login.validateMandatory()) return;
+    login.clearValidation();
+
+    const validator = Validator.make(login, rules);
+
+    if (validator.fails()) {
+        const errors = validator.errors();
+
+        for (const [field, messages] of Object.entries(errors)) {
+            login.setInvalid(field, messages[0]);
+        }
+
+        Toast.fire({
+            icon: "error",
+            title: "Uno o más campos no cumplen con el formato requerido.",
+            theme: "light"
+        });
+
+        return;
+    }
 
     try {
         await HttpClient.post(API_LOGIN, login.getData());

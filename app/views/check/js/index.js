@@ -3,6 +3,13 @@ const API_CHECK = API_URL + "check/check.php";
 
 const asistencia = new ComponentHelper("#asistencia");
 
+const rules = {
+    "correo": {
+        name: "Correo electrónico",
+        rules: "required|email"
+    }
+};
+
 $(function () {
     clearValidation();
     initialize();
@@ -11,22 +18,30 @@ $(function () {
 
 function initialize() {
     asistencia.onAction("check", async () => {
-        const correo = asistencia.getField("correo");
+        asistencia.clearValidation();
 
-        if (correo.val().trim() == "") {
-            correo.addClass("is-invalid");
+        const validator = Validator.make(asistencia, rules);
+
+        if (validator.fails()) {
+            const errors = validator.errors();
+
+            for (const [field, messages] of Object.entries(errors)) {
+                asistencia.setInvalid(field, messages[0]);
+            }
+
             Toast.fire({
-                icon: "warning",
-                title: "El correo electrónico es obligatorio",
+                icon: "error",
+                title: "Uno o más campos no cumplen con el formato requerido.",
                 theme: "light"
             });
+
             return;
         }
 
         try {
             asistencia.buttonOff("check");
-            
-            await HttpClient.post(API_CHECK, { "token": TOKEN, "correo": correo.val() });
+
+            await HttpClient.post(API_CHECK, { "token": TOKEN, "correo": asistencia.getField("correo").val() });
             Toast.fire({
                 icon: "success",
                 title: "Asistencia registrada correctamente.",

@@ -7,9 +7,10 @@
         <p data-bind="diplomado" class="form-label">Diplomado:</p>
         <p data-bind="grupo" class="form-label">Grupo:</p>
         <div autocomplete="off" class="mt-3 pl-2 pr-2">
-            <div class="mb-4">
+            <div class="field mb-4">
                 <label class="form-label">Correo electrónico</label>
                 <input data-field="correo" type="text" autocomplete="correo" class="form-control">
+                <div class="invalid-feedback"></div>
             </div>
             <div class="mb-3 text-center">
                 <button data-action="check" type="button" class="btn btn-outline-primary">

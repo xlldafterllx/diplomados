@@ -36,7 +36,7 @@ function notReadyJet() {
 }
 
 function formatDateTime(value) {
-    if(!value) return value;
+    if (!value) return value;
 
     const strVal = value.replaceAll("-", "/");
 
@@ -57,7 +57,7 @@ function formatDateTime(value) {
 }
 
 function formatDate(value) {
-    if(!value) return value;
+    if (!value) return value;
 
     const strVal = value.replaceAll("-", "/");
 
@@ -75,8 +75,8 @@ function formatDate(value) {
 }
 
 function formatTime(value) {
-    if(!value) return value;
-    
+    if (!value) return value;
+
     const date = value instanceof Date
         ? value
         : new Date(value);
@@ -88,4 +88,27 @@ function formatTime(value) {
     });
 
     return formatter.format(date);
+}
+
+function validateFields(component, rules) {
+    component.clearValidation();
+
+    const validator = Validator.make(component, rules);
+
+    if (validator.fails()) {
+        const errors = validator.errors();
+
+        for (const [field, messages] of Object.entries(errors)) {
+            component.setInvalid(field, messages[0]);
+        }
+
+        Toast.fire({
+            icon: "error",
+            title: "Uno o más campos no cumplen con el formato requerido."
+        });
+
+        return false;
+    }
+
+    return true;
 }

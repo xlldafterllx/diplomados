@@ -52,6 +52,122 @@ let tableAlumnosData = [];
 let tableClasesData = [];
 let tableAsistenciaData = [];
 
+// Rules
+const rulesGrupo = {
+    "nombre": {
+        name: "Nombre",
+        rules: "required|string"
+    },
+    "diplomado": {
+        name: "Diplomado",
+        rules: "required|integer"
+    },
+    "fecha-inicio": {
+        name: "Fecha de inicio",
+        rules: "required|date"
+    },
+    "hora-inicio": {
+        name: "Hora de inicio",
+        rules: "required|string"
+    },
+    "tolerancia-antes": {
+        name: "Tolerancia antes",
+        rules: "nullable|integer|minValue:1|maxValue:240"
+    },
+    "tolerancia-despues": {
+        name: "Tolerancia después",
+        rules: "nullable|integer|minValue:1|maxValue:240"
+    }
+};
+
+const rulesAlumno = {
+    "nombre": {
+        name: "Nombre",
+        rules: "required|string"
+    },
+    "apellido-1": {
+        name: "Primer apellido",
+        rules: "required|string"
+    },
+    "apellido-2": {
+        name: "Segundo apellido",
+        rules: "nullable|string"
+    },
+    "correo": {
+        name: "Correo electrónico",
+        rules: "required|email"
+    },
+    "institucion": {
+        name: "Institución",
+        rules: "required|string"
+    }
+};
+
+const rulesJustificar = {
+    "alumno": {
+        name: "Alumno",
+        rules: "required|integer"
+    },
+    "clase": {
+        name: "Clase",
+        rules: "required|integer"
+    },
+    "motivo": {
+        name: "Motivo",
+        rules: "nullable|string"
+    },
+};
+
+const rulesClaseCrear = {
+    "fecha-inicio": {
+        name: "Fecha de inicio",
+        rules: "required|date"
+    },
+    "hora-inicio": {
+        name: "Hora de inicio",
+        rules: "required|string"
+    },
+    "tolerancia-antes": {
+        name: "Tolerancia antes",
+        rules: "nullable|integer|minValue:1|maxValue:240"
+    },
+    "tolerancia-despues": {
+        name: "Tolerancia después",
+        rules: "nullable|integer|minValue:1|maxValue:240"
+    },
+    "cantidad": {
+        name: "Cantidad",
+        rules: "required|integer|minValue:1|maxValue:100"
+    },
+    "cada": {
+        name: "Cada cuando",
+        rules: "required|integer|minValue:1|maxValue:100"
+    },
+    "tiempo": {
+        name: "Cada cuando",
+        rules: "required|integer"
+    }
+};
+
+const rulesClaseEditar = {
+    "fecha": {
+        name: "Fecha de inicio",
+        rules: "required|date"
+    },
+    "hora-inicio": {
+        name: "Hora de inicio",
+        rules: "required|string"
+    },
+    "tolerancia-antes": {
+        name: "Tolerancia antes",
+        rules: "nullable|integer|minValue:1|maxValue:240"
+    },
+    "tolerancia-despues": {
+        name: "Tolerancia después",
+        rules: "nullable|integer|minValue:1|maxValue:240"
+    }
+};
+
 $(function () {
     initialize();
 });
@@ -89,7 +205,7 @@ function initializeComponent() {
 }
 
 function initializeComponentValidationFields() {
-    modalGrupo.setMandatoryFields([
+    /*modalGrupo.setMandatoryFields([
         { field: "nombre", name: "Nombre", type: "input" },
         { field: "diplomado", name: "Diplomado", type: "select" },
         { field: "fecha-inicio", name: "Fecha de inicio", type: "datetimepicker" },
@@ -119,7 +235,7 @@ function initializeComponentValidationFields() {
         { field: "cantidad", name: "Cantidad de clases", type: "input" },
         { field: "cada", name: "Cada", type: "input" },
         { field: "tiempo", name: "Tiempo", type: "select" }
-    ]);
+    ]);*/
 }
 
 function initializeComponentActions() {
@@ -594,28 +710,7 @@ function deleteGrupo(grupo, nombre) {
 }
 
 async function storeGrupo() {
-    if (!modalGrupo.validateMandatory()) return;
-
-    const tolAntes = modalGrupo.getField("tolerancia-antes");
-    const tolDespues = modalGrupo.getField("tolerancia-despues");
-
-    if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
-        modalGrupo.setInvalidClass(tolAntes);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de la tolerancia antes debe estar entre 1 y 240.",
-        });
-        return;
-    }
-
-    if (tolDespues.val() && (Number(tolDespues.val()) < 1 || Number(tolDespues.val()) > 240)) {
-        modalGrupo.setInvalidClass(tolDespues);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de la tolerancia después debe estar entre 1 y 240.",
-        });
-        return;
-    }
+    if (!validateFields(modalGrupo, rulesGrupo)) return;
 
     try {
         Loader.show();
@@ -643,28 +738,7 @@ async function storeGrupo() {
 }
 
 async function updateGrupo() {
-    if (!modalGrupo.validateMandatory()) return;
-
-    const tolAntes = modalGrupo.getField("tolerancia-antes");
-    const tolDespues = modalGrupo.getField("tolerancia-despues");
-
-    if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
-        modalGrupo.setInvalidClass(tolAntes);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de la tolerancia antes debe estar entre 1 y 240.",
-        });
-        return;
-    }
-
-    if (tolDespues.val() && (Number(tolDespues.val()) < 1 || Number(tolDespues.val()) > 240)) {
-        modalGrupo.setInvalidClass(tolDespues);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de la tolerancia después debe estar entre 1 y 240.",
-        });
-        return;
-    }
+    if (!validateFields(modalGrupo, rulesGrupo)) return;
 
     try {
         Loader.show();
@@ -803,7 +877,7 @@ function removeAlumno(alumno, nombre) {
 }
 
 async function addAlumno() {
-    if (!modalAlumno.validateMandatory()) return;
+    if (!validateFields(modalAlumno, rulesAlumno)) return;
 
     try {
         Loader.show();
@@ -841,7 +915,7 @@ async function addAlumno() {
 }
 
 async function updateAlumno() {
-    if (!modalAlumno.validateMandatory()) return;
+    if (!validateFields(modalAlumno, rulesAlumno)) return;
     
     try {
         Loader.show();
@@ -874,7 +948,7 @@ async function updateAlumno() {
 
 
 
-async function listClases() {    
+async function listClases() {
     try {
         Loader.show();
 
@@ -1012,48 +1086,7 @@ function deleteClase(clase, fecha) {
 }
 
 async function addClases() {
-    if (!modalClaseCrear.validateMandatory()) return;
-
-    const cantidad = modalClaseCrear.getField("cantidad");
-    const cada = modalClaseCrear.getField("cada");
-    const tolAntes = modalClaseCrear.getField("tolerancia-antes");
-    const tolDespues = modalClaseCrear.getField("tolerancia-despues");
-
-    if (Number(cantidad.val()) < 1 || Number(cantidad.val()) > 100) {
-        modalClaseCrear.setInvalidClass(cantidad);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de la cantidad de clases de estar entre 1 y 100.",
-        });
-        return;
-    }
-
-    if (Number(cada.val()) < 1 || Number(cada.val()) > 100) {
-        modalClaseCrear.setInvalidClass(cada);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de cada cuando de estar entre 1 y 50.",
-        });
-        return;
-    }
-
-    if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
-        modalClaseCrear.setInvalidClass(tolAntes);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de la tolerancia antes debe estar entre 1 y 240.",
-        });
-        return;
-    }
-
-    if (tolDespues.val() && (Number(tolDespues.val()) < 1 || Number(tolDespues.val()) > 240)) {
-        modalClaseCrear.setInvalidClass(tolDespues);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de la tolerancia después debe estar entre 1 y 240.",
-        });
-        return;
-    }
+    if (!validateFields(modalClaseCrear, rulesClaseCrear)) return;
 
     try {
         Loader.show();
@@ -1086,28 +1119,7 @@ async function addClases() {
 }
 
 async function updateClase() {
-    if (!modalClaseEditar.validateMandatory()) return;
-
-    const tolAntes = modalClaseEditar.getField("tolerancia-antes");
-    const tolDespues = modalClaseEditar.getField("tolerancia-despues");
-
-    if (tolAntes.val() && (Number(tolAntes.val()) < 1 || Number(tolAntes.val()) > 240)) {
-        modalClaseEditar.setInvalidClass(tolAntes);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de la tolerancia antes debe estar entre 1 y 240.",
-        });
-        return;
-    }
-
-    if (tolDespues.val() && (Number(tolDespues.val()) < 1 || Number(tolDespues.val()) > 240)) {
-        modalClaseEditar.setInvalidClass(tolDespues);
-        Toast.fire({
-            icon: "warning",
-            title: "El valor de la tolerancia después debe estar entre 1 y 240.",
-        });
-        return;
-    }
+    if (!validateFields(modalClaseEditar, rulesClaseEditar)) return;
 
     const params = {
         "grupo": grupoData.getField("id").val(),
@@ -1179,7 +1191,7 @@ async function formJustificar() {
 }
 
 async function storeJustficacion() {
-    if (!modalJustificar.validateMandatory()) return;
+    if (!validateFields(modalJustificar, rulesJustificar)) return;
 
     try {
         Loader.show();
