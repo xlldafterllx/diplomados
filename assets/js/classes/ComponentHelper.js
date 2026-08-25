@@ -444,6 +444,52 @@ class ComponentHelper {
         return this;
     }
 
+    onEnterAction(action) {
+        this.$context
+            .off("keydown.componentHelperEnter")
+            .on("keydown.componentHelperEnter", (event) => {
+                if (event.key !== "Enter") return;
+
+                // Evita interferir con componentes que utilizan Enter
+                if (
+                    event.originalEvent?.isComposing ||
+                    event.ctrlKey ||
+                    event.altKey ||
+                    event.shiftKey ||
+                    event.metaKey
+                ) {
+                    return;
+                }
+
+                const ignoredElements = [
+                    "textarea",
+                    "select",
+                    "button",
+                    "a",
+                    "[contenteditable='true']",
+                    ".select2-container",
+                    ".select2-dropdown"
+                ].join(",");
+
+                if ($(event.target).closest(ignoredElements).length) return;
+
+                const actionButton = this.getAction(action).first();
+
+                if (
+                    !actionButton.length ||
+                    actionButton.prop("disabled")
+                ) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                actionButton.trigger("click");
+            });
+
+        return this;
+    }
+
     resolveElement(element = null) {
         if (element === null) {
             return this.$context;
