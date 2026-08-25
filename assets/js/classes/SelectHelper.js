@@ -19,9 +19,15 @@ class SelectHelper {
         } = request;
 
         if (!url) {
-            throw new Error("SelectHelper.load requiere una URL.");
+            throw new Error(
+                "SelectHelper.load requiere una URL."
+            );
         }
 
+        /*
+         * Permite inicializar el select sin realizar una petición
+         * cuando no se proporciona una acción.
+         */
         if (!action) {
             return this.fill(element, [], options);
         }
@@ -40,7 +46,10 @@ class SelectHelper {
 
             return data;
         } catch (error) {
-            console.error("Error al cargar las opciones del select:", error);
+            console.error(
+                "Error al cargar las opciones del select:",
+                error
+            );
 
             Toast.fire({
                 icon: "error",
@@ -77,11 +86,9 @@ class SelectHelper {
             ...options
         };
 
-        const control = this.getControl(element, settings.context);
-        const parent = this.getParent(
+        const control = this.getControl(
             element,
-            settings.context,
-            settings.dropdownParent
+            settings.context
         );
 
         if (!control.length) {
@@ -91,6 +98,14 @@ class SelectHelper {
 
             return control;
         }
+
+        const isMultiple = control.prop("multiple");
+
+        const parent = this.getParent(
+            element,
+            settings.context,
+            settings.dropdownParent
+        );
 
         /*
          * Creamos una copia para no modificar el arreglo original.
@@ -102,6 +117,12 @@ class SelectHelper {
             ? data.map(option => ({ ...option }))
             : [];
 
+        /*
+         * Agrega la opción general "TODAS".
+         *
+         * En selects simples funciona como una opción normal.
+         * En selects múltiples tendrá un comportamiento excluyente.
+         */
         if (settings.allOption) {
             selectData.unshift({
                 id: 0,
@@ -110,8 +131,16 @@ class SelectHelper {
         }
 
         /*
-         * Si el select ya fue inicializado, destruimos Select2 antes de
-         * reconstruirlo.
+         * Eliminamos únicamente los eventos registrados por este helper.
+         *
+         * Esto evita que el comportamiento se registre varias veces
+         * cuando fill() se ejecuta nuevamente sobre el mismo select.
+         */
+        control.off(".selectHelperAllOption");
+
+        /*
+         * Si el select ya fue inicializado, destruimos Select2 antes
+         * de reconstruirlo.
          */
         if (control.hasClass("select2-hidden-accessible")) {
             control.select2("destroy");
@@ -122,9 +151,13 @@ class SelectHelper {
         /*
          * Select2 necesita una opción vacía para mostrar correctamente
          * el placeholder en selects simples.
+         *
+         * Los selects múltiples no necesitan esta opción vacía.
          */
-        if (settings.placeholder) {
-            control.append(new Option("", "", false, false));
+        if (settings.placeholder && !isMultiple) {
+            control.append(
+                new Option("", "", false, false)
+            );
         }
 
         control.select2({
@@ -138,6 +171,16 @@ class SelectHelper {
             data: selectData
         });
 
+        /*
+         * El comportamiento excluyente solo se registra cuando:
+         *
+         * 1. El select permite múltiples valores.
+         * 2. Se activó allOption.
+         */
+        if (isMultiple && settings.allOption) {
+            this.bindMultiAllOptionBehavior(control);
+        }
+
         const defaultValue = this.resolveDefaultValue(
             settings.defaultValue,
             selectData
@@ -145,7 +188,9 @@ class SelectHelper {
 
         /*
          * Solamente asignamos un valor cuando realmente fue especificado.
-         * Así no eliminamos accidentalmente una selección incluida en data.
+         *
+         * Así no eliminamos accidentalmente una selección incluida
+         * en los datos.
          */
         if (defaultValue !== null && defaultValue !== "") {
             control.val(defaultValue);
@@ -153,6 +198,12 @@ class SelectHelper {
             control.val(null);
         }
 
+        /*
+         * change ejecuta también los listeners externos del select.
+         *
+         * change.select2 solamente actualiza visualmente el componente,
+         * sin ejecutar el resto de los listeners.
+         */
         if (settings.triggerChange) {
             control.trigger("change");
         } else {
@@ -163,11 +214,72 @@ class SelectHelper {
     }
 
     //-------------------------------------------------------------------------
+    // Comportamiento de selects múltiples
+    //-------------------------------------------------------------------------
+
+    /**
+     * Hace que la opción agregada mediante allOption sea excluyente
+     * cuando el select permite múltiples valores.
+     *
+     * Si se selecciona "TODAS", se eliminan las demás selecciones.
+     *
+     * Si "TODAS" ya estaba seleccionada y se elige otra opción,
+     * se deselecciona "TODAS".
+     *
+     * @param {JQuery} control
+     */
+    static bindMultiAllOptionBehavior(control) {
+        control.on(
+            "select2:selecting.selectHelperAllOption",
+            function (event) {
+                const selectedValue = String(
+                    event.params.args.data.id
+                );
+
+                /*
+                 * Si se selecciona "TODAS", dejamos únicamente
+                 * la opción con value 0.
+                 */
+                if (selectedValue === "0") {
+                    control
+                        .val(["0"])
+                        .trigger("change");
+
+                    return;
+                }
+
+                /*
+                 * Si se selecciona cualquier otra opción,
+                 * revisamos si "TODAS" estaba seleccionada.
+                 */
+                const allOption = control.find(
+                    'option[value="0"]'
+                );
+
+                if (allOption.prop("selected")) {
+                    /*
+                     * Deseleccionamos "TODAS".
+                     *
+                     * La nueva opción será seleccionada normalmente por
+                     * Select2 después de finalizar select2:selecting.
+                     */
+                    allOption.prop("selected", false);
+                    control.trigger("change");
+                }
+            }
+        );
+    }
+
+    //-------------------------------------------------------------------------
     // Métodos auxiliares
     //-------------------------------------------------------------------------
 
     /**
      * Obtiene el select desde ComponentHelper o mediante su id.
+     *
+     * @param {string} element
+     * @param {ComponentHelper|null} context
+     * @returns {JQuery}
      */
     static getControl(element, context) {
         if (context) {
@@ -179,6 +291,11 @@ class SelectHelper {
 
     /**
      * Obtiene el contenedor que utilizará dropdownParent.
+     *
+     * @param {string} element
+     * @param {ComponentHelper|null} context
+     * @param {string|JQuery|null} dropdownParent
+     * @returns {JQuery|null}
      */
     static getParent(element, context, dropdownParent) {
         if (dropdownParent) {
@@ -200,6 +317,10 @@ class SelectHelper {
 
     /**
      * Interpreta valores especiales como "first" y "last".
+     *
+     * @param {*} defaultValue
+     * @param {Array} data
+     * @returns {*}
      */
     static resolveDefaultValue(defaultValue, data) {
         if (!data.length) {
