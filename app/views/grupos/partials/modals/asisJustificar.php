@@ -53,7 +53,7 @@
 				</div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary btn-size" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-secondary btn-size" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-outline-success btn-size" data-container="button" data-action="save">
                     <span class="spinner-load">Guardar</span>
                     <span class="spinner-loading spinner-border spinner-border-sm" style="display: none;"></span>

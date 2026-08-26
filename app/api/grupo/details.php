@@ -1,5 +1,5 @@
 <?php
-require_once "../../../../bootstrap.php";
+require_once "../../../bootstrap.php";
 
 ExceptionHandler::register();
 $request = Request::capture();
@@ -34,7 +34,7 @@ $detalle = $db->first(
             gpo.token,
             gpo.nombre 'grupo_nombre',
             td.nombre 'diplomado_nombre',
-            count(cls.id) 'clases',
+            count(gpo_alm.id) 'alumnos',
             gpo.fecha_inicio,
             gpo.hora_inicio,
             gpo.tolerancia_antes,
@@ -46,8 +46,8 @@ $detalle = $db->first(
             gpo.diplomado_id = td.id
         inner join tbl_usuarios tu on
             td.usuario_creacion_id = tu.id
-        left join tbl_clase cls on
-        	gpo.id = cls.grupo_id
+        left join rel_grupo_alumno gpo_alm on
+        	gpo.id = gpo_alm.grupo_id and gpo_alm.status_id = 1
         where gpo.status_id = 1 and gpo.id = ?
         group by gpo.id
     ",

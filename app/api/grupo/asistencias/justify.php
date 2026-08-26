@@ -68,6 +68,25 @@ if (!$claseId)
 $previa = $db->value(
     "
     select 
+        asis.id
+    from tbl_asistencia asis
+    where 
+        asis.alumno_id = ? and
+        asis.clase_id = ? and
+        asis.status_id = 1
+    ",
+    [
+        $alumno,
+        $clase
+    ]
+);
+
+if ($previa)
+    ApiResponse::conflict("El alumno tiene una asistencia registrada en la clase seleccionada.");
+
+$previa = $db->value(
+    "
+    select 
         jus.id
     from tbl_justificacion jus
     where 

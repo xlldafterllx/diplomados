@@ -34,7 +34,7 @@ $detalle = $db->first(
             gpo.token,
             gpo.nombre 'grupo_nombre',
             td.nombre 'diplomado_nombre',
-            count(gpoalm.id) 'alumnos',
+            count(gpo_alm.id) 'alumnos',
             gpo.fecha_inicio,
             gpo.hora_inicio,
             gpo.tolerancia_antes,
@@ -46,8 +46,8 @@ $detalle = $db->first(
             gpo.diplomado_id = td.id
         inner join tbl_usuarios tu on
             td.usuario_creacion_id = tu.id
-        left join rel_grupo_alumno gpoalm on
-        	gpo.id = gpoalm.grupo_id
+        left join rel_grupo_alumno gpo_alm on
+        	gpo.id = gpo_alm.grupo_id and gpo_alm.status_id = 1
         where gpo.status_id = 1 and gpo.id = ?
         group by gpo.id
     ",
@@ -120,7 +120,9 @@ $asistencias = $db->select(
                     then 'ASISTENCIA'
                 when jus.id is not null
                     then 'JUSTIFICADA'
-                when timestamp(cls.fecha, '23:59:59') > now()
+                when (
+                		case when cls.tolerancia_despues is null then timestamp(cls.fecha, '23:59:59') else date_add(timestamp(cls.fecha, cls.hora_inicio), interval cls.tolerancia_despues minute) end
+                	) > now()
                     then 'PENDIENTE'
                 else 'FALTA'
             end as estado

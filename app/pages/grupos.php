@@ -12,6 +12,10 @@ $page = [
         ],
         "footer" => [
             ...Config::get("assets.footer-datatables"),
+            "app/views/grupos/js/grupos.js",
+            "app/views/grupos/js/alumnos.js",
+            "app/views/grupos/js/clases.js",
+            "app/views/grupos/js/asistencias.js",
             "app/views/grupos/js/index.js"
         ]
     ]
