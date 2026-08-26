@@ -44,7 +44,9 @@ $asistencias = $db->select(
                     then 'ASISTENCIA'
                 when jus.id is not null
                     then 'JUSTIFICADA'
-                when date_add(timestamp(cls.fecha, cls.hora_inicio), interval coalesce(cls.tolerancia_despues, 0) minute) > now()                
+                when (
+                		case when cls.tolerancia_despues is null then timestamp(cls.fecha, '23:59:59') else date_add(timestamp(cls.fecha, cls.hora_inicio), interval cls.tolerancia_despues minute) end
+                	) > now()
                     then 'PENDIENTE'
                 else 'FALTA'
             end as estado
