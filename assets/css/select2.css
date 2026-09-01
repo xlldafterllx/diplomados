@@ -42,6 +42,14 @@
   border-color: var(--bs-border-color) !important;
 }
 
+[data-bs-theme="dark"]
+  .select2-container--bootstrap-5
+  .select2-selection--multiple
+  .select2-selection__rendered
+  .select2-selection__choice {
+  color: var(--bs-body-color) !important;
+}
+
 [data-bs-theme="dark"] .select2-results__option--highlighted {
   color: var(--bs-body-bg) !important;
   background-color: var(--bs-border-color) !important;
