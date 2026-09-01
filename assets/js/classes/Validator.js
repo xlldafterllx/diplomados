@@ -104,10 +104,10 @@ class Validator {
                 "Este campo debe contener un archivo.",
 
             mimetype:
-                "El archivo no tiene un formato permitido.",
+                "El archivo no tiene un formato permitido (:value).",
 
             maxFileSize:
-                "El archivo excede el tamaño permitido.",
+                "El archivo excede el tamaño permitido (:value MB).",
 
             min:
                 "Este campo debe contener al menos :value caracteres.",
@@ -811,24 +811,29 @@ class Validator {
         const file = this.value(field);
 
         if (!(file instanceof File)) {
-            return this.fail(
-                field,
-                "mimetype"
-            );
+            return this.fail(field, "mimetype");
         }
 
-        const allowed = String(
-            parameter ?? ""
-        )
+        const allowed = String(parameter ?? "")
             .split(",")
             .map(value => value.trim())
             .filter(Boolean);
+
+        const allowedFormats = [...new Set(
+            allowed.map(mimetype => {
+                const subtype = mimetype.split("/").pop();
+                return subtype.replace(/^x-/, "");
+            })
+        )].join(", ");
 
         return allowed.includes(file.type)
             ? true
             : this.fail(
                 field,
-                "mimetype"
+                "mimetype",
+                {
+                    ":value": allowedFormats
+                }
             );
     }
 
@@ -849,7 +854,10 @@ class Validator {
             ? true
             : this.fail(
                 field,
-                "maxFileSize"
+                "maxFileSize",
+                {
+                    ":value": parameter / 1048576
+                }
             );
     }
 
