@@ -63,6 +63,7 @@ return [
         "assets/vendor/datatables/css/buttons.bootstrap5.min.css",
         "assets/vendor/datatables/css/fixedColumns.bootstrap5.min.css",
         "assets/vendor/datatables/css/fixedHeader.bootstrap5.min.css",
+        "assets/vendor/datatables/css/dataTables.dateTime.min.css",
         //"assets/vendor/datatables/css/keyTable.bootstrap5.min.css",
         "assets/vendor/datatables/css/responsive.bootstrap5.min.css",
         "assets/vendor/datatables/css/columnControl.bootstrap5.min.css",
