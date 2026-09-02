@@ -1,6 +1,9 @@
 app/config/database.php
 initial_configuration.txt
 
+# Temporal files (To be deleted)
+*.old
+
 # Git files
 *.md
 
