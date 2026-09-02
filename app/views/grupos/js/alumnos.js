@@ -222,15 +222,34 @@ function initializeTableAlumnos() {
             tableAlumnosData,
             fixedColumns: { left: 0, right: 1 },
             order: [{ name: "nombre", dir: "asc" }],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            columnControl: [
+                [
+                    "orderAsc",
+                    "orderDesc",
+                    "spacer",
+                    "orderAddAsc",
+                    "orderAddDesc",
+                    "orderRemove",
+                    "spacer",
+                    "orderClear"
+                ],
+                "searchDropdown"
+            ],
             columnDefs: [
-                { targets: "actions:name", width: 1, orderable: false, className: "notexport" },
+                { targets: "actions:name", width: 1, orderable: false, className: "notexport", columnControl: [] },
                 { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
                 { targets: "nombre:name", className: "dt-body-nowrap" },
-                { targets: "institucion:name", className: "dt-col-large" }
+                { targets: "institucion:name", className: "dt-col-large" },
+                { targets: "inscrito:name", render: DataTable.render.date() }
             ],
             ...TableHelper.exportButtons({
                 title: "Alumnos",
-                filename: "alumnos_" + moment(TODAY).format(formatDateExport)
+                filename: "alumnos_" + moment(TODAY).format(formatDateExport),
+                buttons: ["ccSearchClear"]
             }),
             exportOptions: {
                 columns: ":not(.notexport)"

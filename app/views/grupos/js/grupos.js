@@ -204,14 +204,34 @@ function initializeTableGrupos() {
             tableGruposData,
             fixedColumns: { left: 0, right: 1 },
             order: [{ name: "fecha_creacion", dir: "desc" }],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            columnControl: [
+                //"order",
+                [
+                    "orderAsc",
+                    "orderDesc",
+                    "spacer",
+                    "orderAddAsc",
+                    "orderAddDesc",
+                    "orderRemove",
+                    "spacer",
+                    "orderClear"
+                ],
+                "searchDropdown"
+            ],
             columnDefs: [
-                { targets: "actions:name", width: 1, orderable: false, className: "notexport" },
+                { targets: "actions:name", width: 1, orderable: false, className: "notexport", columnControl: [] },
                 { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
-                { targets: ["diplomado_nombre:name", "fecha_creacion:name"], className: "dt-body-nowrap" }
+                { targets: ["diplomado_nombre:name", "fecha_creacion:name"], className: "dt-body-nowrap" },
+                { targets: "fecha_creacion:name", render: DataTable.render.date() }
             ],
             ...TableHelper.exportButtons({
                 title: "Grupos",
-                filename: "grupos_" + moment(TODAY).format(formatDateExport)
+                filename: "grupos_" + moment(TODAY).format(formatDateExport),
+                buttons: ["ccSearchClear"]
             }),
             exportOptions: {
                 columns: ":not(.notexport)"

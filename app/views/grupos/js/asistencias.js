@@ -60,22 +60,29 @@ function updateTableAsistencias(data) {
             rebuild: true,
             columns,
             data: alumnos,
-            footer: {
-                combined: false
+            footer: { combined: false },
+            fixedColumns: { left: 1, right: 1 },
+            order: [{ name: "alumno", dir: "asc" }],
+            ordering: {
+                indicators: false,
+                handler: false
             },
-            fixedColumns: {
-                left: 1,
-                right: 1
-            },
-            order: [
-                {
-                    name: "alumno",
-                    dir: "asc"
-                }
+            columnControl: [
+                [
+                    "orderAsc",
+                    "orderDesc",
+                    "spacer",
+                    "orderAddAsc",
+                    "orderAddDesc",
+                    "orderRemove",
+                    "spacer",
+                    "orderClear"
+                ],
+                "searchDropdown"
             ],
             columnDefs: [
-                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left dt-foot-left" },
-                { targets: "alumno:name", className: "dt-col-medium" },
+                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left dt-foot-left", columnControl: [] },
+                { targets: "alumno:name", className: "dt-col-medium" }
             ],
             footerCallback: function () {
                 renderAsistenciasFooter(
@@ -88,6 +95,7 @@ function updateTableAsistencias(data) {
                 title: "Asistencias",
                 filename: "asistencias",
                 buttons: [
+                    //"ccSearchClear",
                     {
                         text: `<i class="fas fa-rotate"></i> Actualizar`,
                         action: function () {
@@ -214,7 +222,7 @@ function renderAsistenciasFooter(table, clases, totales) {
 
 async function formJustificar() {
     modalJustificar.clear();
-    
+
     try {
         Loader.show();
 
@@ -255,7 +263,7 @@ async function storeJustficacion() {
         ]);
 
         updateTableAsistencias(asistencias.data);
-        
+
         Toast.fire({
             icon: "success",
             title: justificar.data
@@ -274,10 +282,10 @@ async function storeJustficacion() {
 }
 
 async function loadAsistencias() {
-    
+
     try {
         Loader.show();
-        
+
         const result = await HttpClient.post(API_ASISTENCIAS_LIST, { "grupo": grupoData.getField("id").val() });
 
         updateTableAsistencias(result.data);

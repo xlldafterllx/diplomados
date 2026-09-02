@@ -246,13 +246,32 @@ function initializeTableDiplomados() {
             tableDiplomadosData,
             fixedColumns: { left: 0, right: 1 },
             order: [{ name: "nombre", dir: "asc" }],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            columnControl: [
+                [
+                    "orderAsc",
+                    "orderDesc",
+                    "spacer",
+                    "orderAddAsc",
+                    "orderAddDesc",
+                    "orderRemove",
+                    "spacer",
+                    "orderClear"
+                ],
+                "searchDropdown"
+            ],
             columnDefs: [
-                { targets: "actions:name", width: 1, orderable: false, className: "notexport" },
-                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" }
+                { targets: "actions:name", width: 1, orderable: false, className: "notexport", columnControl: [] },
+                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
+                { targets: "fecha_creacion:name", render: DataTable.render.date() }
             ],
             ...TableHelper.exportButtons({
                 title: "Diplomados",
-                filename: "diplomados_" + moment(TODAY).format(formatDateExport)
+                filename: "diplomados_" + moment(TODAY).format(formatDateExport),
+                buttons: ["ccSearchClear"]
             }),
             exportOptions: {
                 columns: ":not(.notexport)"
@@ -319,13 +338,32 @@ function initializeTableModulos() {
             tableModulosData,
             fixedColumns: { left: 0, right: 1 },
             order: [{ name: "orden", dir: "asc" }],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            columnControl: [
+                [
+                    "orderAsc",
+                    "orderDesc",
+                    "spacer",
+                    "orderAddAsc",
+                    "orderAddDesc",
+                    "orderRemove",
+                    "spacer",
+                    "orderClear"
+                ],
+                "searchDropdown"
+            ],
             columnDefs: [
-                { targets: "actions:name", width: 1, orderable: false, className: "notexport" },
-                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" }
+                { targets: "actions:name", width: 1, orderable: false, className: "notexport", columnControl: [] },
+                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
+                { targets: "fecha_creacion:name", render: DataTable.render.date() }
             ],
             ...TableHelper.exportButtons({
                 title: "Modulos",
-                filename: "modulos_" + moment(TODAY).format(formatDateExport)
+                filename: "modulos_" + moment(TODAY).format(formatDateExport),
+                buttons: ["ccSearchClear"]
             }),
             exportOptions: {
                 columns: ":not(.notexport)"
@@ -388,13 +426,32 @@ function initializeTableActividades() {
             tableActividadesData,
             fixedColumns: { left: 0, right: 1 },
             order: [{ name: "orden", dir: "asc" }],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            columnControl: [
+                [
+                    "orderAsc",
+                    "orderDesc",
+                    "spacer",
+                    "orderAddAsc",
+                    "orderAddDesc",
+                    "orderRemove",
+                    "spacer",
+                    "orderClear"
+                ],
+                "searchDropdown"
+            ],
             columnDefs: [
-                { targets: "actions:name", width: 1, orderable: false, className: "notexport" },
-                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" }
+                { targets: "actions:name", width: 1, orderable: false, className: "notexport", columnControl: [] },
+                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
+                { targets: "fecha_creacion:name", render: DataTable.render.date() }
             ],
             ...TableHelper.exportButtons({
                 title: "Actividades",
-                filename: "actividades_" + moment(TODAY).format(formatDateExport)
+                filename: "actividades_" + moment(TODAY).format(formatDateExport),
+                buttons: ["ccSearchClear"]
             }),
             exportOptions: {
                 columns: ":not(.notexport)"
@@ -450,7 +507,7 @@ async function loadModulos(diplomado, nombre) {
             title: "Ocurrió un error",
             html: error.message
         });
-    } finally {        
+    } finally {
         Loader.hide();
     }
 }
@@ -479,7 +536,7 @@ async function loadActividades(diplomado, modulo, nombre) {
             title: "Ocurrió un error",
             html: error.message
         });
-    } finally {        
+    } finally {
         Loader.hide();
     }
 }
@@ -645,7 +702,7 @@ async function editDiplomado(diplomado) {
 
         const result = await HttpClient.post(diplomadosEditApi, { "diplomado": diplomado });
         modal.getField("nombre").val(result.data);
-        
+
         modal.open();
     } catch (error) {
         console.log(error.response ?? error);
@@ -673,7 +730,7 @@ async function editModulo(diplomado, modulo) {
 
         const result = await HttpClient.post(modulosEditApi, { "diplomado": diplomado, "modulo": modulo });
         modal.getField("nombre").val(result.data);
-        
+
         modal.open();
     } catch (error) {
         console.log(error.response ?? error);
@@ -702,7 +759,7 @@ async function editActividad(diplomado, modulo, actividad) {
 
         const result = await HttpClient.post(actividadesEditApi, { "diplomado": diplomado, "modulo": modulo, "actividad": actividad });
         modal.getField("nombre").val(result.data);
-        
+
         modal.open();
     } catch (error) {
         console.log(error.response ?? error);

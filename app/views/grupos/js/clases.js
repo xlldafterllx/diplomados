@@ -281,13 +281,32 @@ function initializeTableClases() {
             tableClasesData,
             fixedColumns: { left: 0, right: 1 },
             order: [{ name: "fecha", dir: "asc" }],
+            ordering: {
+                indicators: false,
+                handler: false
+            },
+            columnControl: [
+                [
+                    "orderAsc",
+                    "orderDesc",
+                    "spacer",
+                    "orderAddAsc",
+                    "orderAddDesc",
+                    "orderRemove",
+                    "spacer",
+                    "orderClear"
+                ],
+                "searchDropdown"
+            ],
             columnDefs: [
-                { targets: "actions:name", width: 1, orderable: false, className: "notexport" },
-                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" }
+                { targets: "actions:name", width: 1, orderable: false, className: "notexport", columnControl: [] },
+                { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
+                { targets: "fecha:name", render: DataTable.render.date() }
             ],
             ...TableHelper.exportButtons({
                 title: "Clases",
-                filename: "clases_" + moment(TODAY).format(formatDateExport)
+                filename: "clases_" + moment(TODAY).format(formatDateExport),
+                buttons: ["ccSearchClear"]
             }),
             exportOptions: {
                 columns: ":not(.notexport)"
