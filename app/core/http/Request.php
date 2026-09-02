@@ -109,19 +109,6 @@ class Request
         $this->files = $this->normalizeFiles($_FILES);
     }
 
-    /*private function getNested(array $data, string $key, $default = null)
-    {
-        foreach (explode(".", $key) as $segment) {
-            if (!is_array($data) || !array_key_exists($segment, $data)) {
-                return $default;
-            }
-
-            $data = $data[$segment];
-        }
-
-        return $data;
-    }*/
-
     private function normalizeFiles(array $files): array
     {
         $normalized = [];
@@ -134,7 +121,6 @@ class Request
 
             $normalized[$field] = $this->normalizeUploadedFiles($fileData);
         }
-
         return $normalized;
     }
 
@@ -345,7 +331,7 @@ class Request
             return $this->files;
         }
 
-        $file = ArrayHelper::get($this->data, $key);
+        $file = ArrayHelper::get($this->files, $key);
         //$file = $this->getNested($this->files, $key);
 
         return $file instanceof UploadedFile
