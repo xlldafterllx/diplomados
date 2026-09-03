@@ -16,7 +16,7 @@ $validator = Validator::make(
 
 if ($validator->fails())
     ApiResponse::unprocessableContent(
-        "Uno o varios campos no cumplen con el formato correspondiente",
+        array_values($validator->errors())[0][0],
         [
             "message" => "Unprocessable Content",
             "errors" => $validator->errors()
@@ -32,7 +32,7 @@ $nombre = $db->value(
         select
             td.nombre
         from tbl_diplomado td
-        where td.status_id = 1 and td.id = ?
+        where td.status_id = 1 and td.id = ?;
     ",
     [
         $diplomado

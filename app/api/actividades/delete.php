@@ -18,7 +18,7 @@ $validator = Validator::make(
 
 if ($validator->fails())
     ApiResponse::unprocessableContent(
-        "Uno o varios campos no cumplen con el formato correspondiente",
+        array_values($validator->errors())[0][0],
         [
             "message" => "Unprocessable Content",
             "errors" => $validator->errors()
@@ -31,21 +31,32 @@ $actividad = $request->integer("actividad");
 
 $db = ConnectionManager::connection();
 
-$db->update(
-    "
-    update tbl_actividad ta
-    set
-        status_id = -1,
-        usuario_eliminacion_id = ?,
-        fecha_eliminacion = current_timestamp()
-    where ta.status_id = 1 and ta.diplomado_id = ? and ta.modulo_id = ? and ta.id = ?
-    ",
-    [
-        Session::get("auth.id"),
-        $diplomado,
-        $modulo,
-        $actividad
-    ]
-);
+$db->transaction(function (Connection $db) use ($diplomado, $modulo, $actividad) {
+    $db->update(
+        "
+            update tbl_actividad ta
+            set
+                status_id = -1,
+                usuario_eliminacion_id = ?,
+                fecha_eliminacion = current_timestamp()
+            where ta.status_id = 1 and ta.diplomado_id = ? and ta.modulo_id = ? and ta.id = ?;
+        ",
+        [
+            Session::get("auth.id"),
+            $diplomado,
+            $modulo,
+            $actividad
+        ]
+    );
 
-ApiResponse::success();
+    AuditLogger::log(
+        $db,
+        action: "actividad.delete",
+        entity: "actividad",
+        entityId: $actividad,
+        data: [],
+        result: "success"
+    );
+});
+
+ApiResponse::success(null, "Actividad eliminada.");

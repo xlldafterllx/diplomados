@@ -16,7 +16,7 @@ $validator = Validator::make(
 
 if ($validator->fails())
     ApiResponse::unprocessableContent(
-        "Uno o varios campos no cumplen con el formato correspondiente",
+        array_values($validator->errors())[0][0],
         [
             "message" => "Unprocessable Content",
             "errors" => $validator->errors()
@@ -27,19 +27,30 @@ $diplomado = $request->integer("diplomado");
 
 $db = ConnectionManager::connection();
 
-$db->update(
-    "
-    update tbl_diplomado td
-    set
-        status_id = -1,
-        usuario_eliminacion_id = ?,
-        fecha_eliminacion = current_timestamp()
-    where td.status_id = 1 and td.id = ?
-    ",
-    [
-        Session::get("auth.id"),
-        $diplomado
-    ]
-);
+$db->transaction(function (Connection $db) use ($diplomado) {
+    $db->update(
+        "
+            update tbl_diplomado td
+            set
+                status_id = -1,
+                usuario_eliminacion_id = ?,
+                fecha_eliminacion = current_timestamp()
+            where td.status_id = 1 and td.id = ?;
+        ",
+        [
+            Session::get("auth.id"),
+            $diplomado
+        ]
+    );
 
-ApiResponse::success();
+    AuditLogger::log(
+        $db,
+        action: "diplomado.delete",
+        entity: "diplomado",
+        entityId: $diplomado,
+        data: [],
+        result: "success"
+    );
+});
+
+ApiResponse::success(null, "Diplomado eliminado.");

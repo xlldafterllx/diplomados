@@ -18,7 +18,7 @@ $validator = Validator::make(
 
 if ($validator->fails())
     ApiResponse::unprocessableContent(
-        "Uno o varios campos no cumplen con el formato correspondiente",
+        array_values($validator->errors())[0][0],
         [
             "message" => "Unprocessable Content",
             "errors" => $validator->errors()
@@ -39,38 +39,87 @@ $exist = $db->first(
         from tbl_modulo tm
         where
             tm.status_id = 1 and
-            tm.id <> ? and
             tm.diplomado_id = ? and
-            tm.nombre = ?
+            tm.id <> ? and
+            tm.nombre = ?;
     ",
     [
-        $modulo,
         $diplomado,
+        $modulo,
         $nombre
     ]
 );
 
-if ($exist)
-    ApiResponse::conflict("Ya existe un módulo con el mismo nombre.", [
-        "id" => $exist["id"],
-        "nombre" => $exist["nombre"]
-    ]);
+if ($exist) {
+    $msg = "Ya existe un módulo con el mismo nombre.";
 
-$db->update(
+    AuditLogger::log(
+        $db,
+        action: "modulo.update",
+        entity: "modulo",
+        entityId: null,
+        data: [
+            "mensaje" => $msg,
+            "id" => $exist["id"],
+            "nombre" => $exist["nombre"]
+        ],
+        result: "rejected"
+    );
+
+    ApiResponse::conflict($msg);
+}
+
+$anterior = $db->first(
     "
-    update tbl_modulo tm
-    set
-        nombre = ?,
-        usuario_actualizacion_id = ?,
-        fecha_actualizacion = current_timestamp()
-    where tm.status_id = 1 and tm.diplomado_id = ? and tm.id = ?
+        select
+            tm.nombre
+        from tbl_modulo tm
+        where
+            tm.status_id = 1 and
+            tm.diplomado_id = ? and
+            tm.id = ?
     ",
     [
-        $nombre,
-        Session::get("auth.id"),
         $diplomado,
         $modulo
     ]
 );
 
-ApiResponse::success();
+$nuevo = [
+    "nombre" => $nombre
+];
+
+$cambios = AuditLogger::obtenerCambios($anterior, $nuevo);
+
+$db->transaction(function (Connection $db) use ($diplomado, $modulo, $nombre, $cambios) {
+    $db->update(
+        "
+            update tbl_modulo tm
+            set
+                nombre = ?,
+                usuario_actualizacion_id = ?,
+                fecha_actualizacion = current_timestamp()
+            where tm.status_id = 1 and tm.diplomado_id = ? and tm.id = ?;
+        ",
+        [
+            $nombre,
+            Session::get("auth.id"),
+            $diplomado,
+            $modulo
+        ]
+    );
+
+    if (!empty($cambios))
+        AuditLogger::log(
+            $db,
+            action: "modulo.update",
+            entity: "modulo",
+            entityId: $modulo,
+            data: [
+                "cambios" => $cambios
+            ],
+            result: "success"
+        );
+});
+
+ApiResponse::success(null, "Módulo actualizado.");

@@ -16,7 +16,7 @@ $validator = Validator::make(
 
 if ($validator->fails())
     ApiResponse::unprocessableContent(
-        "Uno o varios campos no cumplen con el formato correspondiente",
+        array_values($validator->errors())[0][0],
         [
             "message" => "Unprocessable Content",
             "errors" => $validator->errors()
@@ -35,35 +35,59 @@ $exist = $db->first(
         from tbl_diplomado td
         where
             td.status_id = 1 and
-            td.nombre = ?
+            td.nombre = ?;
     ",
     [
         $nombre
     ]
 );
 
-if ($exist)
-    ApiResponse::conflict("Ya existe un diplomado con el mismo nombre.", [
-        "id" => $exist["id"],
-        "nombre" => $exist["nombre"]
-    ]);
+if ($exist) {
+    $msg = "Ya existe un diplomado con el mismo nombre.";
 
-$db->insert(
-    "
-        insert into tbl_diplomado
-        (
-            nombre,
-            usuario_creacion_id
-        )
-        values
-        (
-            ?, ?
-        )
-    ",
-    [
-        $nombre,
-        Session::get("auth.id")
-    ]
-);
+    AuditLogger::log(
+        $db,
+        action: "diplomado.create",
+        entity: "diplomado",
+        entityId: null,
+        data: [
+            "mensaje" => $msg,
+            "id" => $exist["id"],
+            "nombre" => $exist["nombre"]
+        ],
+        result: "rejected"
+    );
 
-ApiResponse::created();
+    ApiResponse::conflict($msg);
+}
+
+$db->transaction(function (Connection $db) use ($nombre) {
+    $id = $db->insert(
+        "
+            insert into tbl_diplomado
+            (
+                nombre,
+                usuario_creacion_id
+            ) values (
+                ?, ?
+            );
+        ",
+        [
+            $nombre,
+            Session::get("auth.id")
+        ]
+    );
+
+    AuditLogger::log(
+        $db,
+        action: "diplomado.create",
+        entity: "diplomado",
+        entityId: $id,
+        data: [
+            "nombre" => $nombre
+        ],
+        result: "success"
+    );
+});
+
+ApiResponse::created(null, "Diplomado creado.");

@@ -36,7 +36,7 @@ $nombre = $db->value(
         select
             ta.nombre
         from tbl_actividad ta
-        where ta.status_id = 1 and ta.diplomado_id = ? and ta.modulo_id = ? and ta.id = ?
+        where ta.status_id = 1 and ta.diplomado_id = ? and ta.modulo_id = ? and ta.id = ?;
     ",
     [
         $diplomado,

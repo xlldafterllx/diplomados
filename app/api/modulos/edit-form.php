@@ -34,7 +34,7 @@ $nombre = $db->value(
         select
             tm.nombre
         from tbl_modulo tm
-        where tm.status_id = 1 and tm.diplomado_id = ? and tm.id = ?
+        where tm.status_id = 1 and tm.diplomado_id = ? and tm.id = ?;
     ",
     [
         $diplomado,

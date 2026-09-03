@@ -19,7 +19,7 @@ $validator = Validator::make(
 
 if ($validator->fails())
     ApiResponse::unprocessableContent(
-        "Uno o varios campos no cumplen con el formato correspondiente",
+        array_values($validator->errors())[0][0],
         [
             "message" => "Unprocessable Content",
             "errors" => $validator->errors()
@@ -41,41 +41,92 @@ $exist = $db->first(
         from tbl_actividad ta
         where
             ta.status_id = 1 and
-            ta.id <> ? and
             ta.diplomado_id = ? and
             ta.modulo_id = ? and
-            ta.nombre = ?
+            ta.id <> ? and
+            ta.nombre = ?;
     ",
     [
-        $actividad,
         $diplomado,
         $modulo,
+        $actividad,
         $nombre
     ]
 );
 
-if ($exist)
-    ApiResponse::conflict("Ya existe una actividad con el mismo nombre.", [
-        "id" => $exist["id"],
-        "nombre" => $exist["nombre"]
-    ]);
+if ($exist) {
+    $msg = "Ya existe una actividad con el mismo nombre.";
 
-$db->update(
+    AuditLogger::log(
+        $db,
+        action: "actividad.update",
+        entity: "actividad",
+        entityId: null,
+        data: [
+            "mensaje" => $msg,
+            "id" => $exist["id"],
+            "nombre" => $exist["nombre"]
+        ],
+        result: "rejected"
+    );
+
+    ApiResponse::conflict($msg);
+}
+
+$anterior = $db->first(
     "
-    update tbl_actividad ta
-    set
-        nombre = ?,
-        usuario_actualizacion_id = ?,
-        fecha_actualizacion = current_timestamp()
-    where ta.status_id = 1 and ta.diplomado_id = ? and ta.modulo_id = ? and ta.id = ?
+        select
+            ta.nombre
+        from tbl_actividad ta
+        where
+            ta.status_id = 1 and
+            ta.diplomado_id = ? and
+            ta.modulo_id = ? and
+            ta.id = ?
     ",
     [
-        $nombre,
-        Session::get("auth.id"),
         $diplomado,
         $modulo,
         $actividad
     ]
 );
 
-ApiResponse::success();
+$nuevo = [
+    "nombre" => $nombre
+];
+
+$cambios = AuditLogger::obtenerCambios($anterior, $nuevo);
+
+$db->transaction(function (Connection $db) use ($diplomado, $modulo, $actividad, $nombre, $cambios) {
+    $db->update(
+        "
+            update tbl_actividad ta
+            set
+                nombre = ?,
+                usuario_actualizacion_id = ?,
+                fecha_actualizacion = current_timestamp()
+            where ta.status_id = 1 and ta.diplomado_id = ? and ta.modulo_id = ? and ta.id = ?;
+        ",
+        [
+            $nombre,
+            Session::get("auth.id"),
+            $diplomado,
+            $modulo,
+            $actividad
+        ]
+    );
+
+    if (!empty($cambios))
+        AuditLogger::log(
+            $db,
+            action: "actividad.update",
+            entity: "actividad",
+            entityId: $actividad,
+            data: [
+                "cambios" => $cambios
+            ],
+            result: "success"
+        );
+});
+
+ApiResponse::success(null, "Actividad actualizada.");

@@ -1,20 +1,20 @@
-const diplomadosListApi = API_URL + "diplomados/list.php";
-const diplomadosStoreApi = API_URL + "diplomados/store.php";
-const diplomadosEditApi = API_URL + "diplomados/edit-form.php";
-const diplomadosUpdateApi = API_URL + "diplomados/update.php";
-const diplomadosDeleteApi = API_URL + "diplomados/delete.php";
+const API_DIPLOMADOS_LIST = API_URL + "diplomados/list.php";
+const API_DIPLOMADOS_STORE = API_URL + "diplomados/store.php";
+const API_DIPLOMADOS_EDIT = API_URL + "diplomados/edit-form.php";
+const API_DIPLOMADOS_UPDATE = API_URL + "diplomados/update.php";
+const API_DIPLOMADOS_DELETE = API_URL + "diplomados/delete.php";
 
-const modulosListApi = API_URL + "modulos/list.php";
-const modulosStoreApi = API_URL + "modulos/store.php";
-const modulosEditApi = API_URL + "modulos/edit-form.php";
-const modulosUpdateApi = API_URL + "modulos/update.php";
-const modulosDeleteApi = API_URL + "modulos/delete.php";
+const API_MODULOS_LIST = API_URL + "modulos/list.php";
+const API_MODULOS_STORE = API_URL + "modulos/store.php";
+const API_MODULOS_EDIT = API_URL + "modulos/edit-form.php";
+const API_MODULOS_UPDATE = API_URL + "modulos/update.php";
+const API_MODULOS_DELETE = API_URL + "modulos/delete.php";
 
-const actividadesListApi = API_URL + "actividades/list.php";
-const actividadesStoreApi = API_URL + "actividades/store.php";
-const actividadesEditApi = API_URL + "actividades/edit-form.php";
-const actividadesUpdateApi = API_URL + "actividades/update.php";
-const actividadesDeleteApi = API_URL + "actividades/delete.php";
+const API_ACTIVIDADES_LIST = API_URL + "actividades/list.php";
+const API_ACTIVIDADES_STORE = API_URL + "actividades/store.php";
+const API_ACTIVIDADES_EDIT = API_URL + "actividades/edit-form.php";
+const API_ACTIVIDADES_UPDATE = API_URL + "actividades/update.php";
+const API_ACTIVIDADES_DELETE = API_URL + "actividades/delete.php";
 
 // Components
 let diplomados;
@@ -26,11 +26,6 @@ let modal;
 let tableDiplomados;
 let tableModulos;
 let tableActividades;
-
-// Tables data
-let tableDiplomadosData = [];
-let tableModulosData = [];
-let tableActividadesData = [];
 
 // Rules
 const rules = {
@@ -65,32 +60,28 @@ function initializeComponents() {
 
 function initializeComponentActions() {
     diplomados.onAction("new", () => {
-        modal.clearValidation();
-        modal.getBind("title").text("Crear diplomado");
-        modal.getBind("name").text("Nombre del diplomado");
+        modal.clear();
+        modal.setBinds({ "title": "Crear diplomado", "name": "Nombre del diplomado" });
         modal.getContainer("button").attr("data-action", "save");
         modal.getContainer("value").attr("data-value", "diplomado");
-        modal.getField("nombre").val("");
         modal.open();
     });
 
     modulos.onAction("new", () => {
-        modal.clearValidation();
-        modal.getBind("title").text("Crear módulo");
-        modal.getBind("name").text("Nombre del módulo");
+        modal.clear();
+        modal.setData({ "diplomado": modulos.getField("diplomado").val() });
+        modal.setBinds({ "title": "Crear módulo", "name": "Nombre del módulo" });
         modal.getContainer("button").attr("data-action", "save");
         modal.getContainer("value").attr("data-value", "modulo");
-        modal.getField("nombre").val("");
         modal.open();
     });
 
     actividades.onAction("new", () => {
-        modal.clearValidation();
-        modal.getBind("title").text("Crear actividad");
-        modal.getBind("name").text("Nombre de la actividad");
+        modal.clear();
+        modal.setData({ "diplomado": actividades.getField("diplomado").val(), "modulo": actividades.getField("modulo").val() });
+        modal.setBinds({ "title": "Crear actividad", "name": "Nombre de la actividad" });
         modal.getContainer("button").attr("data-action", "save");
         modal.getContainer("value").attr("data-value", "actividad");
-        modal.getField("nombre").val("");
         modal.open();
     });
 
@@ -244,7 +235,6 @@ function initializeTableDiplomados() {
         "diplomados",
         {
             columns,
-            tableDiplomadosData,
             fixedColumns: { left: 0, right: 1 },
             order: [{ name: "nombre", dir: "asc" }],
             ordering: {
@@ -334,7 +324,6 @@ function initializeTableModulos() {
         "modulos",
         {
             columns,
-            tableModulosData,
             fixedColumns: { left: 0, right: 1 },
             order: [{ name: "orden", dir: "asc" }],
             ordering: {
@@ -420,7 +409,6 @@ function initializeTableActividades() {
         "actividades",
         {
             columns,
-            tableActividadesData,
             fixedColumns: { left: 0, right: 1 },
             order: [{ name: "orden", dir: "asc" }],
             ordering: {
@@ -460,10 +448,9 @@ async function loadDiplomados() {
         modulos.slideUp();
         actividades.slideUp();
 
-        const result = await HttpClient.post(diplomadosListApi, {});
-        tableDiplomadosData = result.data;
+        const { data: data } = await HttpClient.get(API_DIPLOMADOS_LIST);
 
-        TableHelper.update(tableDiplomados, tableDiplomadosData);
+        TableHelper.update(tableDiplomados, data);
     } catch (error) {
         console.log(error.response ?? error);
 
@@ -482,14 +469,12 @@ async function loadModulos(diplomado, nombre) {
         Loader.show();
         actividades.slideUp();
 
-        modulos.getBind("title").text("Módulos del diplomado " + nombre.toLowerCase());
+        modulos.setData({ diplomado: diplomado });
+        modulos.setBinds({ title: `Módulos de "${nombre}"` });
 
-        const result = await HttpClient.post(modulosListApi, { "diplomado": diplomado });
-        tableModulosData = result.data;
+        const { data: data } = await HttpClient.post(API_MODULOS_LIST, { "diplomado": diplomado });
 
-        TableHelper.update(tableModulos, tableModulosData);
-
-        modal.getField("diplomado").val(diplomado);
+        TableHelper.update(tableModulos, data);
 
         modulos.slideDown();
         scrollToElement(modulos);
@@ -510,86 +495,12 @@ async function loadActividades(diplomado, modulo, nombre) {
     try {
         Loader.show();
 
-        actividades.getBind("title").text("Actividades del módulo " + nombre.toLowerCase());
+        actividades.setData({ diplomado: diplomado, modulo: modulo });
+        actividades.setBinds({ title: `Actividades de "${nombre}"` });
 
-        const result = await HttpClient.post(actividadesListApi, { "diplomado": diplomado, "modulo": modulo });
-        tableActividadesData = result.data;
+        const { data: data } = await HttpClient.post(API_ACTIVIDADES_LIST, { "diplomado": diplomado, "modulo": modulo });
 
-        TableHelper.update(tableActividades, tableActividadesData);
-
-        modal.getField("diplomado").val(diplomado);
-        modal.getField("modulo").val(modulo);
-
-        actividades.slideDown();
-        scrollToElement(actividades);
-    } catch (error) {
-        console.log(error.response ?? error);
-
-        Toast.fire({
-            icon: "error",
-            title: "Ocurrió un error",
-            html: error.message
-        });
-    } finally {
-        Loader.hide();
-    }
-}
-
-async function updateDiplomadosData() {
-    try {
-        Loader.show();
-
-        const result = await HttpClient.post(diplomadosListApi, {});
-        tableDiplomadosData = result.data;
-
-        TableHelper.update(tableDiplomados, tableDiplomadosData);
-    } catch (error) {
-        console.log(error.response ?? error);
-
-        Toast.fire({
-            icon: "error",
-            title: "Ocurrió un error",
-            html: error.message
-        });
-    } finally {
-        Loader.hide();
-    }
-}
-
-async function updateModulosData(diplomado) {
-    try {
-        Loader.show();
-
-        const result = await HttpClient.post(modulosListApi, { "diplomado": diplomado });
-        tableModulosData = result.data;
-
-        TableHelper.update(tableModulos, tableModulosData);
-
-        modal.getField("diplomado").val(diplomado);
-    } catch (error) {
-        console.log(error.response ?? error);
-
-        Toast.fire({
-            icon: "error",
-            title: "Ocurrió un error",
-            html: error.message
-        });
-    } finally {
-        Loader.hide();
-    }
-}
-
-async function updateActividadesData(diplomado, modulo) {
-    try {
-        Loader.show();
-
-        const result = await HttpClient.post(actividadesListApi, { "diplomado": diplomado, "modulo": modulo });
-        tableActividadesData = result.data;
-
-        TableHelper.update(tableActividades, tableActividadesData);
-
-        modal.getField("diplomado").val(diplomado);
-        modal.getField("modulo").val(modulo);
+        TableHelper.update(tableActividades, data);
 
         actividades.slideDown();
         scrollToElement(actividades);
@@ -608,16 +519,19 @@ async function updateActividadesData(diplomado, modulo) {
 
 async function newDiplomado() {
     if (!validateFields(modal, rules)) return;
-    modal.buttonOff("save");
 
     try {
-        const result = await HttpClient.post(diplomadosStoreApi, modal.getData());
-        updateDiplomadosData();
+        Loader.show();
+
+        const { message: message } = await HttpClient.post(API_DIPLOMADOS_STORE, modal.getData());
+        const { data: data } = await HttpClient.get(API_DIPLOMADOS_LIST);
+
+        TableHelper.update(tableDiplomados, data);
         modal.close();
 
         Toast.fire({
             icon: "success",
-            title: "Diplomado creado"
+            title: message
         });
     } catch (error) {
         console.log(error.response ?? error);
@@ -628,7 +542,7 @@ async function newDiplomado() {
             html: error.message
         });
     } finally {
-        modal.buttonOn("save");
+        Loader.hide();
     }
 }
 
@@ -637,13 +551,15 @@ async function newModulo() {
     modal.buttonOff("save");
 
     try {
-        const result = await HttpClient.post(modulosStoreApi, modal.getData());
-        updateModulosData(modal.getField("diplomado").val());
+        const { message: message } = await HttpClient.post(API_MODULOS_STORE, modal.getData());
+        const { data: data } = await HttpClient.post(API_MODULOS_LIST, { "diplomado": modal.getField("diplomado").val() });
+
+        TableHelper.update(tableModulos, data);
         modal.close();
 
         Toast.fire({
             icon: "success",
-            title: "Módulo creado"
+            title: message
         });
     } catch (error) {
         console.log(error.response ?? error);
@@ -663,13 +579,15 @@ async function newActividad() {
     modal.buttonOff("save");
 
     try {
-        const result = await HttpClient.post(actividadesStoreApi, modal.getData());
-        updateActividadesData(modal.getField("diplomado").val(), modal.getField("modulo").val());
+        const { message: message } = await HttpClient.post(API_ACTIVIDADES_STORE, modal.getData());
+        const { data: data } = await HttpClient.post(API_ACTIVIDADES_LIST, { "diplomado": modal.getField("diplomado").val(), "modulo": modal.getField("modulo").val() });
+
+        TableHelper.update(tableActividades, data);
         modal.close();
 
         Toast.fire({
             icon: "success",
-            title: "Actividad creada"
+            title: message
         });
     } catch (error) {
         console.log(error.response ?? error);
@@ -688,14 +606,13 @@ async function editDiplomado(diplomado) {
     try {
         Loader.show();
 
-        modal.getBind("title").text("Editar diplomado");
-        modal.getBind("name").text("Nombre del diplomado");
+        const { data: data } = await HttpClient.post(API_DIPLOMADOS_EDIT, { "diplomado": diplomado });
+
+        modal.setData({ "nombre": data, "diplomado": diplomado });
+        modal.setBinds({ "title": "Editar diplomado", "name": "Nombre del diplomado" });
+
         modal.getContainer("button").attr("data-action", "update");
         modal.getContainer("value").attr("data-value", "diplomado");
-        modal.getField("diplomado").val(diplomado);
-
-        const result = await HttpClient.post(diplomadosEditApi, { "diplomado": diplomado });
-        modal.getField("nombre").val(result.data);
 
         modal.open();
     } catch (error) {
@@ -715,15 +632,13 @@ async function editModulo(diplomado, modulo) {
     try {
         Loader.show();
 
-        modal.getBind("title").text("Editar modulo");
-        modal.getBind("name").text("Nombre del modulo");
+        const { data: data } = await HttpClient.post(API_MODULOS_EDIT, { "diplomado": diplomado, "modulo": modulo });
+
+        modal.setData({ "nombre": data, "diplomado": diplomado, "modulo": modulo });
+        modal.setBinds({ "title": "Editar módulo", "name": "Nombre del módulo" });
+
         modal.getContainer("button").attr("data-action", "update");
         modal.getContainer("value").attr("data-value", "modulo");
-        modal.getField("diplomado").val(diplomado);
-        modal.getField("modulo").val(modulo);
-
-        const result = await HttpClient.post(modulosEditApi, { "diplomado": diplomado, "modulo": modulo });
-        modal.getField("nombre").val(result.data);
 
         modal.open();
     } catch (error) {
@@ -743,16 +658,13 @@ async function editActividad(diplomado, modulo, actividad) {
     try {
         Loader.show();
 
-        modal.getBind("title").text("Editar actividad");
-        modal.getBind("name").text("Nombre de la actividad");
+        const { data: data } = await HttpClient.post(API_ACTIVIDADES_EDIT, { "diplomado": diplomado, "modulo": modulo, "actividad": actividad });
+
+        modal.setData({ "nombre": data, "diplomado": diplomado, "modulo": modulo, "actividad": actividad });
+        modal.setBinds({ "title": "Editar actividad", "name": "Nombre de la actividad" });
+
         modal.getContainer("button").attr("data-action", "update");
         modal.getContainer("value").attr("data-value", "actividad");
-        modal.getField("diplomado").val(diplomado);
-        modal.getField("modulo").val(modulo);
-        modal.getField("actividad").val(actividad);
-
-        const result = await HttpClient.post(actividadesEditApi, { "diplomado": diplomado, "modulo": modulo, "actividad": actividad });
-        modal.getField("nombre").val(result.data);
 
         modal.open();
     } catch (error) {
@@ -770,16 +682,23 @@ async function editActividad(diplomado, modulo, actividad) {
 
 async function updateDiplomado() {
     if (!validateFields(modal, rules)) return;
-    modal.buttonOff("save");
 
     try {
-        const result = await HttpClient.post(diplomadosUpdateApi, modal.getData());
-        updateDiplomadosData();
+        Loader.show();
+
+        const { message: message } = await HttpClient.post(API_DIPLOMADOS_UPDATE, modal.getData());
+        const { data: data } = await HttpClient.get(API_DIPLOMADOS_LIST);
+
+        TableHelper.update(tableDiplomados, data);
+
+        if (modal.getField("diplomado").val() == modulos.getField("diplomado").val())
+            modulos.setBinds({ title: `Módulos de "${modal.getField("nombre").val()}"` });
+
         modal.close();
 
         Toast.fire({
             icon: "success",
-            title: "Diplomado actualizado"
+            title: message
         });
     } catch (error) {
         console.log(error.response ?? error);
@@ -790,7 +709,7 @@ async function updateDiplomado() {
             html: error.message
         });
     } finally {
-        modal.buttonOn("save");
+        Loader.hide();
     }
 }
 
@@ -799,13 +718,20 @@ async function updateModulo() {
     modal.buttonOff("save");
 
     try {
-        const result = await HttpClient.post(modulosUpdateApi, modal.getData());
-        updateModulosData(modal.getField("diplomado").val());
+        const { message: message } = await HttpClient.post(API_MODULOS_UPDATE, modal.getData());
+        const { data: data } = await HttpClient.post(API_MODULOS_LIST, { "diplomado": modal.getField("diplomado").val() });
+
+        TableHelper.update(tableModulos, data);
+
+        if (modal.getField("diplomado").val() == actividades.getField("diplomado").val() &&
+            modal.getField("modulo").val() == actividades.getField("modulo").val())
+            actividades.setBinds({ title: `Actividades de "${modal.getField("nombre").val()}"` });
+
         modal.close();
 
         Toast.fire({
             icon: "success",
-            title: "Módulo actualizado"
+            title: message
         });
     } catch (error) {
         console.log(error.response ?? error);
@@ -825,13 +751,15 @@ async function updateActividad() {
     modal.buttonOff("save");
 
     try {
-        const result = await HttpClient.post(actividadesUpdateApi, modal.getData());
-        updateActividadesData(modal.getField("diplomado").val(), modal.getField("modulo").val());
+        const { message: message } = await HttpClient.post(API_ACTIVIDADES_UPDATE, modal.getData());
+        const { data: data } = await HttpClient.post(API_ACTIVIDADES_LIST, { "diplomado": modal.getField("diplomado").val(), "modulo": modal.getField("modulo").val() });
+
+        TableHelper.update(tableActividades, data);
         modal.close();
 
         Toast.fire({
             icon: "success",
-            title: "Actividad actualizada"
+            title: message
         });
     } catch (error) {
         console.log(error.response ?? error);
@@ -859,14 +787,18 @@ function deleteDiplomado(diplomado, nombre) {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                const result = await HttpClient.post(diplomadosDeleteApi, { "diplomado": diplomado });
-                updateDiplomadosData();
+                Loader.show();
+
+                const { message: message } = await HttpClient.post(API_DIPLOMADOS_DELETE, { "diplomado": diplomado });
+                const { data: data } = await HttpClient.get(API_DIPLOMADOS_LIST);
+
+                TableHelper.update(tableDiplomados, data);
                 modulos.slideUp();
                 actividades.slideUp();
 
                 Toast.fire({
                     icon: "success",
-                    title: "Diplomado eliminado"
+                    title: message
                 });
             } catch (err) {
                 console.log(err.response);
@@ -876,6 +808,8 @@ function deleteDiplomado(diplomado, nombre) {
                     title: "Ocurrió un error",
                     html: err.message
                 });
+            } finally {
+                Loader.hide();
             }
         }
     });
@@ -894,13 +828,15 @@ function deleteModulo(diplomado, modulo, nombre) {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                const result = await HttpClient.post(modulosDeleteApi, { "diplomado": diplomado, "modulo": modulo });
-                updateModulosData(diplomado);
+                const { message: message } = await HttpClient.post(API_MODULOS_DELETE, { "diplomado": diplomado, "modulo": modulo });
+                const { data: data } = await HttpClient.post(API_MODULOS_LIST, { "diplomado": modal.getField("diplomado").val() });
+
+                TableHelper.update(tableModulos, data);
                 actividades.slideUp();
 
                 Toast.fire({
                     icon: "success",
-                    title: "Módulo eliminado"
+                    title: message
                 });
             } catch (err) {
                 console.log(err.response);
@@ -928,12 +864,14 @@ function deleteActividad(diplomado, modulo, actividad, nombre) {
     }).then(async (result) => {
         if (result.isConfirmed) {
             try {
-                const result = await HttpClient.post(actividadesDeleteApi, { "diplomado": diplomado, "modulo": modulo, "actividad": actividad });
-                updateActividadesData(diplomado, modulo);
+                const { message: message } = await HttpClient.post(API_ACTIVIDADES_DELETE, { "diplomado": diplomado, "modulo": modulo, "actividad": actividad });
+                const { data: data } = await HttpClient.post(API_ACTIVIDADES_LIST, { "diplomado": modal.getField("diplomado").val(), "modulo": modal.getField("modulo").val() });
+
+                TableHelper.update(tableActividades, data);
 
                 Toast.fire({
                     icon: "success",
-                    title: "Actividad eliminada"
+                    title: message
                 });
             } catch (err) {
                 console.log(err.response);

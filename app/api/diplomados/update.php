@@ -17,7 +17,7 @@ $validator = Validator::make(
 
 if ($validator->fails())
     ApiResponse::unprocessableContent(
-        "Uno o varios campos no cumplen con el formato correspondiente",
+        array_values($validator->errors())[0][0],
         [
             "message" => "Unprocessable Content",
             "errors" => $validator->errors()
@@ -38,7 +38,7 @@ $exist = $db->first(
         where
             td.status_id = 1 and
             td.id <> ? and
-            td.nombre = ?
+            td.nombre = ?;
     ",
     [
         $diplomado,
@@ -46,26 +46,73 @@ $exist = $db->first(
     ]
 );
 
-if ($exist)
-    ApiResponse::conflict("Ya existe un diplomado con el mismo nombre.", [
-        "id" => $exist["id"],
-        "nombre" => $exist["nombre"]
-    ]);
+if ($exist) {
+    $msg = "Ya existe un diplomado con el mismo nombre.";
 
-$db->update(
+    AuditLogger::log(
+        $db,
+        action: "diplomado.update",
+        entity: "diplomado",
+        entityId: null,
+        data: [
+            "mensaje" => $msg,
+            "id" => $exist["id"],
+            "nombre" => $exist["nombre"]
+        ],
+        result: "rejected"
+    );
+
+    ApiResponse::conflict($msg);
+}
+
+$anterior = $db->first(
     "
-    update tbl_diplomado td
-    set
-        nombre = ?,
-        usuario_actualizacion_id = ?,
-        fecha_actualizacion = current_timestamp()
-    where td.status_id = 1 and td.id = ?
+        select
+            td.nombre
+        from tbl_diplomado td
+        where
+            td.status_id = 1 and
+            td.id = ?
     ",
     [
-        $nombre,
-        Session::get("auth.id"),
         $diplomado
     ]
 );
 
-ApiResponse::success();
+$nuevo = [
+    "nombre" => $nombre
+];
+
+$cambios = AuditLogger::obtenerCambios($anterior, $nuevo);
+
+$db->transaction(function (Connection $db) use ($diplomado, $nombre, $cambios) {
+    $db->update(
+        "
+            update tbl_diplomado td
+            set
+                nombre = ?,
+                usuario_actualizacion_id = ?,
+                fecha_actualizacion = current_timestamp()
+            where td.status_id = 1 and td.id = ?;
+        ",
+        [
+            $nombre,
+            Session::get("auth.id"),
+            $diplomado
+        ]
+    );
+
+    if (!empty($cambios))
+        AuditLogger::log(
+            $db,
+            action: "diplomado.update",
+            entity: "diplomado",
+            entityId: $diplomado,
+            data: [
+                "cambios" => $cambios
+            ],
+            result: "success"
+        );
+});
+
+ApiResponse::success(null, "Diplomado actualizado.");

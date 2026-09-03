@@ -55,6 +55,7 @@
 
                     <div class="card-body">
                         <div data-field-container="modulos">
+                            <input data-field="diplomado" type="text" class="form-control d-none" disabled>
                             <table class="table table-striped table-hover" data-table="modulos">
                             </table>
                         </div>
@@ -79,6 +80,8 @@
 
                     <div class="card-body">
                         <div data-field-container="actividades">
+                            <input data-field="diplomado" type="text" class="form-control d-none" disabled>
+                            <input data-field="modulo" type="text" class="form-control d-none" disabled>
                             <table class="table table-striped table-hover" data-table="actividades">
                             </table>
                         </div>

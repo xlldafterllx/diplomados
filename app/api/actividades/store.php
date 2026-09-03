@@ -18,7 +18,7 @@ $validator = Validator::make(
 
 if ($validator->fails())
     ApiResponse::unprocessableContent(
-        "Uno o varios campos no cumplen con el formato correspondiente",
+        array_values($validator->errors())[0][0],
         [
             "message" => "Unprocessable Content",
             "errors" => $validator->errors()
@@ -41,7 +41,7 @@ $exist = $db->first(
             ta.status_id = 1 and
             ta.diplomado_id = ? and
             ta.modulo_id = ? and
-            ta.nombre = ?
+            ta.nombre = ?;
     ",
     [
         $diplomado,
@@ -50,20 +50,33 @@ $exist = $db->first(
     ]
 );
 
-if ($exist)
-    ApiResponse::conflict("Ya existe una actividad con el mismo nombre.", [
-        "id" => $exist["id"],
-        "nombre" => $exist["nombre"]
-    ]);
+if ($exist) {
+    $msg = "Ya existe una actividad con el mismo nombre.";
+
+    AuditLogger::log(
+        $db,
+        action: "actividad.create",
+        entity: "actividad",
+        entityId: null,
+        data: [
+            "mensaje" => $msg,
+            "id" => $exist["id"],
+            "nombre" => $exist["nombre"]
+        ],
+        result: "rejected"
+    );
+
+    ApiResponse::conflict($msg);
+}
 
 $last = $db->value(
     "
-    select
-        ta.orden
-    from tbl_actividad ta
-    where ta.diplomado_id = ? and ta.modulo_id = ?
-    order by orden desc
-    limit 1
+        select
+            ta.orden
+        from tbl_actividad ta
+        where ta.diplomado_id = ? and ta.modulo_id = ?
+        order by orden desc
+        limit 1;
     ",
     [
         $diplomado,
@@ -73,28 +86,42 @@ $last = $db->value(
 
 $last = $last ? $last += 1 : 1;
 
-$db->insert(
-    "
-        insert into tbl_actividad
-        (
-            nombre,
-            diplomado_id,
-            modulo_id,
-            orden,
-            usuario_creacion_id
-        )
-        values
-        (
-            ?, ?, ?, ?, ?
-        )
-    ",
-    [
-        $nombre,
-        $diplomado,
-        $modulo,
-        $last,
-        Session::get("auth.id")
-    ]
-);
+$db->transaction(function (Connection $db) use ($nombre, $diplomado, $modulo, $last) {
+    $id = $db->insert(
+        "
+            insert into tbl_actividad
+            (
+                nombre,
+                diplomado_id,
+                modulo_id,
+                orden,
+                usuario_creacion_id
+            ) values (
+                ?, ?, ?, ?, ?
+            );
+        ",
+        [
+            $nombre,
+            $diplomado,
+            $modulo,
+            $last,
+            Session::get("auth.id")
+        ]
+    );
 
-ApiResponse::created();
+    AuditLogger::log(
+        $db,
+        action: "actividad.create",
+        entity: "actividad",
+        entityId: $id,
+        data: [
+            "nombre" => $nombre,
+            "diplomado" => $diplomado,
+            "modulo" => $modulo,
+            "last" => $last
+        ],
+        result: "success"
+    );
+});
+
+ApiResponse::created(null, "Actividad creada.");
