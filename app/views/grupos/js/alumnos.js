@@ -189,6 +189,7 @@ function initializeTableAlumnos() {
             data: 'inscrito',
             name: 'inscrito',
             title: 'Fecha de inscripción',
+            type: "datetime",
             render: DataTable.render.datetime('DD/MM/YYYY')
         },
         {
@@ -227,16 +228,7 @@ function initializeTableAlumnos() {
                 handler: false
             },
             columnControl: [
-                [
-                    "orderAsc",
-                    "orderDesc",
-                    "spacer",
-                    "orderAddAsc",
-                    "orderAddDesc",
-                    "orderRemove",
-                    "spacer",
-                    "orderClear"
-                ],
+                "order",
                 "searchDropdown"
             ],
             columnDefs: [
@@ -244,7 +236,13 @@ function initializeTableAlumnos() {
                 { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
                 { targets: "nombre:name", className: "dt-body-nowrap" },
                 { targets: "institucion:name", className: "dt-col-large" },
-                { targets: "inscrito:name", render: DataTable.render.date() }
+                {
+                    targets: "inscrito:name", className: "dt-body-nowrap", columnControl: ["order", {
+                        extend: "searchDropdown",
+                        mask: "YYYY-MM-DD",
+                        format: "DD/MM/YYYY"
+                    }]
+                }
             ],
             ...TableHelper.exportButtons({
                 title: "Alumnos",

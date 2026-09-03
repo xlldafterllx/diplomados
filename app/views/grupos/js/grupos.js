@@ -150,6 +150,7 @@ function initializeTableGrupos() {
             data: 'fecha_inicio',
             name: 'fecha_inicio',
             title: 'Fecha de inicio',
+            type: "datetime",
             render: DataTable.render.datetime('DD/MM/YYYY')
         },
         {
@@ -167,6 +168,7 @@ function initializeTableGrupos() {
             data: 'fecha_creacion',
             name: 'fecha_creacion',
             title: 'Fecha de creación',
+            type: "datetime",
             render: DataTable.render.datetime('DD/MM/YYYY h:mm a')
         },
         {
@@ -209,24 +211,20 @@ function initializeTableGrupos() {
                 handler: false
             },
             columnControl: [
-                //"order",
-                [
-                    "orderAsc",
-                    "orderDesc",
-                    "spacer",
-                    "orderAddAsc",
-                    "orderAddDesc",
-                    "orderRemove",
-                    "spacer",
-                    "orderClear"
-                ],
+                "order",
                 "searchDropdown"
             ],
             columnDefs: [
                 { targets: "actions:name", width: 1, orderable: false, className: "notexport", columnControl: [] },
                 { targets: "_all", className: "align-content-center dt-head-nowrap dt-head-left dt-body-left" },
-                { targets: ["diplomado_nombre:name", "fecha_creacion:name"], className: "dt-body-nowrap" },
-                { targets: "fecha_creacion:name", render: DataTable.render.date() }
+                { targets: "diplomado_nombre:name", className: "dt-body-nowrap" },
+                {
+                    targets: ["fecha_creacion:name", "fecha_inicio:name"], className: "dt-body-nowrap", columnControl: ["order", {
+                        extend: "searchDropdown",
+                        mask: "YYYY-MM-DD",
+                        format: "DD/MM/YYYY"
+                    }]
+                }
             ],
             ...TableHelper.exportButtons({
                 title: "Grupos",
