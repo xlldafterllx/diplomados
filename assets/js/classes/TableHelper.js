@@ -9,6 +9,7 @@ class TableHelper {
             info: false,
             paging: false,
             lengthChange: false,
+            lengthMenu: [[50, 100, 200, -1], [50, 100, 200, "Mostrar todo"]],
 
             language: {
                 url: "assets/vendor/datatables/json/language-es-MX.json"
