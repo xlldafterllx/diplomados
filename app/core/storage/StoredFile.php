@@ -16,7 +16,7 @@ final class StoredFile
      * Directorio relativo donde fue almacenado.
      *
      * Ejemplo:
-     * entradas/2026/07/13/1532
+     * entradas/1532/2026/07/13
      */
     private string $directory;
 
@@ -75,13 +75,13 @@ final class StoredFile
 
     /**
      * Devuelve:
-     * entradas/2026/07/13/1532/uuid_documento.pdf
+     * entradas/1532/2026/07/13/uuid_documento.pdf
      */
     public function getRelativePath(): string
     {
-        return $this->directory
-            . DIRECTORY_SEPARATOR
-            . $this->storedName;
+        return rtrim($this->directory, "/\\")
+        . "/"
+        . $this->storedName;
     }
 
     /**

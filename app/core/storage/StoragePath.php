@@ -8,10 +8,10 @@ final class StoragePath
      * Ejemplo:
      * [
      *     "entradas",
+     *     "1532",
      *     "2026",
      *     "07",
-     *     "13",
-     *     "1532"
+     *     "13"
      * ]
      */
     private array $segments = [];
@@ -72,12 +72,12 @@ final class StoragePath
     /**
      * Ruta relativa.
      *
-     * entradas/2026/07/13/1532
+     * entradas/1532/2026/07/13
      */
     public function relative(): string
     {
         return implode(
-            DIRECTORY_SEPARATOR,
+            "/",
             $this->segments
         );
     }
@@ -89,7 +89,10 @@ final class StoragePath
     {
         return rtrim($basePath, "/\\")
             . DIRECTORY_SEPARATOR
-            . $this->relative();
+            . implode(
+                DIRECTORY_SEPARATOR,
+                $this->segments
+            );
     }
 
     /**
@@ -126,10 +129,10 @@ final class StoragePath
 
         return self::fromSegments(
             $root,
+            (string) $identifier,
             $date->format("Y"),
             $date->format("m"),
-            $date->format("d"),
-            (string) $identifier
+            $date->format("d")
         );
     }
 }
