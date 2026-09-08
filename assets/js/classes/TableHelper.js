@@ -76,6 +76,7 @@ class TableHelper {
         datatable.rows.add(data);
         datatable.draw();
         datatable.columns.adjust();
+        datatable.columns().columnControl.searchList("refresh");
     }
 
     static destroy(datatable) {
