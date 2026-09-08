@@ -475,11 +475,11 @@ class DateHelper {
             });
 
             callbacks.push((index, instance) => {
-                instance.setDate(
-                    new Date(),
-                    true
-                );
+                const today = new Date();
 
+                today.setHours(0, 0, 0, 0);
+
+                instance.setDate(today, true);
                 instance.close();
             });
         }
