@@ -127,7 +127,7 @@ class DateHelper {
             element,
             {
                 enableTime: true,
-                time_24hr: true,
+                time_24hr: false,
 
                 altInput: true,
                 altInputClass: "form-control",
