@@ -34,6 +34,6 @@ function asset(string $path): string
         const APP_NAME = "<?= APP_NAME ?>";
         const BASE_URL = "<?= BASE_URL ?>";
         const API_URL = BASE_URL + "app/api/";
-        const TODAY = "<?= date("Y-m-d"); ?>";
+        const TODAY = "<?= date("Y-m-d 23:59:59"); ?>";
     </Script>
 </head>
