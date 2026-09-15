@@ -71,10 +71,12 @@ class Validator {
                 "Este campo es obligatorio.",
 
             requiredIf:
-                "Este campo es obligatorio cuando ':other' tenga uno de los siguientes valores: :values.",
+                "Este campo es obligatorio.",
+            //"Este campo es obligatorio cuando ':other' tenga uno de los siguientes valores: :values.",
 
             requiredUnless:
-                "Este campo es obligatorio, excepto cuando ':other' tenga uno de los siguientes valores: :values.",
+                "Este campo es obligatorio.",
+            //"Este campo es obligatorio, excepto cuando ':other' tenga uno de los siguientes valores: :values.",
 
             string:
                 "Este campo debe ser una cadena de texto.",
@@ -571,8 +573,9 @@ class Validator {
             return true;
         }
 
-        const otherValue =
-            this.value(condition.field);
+        const otherValue = this.skipEmpty(condition.field)
+            ? ""
+            : this.value(condition.field);
 
         const required =
             condition.values
@@ -581,10 +584,7 @@ class Validator {
                     String(otherValue)
                 );
 
-        if (
-            !required ||
-            !this.skipEmpty(field)
-        ) {
+        if (!required || !this.skipEmpty(field)) {
             return true;
         }
 
@@ -613,8 +613,9 @@ class Validator {
             return true;
         }
 
-        const otherValue =
-            this.value(condition.field);
+        const otherValue = this.skipEmpty(condition.field)
+            ? ""
+            : this.value(condition.field);
 
         const excludedValues =
             condition.values.map(String);
