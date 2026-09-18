@@ -102,8 +102,7 @@ class SelectHelper {
         const isMultiple = control.prop("multiple");
 
         const parent = this.getParent(
-            element,
-            settings.context,
+            control,
             settings.dropdownParent
         );
 
@@ -292,27 +291,28 @@ class SelectHelper {
     /**
      * Obtiene el contenedor que utilizará dropdownParent.
      *
-     * @param {string} element
-     * @param {ComponentHelper|null} context
+     * Si se especifica manualmente, tiene prioridad.
+     * Si el select está dentro de un modal, utiliza el modal.
+     * En cualquier otro caso, utiliza el body.
+     *
+     * @param {JQuery} control
      * @param {string|JQuery|null} dropdownParent
-     * @returns {JQuery|null}
+     * @returns {JQuery}
      */
-    static getParent(element, context, dropdownParent) {
+    static getParent(control, dropdownParent) {
         if (dropdownParent) {
             return dropdownParent instanceof jQuery
                 ? dropdownParent
                 : $(dropdownParent);
         }
 
-        if (context) {
-            const parent = context.getContainer(element);
+        const modal = control.closest(".modal");
 
-            return parent?.length
-                ? parent
-                : null;
+        if (modal.length) {
+            return modal;
         }
 
-        return null;
+        return $(document.body);
     }
 
     /**
