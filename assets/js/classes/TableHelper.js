@@ -12,23 +12,32 @@ class TableHelper {
             lengthMenu: [[50, 100, 200, -1], [50, 100, 200, "Mostrar todo"]],
 
             language: {
-                url: "assets/vendor/datatables/json/language-es-MX.json"
+                url: BASE_URL + "assets/vendor/datatables/json/language-es-MX.json"
+            },
+
+            initComplete: function () {
+                const settings = this.api().settings()[0];
+
+                settings.scrollHead?.off('scroll.DT');
+                settings.scrollFoot?.off('scroll.DT');
             },
 
             drawCallback: function () {
                 const table = this.api();
                 const $table = $(table.table().node());
+                const $container = $(table.table().container());
 
                 const hasData = table
-                    .rows({
-                        search: "applied"
-                    })
+                    .rows({ search: "applied" })
                     .count() > 0;
 
                 const previousState = $table.hasClass("dt-has-data");
 
-                $table.toggleClass("dt-has-data", hasData);
-                $table.toggleClass("dt-no-data", !hasData);
+                // Aplicar el mismo estado al cuerpo, encabezado y pie.
+                $container
+                    .find("table.dataTable")
+                    .toggleClass("dt-has-data", hasData)
+                    .toggleClass("dt-no-data", !hasData);
 
                 if (previousState !== hasData) {
                     requestAnimationFrame(() => {
